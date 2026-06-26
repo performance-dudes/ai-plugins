@@ -1,8 +1,9 @@
 {
   "name": "example",
-  "description": "Reference example for shipping a dynamic Workflow inside a plugin — a workflows/ script invoked by a slash command via ${CLAUDE_PLUGIN_ROOT}. Use as the template for plugin-bundled workflows. Command: /greet",
-  "version": "0.1.0",
+  "description": "A reference showcase of every Claude Code plugin component and technique — workflow, slash command, skill (that calls the workflow), subagent, theme, output style, plus documented .example templates for hooks, MCP, LSP and monitors, and a tests/ folder showing how to test plugins and skills. Command: /greet",
+  "version": "0.2.0",
   "author": {
     "name": "Performance Dudes"
-  }
+  },
+  "keywords": ["example", "reference", "workflow", "skill", "template"]
 }

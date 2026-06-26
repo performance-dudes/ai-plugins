@@ -1,0 +1,28 @@
+name: validate plugins
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Static checks (no Claude CLI required)
+        run: |
+          set -e
+          echo "== JSON parses =="
+          for f in .claude-plugin/marketplace.json example/.claude-plugin/plugin.json example/themes/*.json; do
+            python3 -m json.tool "$f" >/dev/null && echo "  ok $f"
+          done
+          echo "== workflow JS parses =="
+          node --check example/workflows/greet.js && echo "  ok greet.js"
+          echo "== required component files present =="
+          for f in example/commands/greet.md example/skills/run-greet/SKILL.md example/agents/greeter.md example/output-styles/terse.md; do
+            test -f "$f" && echo "  ok $f"
+          done

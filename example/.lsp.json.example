@@ -1,0 +1,10 @@
+{
+  "_comment": "Rename to .lsp.json to activate. The language-server binary (e.g. gopls) must be installed separately.",
+  "go": {
+    "command": "gopls",
+    "args": ["serve"],
+    "extensionToLanguage": {
+      ".go": "go"
+    }
+  }
+}

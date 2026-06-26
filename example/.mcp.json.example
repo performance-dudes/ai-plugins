@@ -1,0 +1,12 @@
+{
+  "_comment": "Rename to .mcp.json to activate. Auto-starts on session load — ship a real server binary first.",
+  "mcpServers": {
+    "example-server": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/dist/index.js"],
+      "env": {
+        "EXAMPLE_LOG_LEVEL": "info"
+      }
+    }
+  }
+}
