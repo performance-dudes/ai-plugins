@@ -1,0 +1,8 @@
+{
+  "name": "example",
+  "description": "Reference example for shipping a dynamic Workflow inside a plugin — a workflows/ script invoked by a slash command via ${CLAUDE_PLUGIN_ROOT}. Use as the template for plugin-bundled workflows. Command: /greet",
+  "version": "0.1.0",
+  "author": {
+    "name": "Performance Dudes"
+  }
+}
