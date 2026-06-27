@@ -1,0 +1,9 @@
+{
+  "name": "transcribe",
+  "description": "Quality-first multi-speaker transcription on Apple Silicon — an on-device ffmpeg/Whisper/pyannote pipeline plus parallel Opus deliverables (verbatim clean transcript, minutes, quoted facts, personas, todos). Generic: all domain knowledge comes from user-provided context. Command: /transcribe",
+  "version": "0.1.0",
+  "author": {
+    "name": "Performance Dudes"
+  },
+  "keywords": ["transcription", "diarization", "whisper", "pyannote", "workflow", "audio", "meeting"]
+}
