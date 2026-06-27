@@ -16,6 +16,12 @@
       "source": "./transcribe",
       "description": "Quality-first multi-speaker transcription on Apple Silicon — an on-device ffmpeg/Whisper/pyannote pipeline plus parallel Opus deliverables (verbatim clean transcript, minutes, quoted facts, personas, todos). Generic: all domain knowledge comes from user-provided context. Command: /transcribe",
       "version": "0.1.0"
+    },
+    {
+      "name": "ocr",
+      "source": "./ocr",
+      "description": "Quality-first OCR + auto-classification of scanned documents on Apple Silicon — on-device Apple Vision OCR (auge, auto-rotating) plus parallel Opus classification into a reviewable rename/sort proposal, with a separate dry-run apply step (undo log, searchable PDF text layers). Generic: all domain knowledge comes from user-provided context. Command: /ocr",
+      "version": "0.1.0"
     }
   ]
 }
