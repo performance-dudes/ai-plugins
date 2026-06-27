@@ -1,0 +1,9 @@
+[
+  {
+    "_comment": "Rename this file to monitors.json to activate. Experimental (Claude Code v2.1.105+). Runs a persistent process — review before enabling.",
+    "name": "example-heartbeat",
+    "command": "${CLAUDE_PLUGIN_ROOT}/monitors/scripts/heartbeat.sh",
+    "description": "Emits a line every 30s; demo of a background monitor",
+    "when": "on-skill-invoke:run-greet"
+  }
+]
