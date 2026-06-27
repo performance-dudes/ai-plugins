@@ -10,6 +10,12 @@
       "source": "./example",
       "description": "Reference showcase of every Claude Code plugin component and technique — workflow, command, skill (calling the workflow), subagent, theme, output style, plus .example templates for hooks/MCP/LSP/monitors and a tests/ folder on how to test plugins and skills. Command: /greet",
       "version": "0.2.0"
+    },
+    {
+      "name": "transcribe",
+      "source": "./transcribe",
+      "description": "Quality-first multi-speaker transcription on Apple Silicon — an on-device ffmpeg/Whisper/pyannote pipeline plus parallel Opus deliverables (verbatim clean transcript, minutes, quoted facts, personas, todos). Generic: all domain knowledge comes from user-provided context. Command: /transcribe",
+      "version": "0.1.0"
     }
   ]
 }
