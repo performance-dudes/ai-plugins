@@ -1,9 +1,6 @@
 export const meta = {
   name: 'transcribe',
-  description:
-    'Quality-first multi-speaker transcription: deterministic on-device pipeline ' +
-    '(ffmpeg -> Whisper -> pyannote -> merge) followed by parallel Opus deliverables ' +
-    '(verbatim clean transcript, minutes, quoted facts, personas, todos).',
+  description: 'Quality-first multi-speaker transcription: deterministic on-device pipeline (ffmpeg -> Whisper -> pyannote -> merge) followed by parallel Opus deliverables (verbatim clean transcript, minutes, quoted facts, personas, todos).',
   phases: [
     { title: 'Pipeline' },
     { title: 'Chunk' },
@@ -24,7 +21,10 @@ export const meta = {
 //                per conversation by the user. Empty is allowed (fewer corrections).
 //   speakerMap   optional pre-known 'SPEAKER_00=Name SPEAKER_01=Name' (string)
 // ---------------------------------------------------------------------------
-const a = (typeof args === 'object' && args) ? args : {}
+// `args` may arrive as a parsed object or as a JSON string (the Workflow runtime
+// serializes it); accept both so the command/skill invocation always lands.
+const a = (args && typeof args === 'object') ? args
+  : (typeof args === 'string' && args.trim() ? (() => { try { return JSON.parse(args) } catch (e) { return {} } })() : {})
 const pluginRoot = a.pluginRoot || '.'
 const audio = a.audio || ''
 const numSpeakers = (a.numSpeakers === undefined || a.numSpeakers === null) ? '' : String(a.numSpeakers)

@@ -1,9 +1,6 @@
 export const meta = {
   name: 'ocr',
-  description:
-    'On-device OCR of scanned documents (auge / Apple Vision, auto-rotating) followed by ' +
-    'parallel Opus classification into a reviewable rename/sort proposal. Produces only a ' +
-    'proposal — nothing is moved; applying is a separate, human-gated step.',
+  description: 'On-device OCR of scanned documents (auge / Apple Vision, auto-rotating) followed by parallel Opus classification into a reviewable rename/sort proposal. Produces only a proposal — nothing is moved; applying is a separate, human-gated step.',
   phases: [
     { title: 'OCR' },
     { title: 'Classify', model: 'opus' },
@@ -23,7 +20,10 @@ export const meta = {
 //   langs       OCR language hints (BCP-47, e.g. 'de-DE,en-US')
 //   model       classification model (default 'opus')
 // ---------------------------------------------------------------------------
-const a = (typeof args === 'object' && args) ? args : {}
+// `args` may arrive as a parsed object or as a JSON string (the Workflow runtime
+// serializes it); accept both so the command/skill invocation always lands.
+const a = (args && typeof args === 'object') ? args
+  : (typeof args === 'string' && args.trim() ? (() => { try { return JSON.parse(args) } catch (e) { return {} } })() : {})
 const pluginRoot = a.pluginRoot || '.'
 const scanDir = a.scanDir || ''
 const outDir = a.outDir || (String(scanDir).replace(/\/+$/, '') + '_ocr')

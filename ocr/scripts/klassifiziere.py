@@ -17,6 +17,12 @@ the document types, the target taxonomy and the naming convention — comes from
 the CONTEXT you pass with --context-file (or --context). With no context it still
 classifies, just more conservatively.
 
+Throughput: documents are classified with a bounded thread pool (--jobs, default
+4) and each `claude -p` call retries with exponential backoff on transient
+server rate limits / overload. The default is intentionally modest — a wide
+fan-out (e.g. dozens of parallel Opus calls) trips server-side rate limiting; a
+handful of workers is fast yet stays under that ceiling.
+
 Output:
   <ocr-dir>/_vorschlag.json   machine-readable  -> input for anwenden.py
   <ocr-dir>/_vorschlag.md     review table for a human
@@ -25,7 +31,7 @@ NOTHING is moved or renamed. A human reviews _vorschlag.md (and corrects
 _vorschlag.json if needed), then runs anwenden.py.
 
 Usage:
-  uv run klassifiziere.py <ocr-dir> [--context-file ctx.txt] [--model opus|sonnet] [--limit N]
+  uv run klassifiziere.py <ocr-dir> [--context-file ctx.txt] [--model opus|sonnet] [--limit N] [--jobs N]
 """
 from __future__ import annotations
 
@@ -34,24 +40,46 @@ import json
 import os
 import subprocess
 import sys
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 PROMPT_FILE = Path(__file__).with_name("classify_prompt.md")
 CLAUDE_TIMEOUT_S = 600
+# Substrings that mark a transient, retryable server condition (not a usage cap).
+TRANSIENT_HINTS = (
+    "temporarily limiting", "rate limit", "rate_limit", "ratelimit",
+    "overloaded", "529", "503", "502", "timeout", "timed out",
+)
 
 
-def call_claude(prompt: str, model: str = "opus") -> str:
+def call_claude(prompt: str, model: str = "opus", retries: int = 5) -> str:
+    """Run `claude -p`, retrying transient rate-limit/overload errors with backoff."""
     env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
-    r = subprocess.run(
-        ["claude", "-p", "--model", model, "--output-format", "text"],
-        input=prompt, capture_output=True, text=True,
-        timeout=CLAUDE_TIMEOUT_S, encoding="utf-8", env=env,
-    )
-    if r.returncode != 0:
-        sys.stderr.write(f"claude exit {r.returncode}: {r.stderr[:1000]}\n")
-        r.check_returncode()
-    return r.stdout.strip()
+    delay = 5.0
+    last = ""
+    for attempt in range(retries + 1):
+        transient = False
+        try:
+            r = subprocess.run(
+                ["claude", "-p", "--model", model, "--output-format", "text"],
+                input=prompt, capture_output=True, text=True,
+                timeout=CLAUDE_TIMEOUT_S, encoding="utf-8", env=env,
+            )
+            if r.returncode == 0:
+                return r.stdout.strip()
+            last = (r.stderr or "")[:1000]
+            transient = any(h in last.lower() for h in TRANSIENT_HINTS)
+        except subprocess.TimeoutExpired:
+            last = f"timeout after {CLAUDE_TIMEOUT_S}s"
+            transient = True
+        if attempt < retries and transient:
+            time.sleep(delay)
+            delay = min(delay * 2, 90.0)
+            continue
+        break
+    raise RuntimeError(f"claude failed after {retries + 1} attempts: {last}")
 
 
 def parse_json(text: str) -> dict:
@@ -71,6 +99,8 @@ def main() -> int:
     ap.add_argument("--context", default=None, help="inline CONTEXT (overrides --context-file)")
     ap.add_argument("--model", default="opus")
     ap.add_argument("--limit", type=int, default=0, help="only first N (test run)")
+    ap.add_argument("--jobs", type=int, default=4,
+                    help="parallel claude workers (default 4; keep modest to avoid rate limits)")
     args = ap.parse_args()
 
     task = PROMPT_FILE.read_text(encoding="utf-8")
@@ -88,9 +118,14 @@ def main() -> int:
         print(f"no *.txt in {args.ocr_dir} — run ocr.py first.", file=sys.stderr)
         return 1
 
-    print(f"{len(txts)} documents -> classify via claude ({args.model})")
-    results = []
-    for i, txt in enumerate(txts, 1):
+    jobs = max(1, args.jobs)
+    print(f"{len(txts)} documents -> classify via claude ({args.model}, {jobs} parallel)")
+
+    results: list[dict | None] = [None] * len(txts)
+    lock = threading.Lock()
+    progress = {"done": 0}
+
+    def classify_one(idx: int, txt: Path) -> tuple[int, dict]:
         content = txt.read_text(encoding="utf-8").strip()
         prompt = (
             f"KONTEXT:\n{context}\n\n"
@@ -105,9 +140,20 @@ def main() -> int:
                    "ist_muell": False, "begruendung": str(e)[:200]}
         obj["session"] = txt.stem
         obj["ocr_zeichen"] = len(content)
-        results.append(obj)
-        print(f"   {i}/{len(txts)} {txt.stem}: {obj.get('dokumenttyp', '?')} "
-              f"[{obj.get('konfidenz', '?')}] {time.time() - t0:.1f}s")
+        with lock:
+            progress["done"] += 1
+            print(f"   {progress['done']}/{len(txts)} {txt.stem}: "
+                  f"{obj.get('dokumenttyp', '?')} [{obj.get('konfidenz', '?')}] "
+                  f"{time.time() - t0:.1f}s")
+        return idx, obj
+
+    with ThreadPoolExecutor(max_workers=jobs) as ex:
+        futs = [ex.submit(classify_one, i, txt) for i, txt in enumerate(txts)]
+        for fut in as_completed(futs):
+            idx, obj = fut.result()
+            results[idx] = obj
+
+    results = [r for r in results if r is not None]
 
     out_json = args.ocr_dir / "_vorschlag.json"
     out_json.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
