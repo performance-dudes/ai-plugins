@@ -1,7 +1,7 @@
 {
   "name": "ocr",
   "description": "Quality-first OCR + auto-classification of scanned documents on Apple Silicon — on-device Apple Vision OCR (auge, auto-rotating) plus parallel Opus classification into a reviewable rename/sort proposal, with a separate dry-run apply step (undo log). Generic: all domain knowledge comes from user-provided context. Command: /ocr",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "Performance Dudes"
   },

@@ -47,6 +47,28 @@ stay images; `--skip-fotos` processes documents only, `--copy` keeps originals.
 Standalone, `/ocr-searchable` adds a text layer to existing image-only PDFs. PDFs
 that already have text are left untouched.
 
+> ⛔ **Agent guardrail — never call `ocrmypdf` / `tesseract` directly.** Use this
+> pipeline (`/ocr-searchable` → `durchsuchbar.py`, auge + PyMuPDF). **Never
+> `ocrmypdf --force-ocr`**: it **rasterizes the whole page** (vector/text → image) —
+> lossy, and bloats archival PDFs (observed: a tax assessment 1.5 MB → 10 MB / 6.4×;
+> ID-card scans re-compressed lossily for *zero* text gain). auge lays the text layer
+> *over* the existing image without re-rasterizing — that is the entire point.
+>
+> 🚫 **Vector PDFs — never rasterize, but you *can* make them searchable.** A PDF with
+> **0 images and 0 fonts** is vector (e.g. `Microsoft: Print To PDF` forms / payment
+> slips) — crisp, small, resolution-independent. Never `--force-ocr` it (that rasterizes
+> the vector away). Instead add an invisible text layer via `/ocr-searchable` →
+> `durchsuchbar.py` (`searchbar.add_textlayer`): it renders a *temporary* image only to
+> run auge, then places the invisible text over the **untouched vector page** — it stays
+> vector (lossless) **and** becomes searchable.
+>
+> ⚠️ **Known limit — junk text layers.** `pdf_is_image_only` treats a PDF as "has
+> text" if **any** (even a tiny/junk) text fragment is present, so such a PDF is
+> **skipped** (not made searchable). Some scans (e.g. authority/payment forms) carry
+> such a fragment. To force them searchable: strip the junk layer first (extract the
+> page image via PyMuPDF → rebuild with `searchbar.build_pdf`), then auge — **not**
+> `--force-ocr`.
+
 ## Components
 
 | Component | Path | Shows |

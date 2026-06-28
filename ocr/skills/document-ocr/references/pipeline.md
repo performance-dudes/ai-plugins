@@ -65,6 +65,20 @@ leaving already-searchable PDFs untouched. PDFs only. The embedding lives in the
 shared `scripts/searchbar.py` module (auge + PyMuPDF, fully on-device — no
 ocrmypdf / tesseract / poppler).
 
+> ⛔ **Even in this Bash fallback: never reach for `ocrmypdf`/`tesseract`.** Always
+> use `durchsuchbar.py` (auge). **Never `ocrmypdf --force-ocr`** — it rasterizes the
+> page (lossy, bloats PDFs ~6×, ID scans degraded for zero text gain). auge adds the
+> layer *over* the image, non-lossily.
+>
+> 🚫 **Vector PDFs** (0 images + 0 fonts, e.g. `Print To PDF` forms): never
+> `--force-ocr` (rasterizes the vector away). `add_textlayer` is safe — it renders a
+> *temporary* image only for auge, then lays the invisible text over the untouched
+> vector page → stays vector (lossless) **and** searchable.
+>
+> ⚠️ **Junk text layer:** a PDF with any minimal/junk text fragment is detected as
+> "has text" and **skipped**. To make it searchable, first strip the junk layer
+> (extract the page image via PyMuPDF → `searchbar.build_pdf`), then auge.
+
 ## The Workflow
 
 `workflows/ocr.js` wires phases 1–3 (OCR → parallel Opus classification →
