@@ -16,13 +16,36 @@ jobs:
       - name: Static checks (no Claude CLI required)
         run: |
           set -e
-          echo "== JSON parses =="
-          for f in .claude-plugin/marketplace.json example/.claude-plugin/plugin.json example/themes/*.json; do
+          echo "== marketplace.json parses =="
+          python3 -m json.tool .claude-plugin/marketplace.json >/dev/null && echo "  ok marketplace.json"
+
+          echo "== every plugin.json parses =="
+          for f in plugins/*/.claude-plugin/plugin.json; do
             python3 -m json.tool "$f" >/dev/null && echo "  ok $f"
           done
-          echo "== workflow JS parses =="
-          node --check example/workflows/greet.js && echo "  ok greet.js"
-          echo "== required component files present =="
-          for f in example/commands/greet.md example/skills/run-greet/SKILL.md example/agents/greeter.md example/output-styles/terse.md; do
-            test -f "$f" && echo "  ok $f"
+
+          echo "== marketplace sources resolve =="
+          python3 - <<'PY'
+          import json, pathlib, sys
+          mk = json.load(open('.claude-plugin/marketplace.json'))
+          bad = 0
+          for p in mk['plugins']:
+              src = pathlib.Path(p['source'])
+              pj = src / '.claude-plugin' / 'plugin.json'
+              if not pj.is_file():
+                  print(f"  MISS {p['name']}: {pj} not found"); bad = 1
+                  continue
+              ver = json.load(open(pj)).get('version')
+              if ver != p.get('version'):
+                  print(f"  MISS {p['name']}: marketplace {p.get('version')} != plugin.json {ver}"); bad = 1
+              else:
+                  print(f"  ok {p['name']} ({ver})")
+          sys.exit(bad)
+          PY
+
+          echo "== per-plugin smoke tests =="
+          for t in plugins/*/tests/validate.sh; do
+            [ -f "$t" ] || continue
+            echo "  -> $t"
+            bash "$t"
           done
