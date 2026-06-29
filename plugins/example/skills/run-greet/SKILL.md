@@ -31,6 +31,15 @@ This skill demonstrates the cleanest way for a **skill** to invoke a
    back to greeting the name yourself in one friendly line — same outcome, no
    orchestration.
 
+## Lazy-loaded references
+
+Deeper material a skill needs only *sometimes* lives in a `references/` folder
+next to this file, not inline. `SKILL.md` stays short (always loaded); the model
+opens a reference **only when the task calls for it**. Here, greeting styles,
+localization notes and edge cases live in
+[`references/advanced-greetings.md`](references/advanced-greetings.md) — read it
+when a greeting needs a specific tone or language.
+
 ## Why a skill *and* a command?
 
 - `commands/greet.md` is the explicit `/greet` entry point a user types.
