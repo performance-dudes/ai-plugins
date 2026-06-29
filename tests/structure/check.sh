@@ -9,7 +9,7 @@ note() { printf '  ✗ %s\n' "$1"; fail=1; }
 ok()   { printf '  ✓ %s\n' "$1"; }
 
 echo "[structure] AC-1-1: Top-Level-Ordner vorhanden"
-for d in specs docs journal plans tests; do
+for d in plugins specs docs journal plans tests; do
   if [ -d "$d" ]; then ok "$d/"; else note "Top-Level-Ordner fehlt: $d/"; fi
 done
 
@@ -29,7 +29,7 @@ done < <(find specs -name '*.md' 2>/dev/null)
 
 echo "[structure] US-conv-1: Plugin-Ordner bleiben rein (kein specs/docs/journal/plans drin)"
 # Plugin-Ordner = Top-Level-Dir mit .claude-plugin/
-for pj in */.claude-plugin/plugin.json; do
+for pj in plugins/*/.claude-plugin/plugin.json; do
   [ -e "$pj" ] || continue
   plug="${pj%%/.claude-plugin/plugin.json}"
   for meta in specs docs journal plans; do
