@@ -127,7 +127,7 @@ const scouted = (await parallel(
   subquestions.map((q, i) => () =>
     agent(
       `${READ}\n\nYour sub-question (${i + 1}/${subquestions.length}): ${q}\n\nReport every supported finding as JSON.`,
-      { label: `scout:${q.slice(0, 28)}`, phase: 'Scout', schema: FINDINGS_SCHEMA, agentType: 'context-scout' },
+      { label: `scout:${q.slice(0, 28)}`, phase: 'Scout', schema: FINDINGS_SCHEMA, agentType: 'context-aware:context-scout' },
     ),
   ),
 )).filter(Boolean)
@@ -171,7 +171,7 @@ Deduped findings (lean JSON — your primary material; do NOT re-fetch the sourc
 ${JSON.stringify(deduped)}
 
 Synthesize the answer. ctx_search the indexed corpus only to fill a specific gap. Return the report JSON.`,
-  { label: 'synthesize', phase: 'Synthesize', schema: REPORT_SCHEMA, agentType: 'context-synthesizer' },
+  { label: 'synthesize', phase: 'Synthesize', schema: REPORT_SCHEMA, agentType: 'context-aware:context-synthesizer' },
 ).catch(() => null)
 
 return {
