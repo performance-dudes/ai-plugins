@@ -27,7 +27,13 @@
       "name": "ocr",
       "source": "./plugins/ocr",
       "description": "Quality-first OCR + auto-classification of scanned documents on Apple Silicon — on-device Apple Vision OCR (auge, auto-rotating) plus parallel Opus classification into a reviewable rename/sort proposal, with a separate dry-run apply step (undo log, searchable PDF text layers). Generic: all domain knowledge comes from user-provided context. Command: /ocr",
-      "version": "0.1.2"
+      "version": "0.1.3"
+    },
+    {
+      "name": "image-toolkit",
+      "source": "./plugins/image-toolkit",
+      "description": "Image create & edit framework — Google Gemini for AI generation and semantic editing (recommended path), plus ImageMagick 7 for fast local processing (resize, crop, convert, watermark, favicon, batch, GIF, montage). Bundled generate_image.py runs via uv (no manual deps). Generic: prompts and assets come from the user. Command: /image",
+      "version": "0.1.0"
     }
   ]
 }

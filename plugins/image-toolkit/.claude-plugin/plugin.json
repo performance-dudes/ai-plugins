@@ -1,0 +1,9 @@
+{
+  "name": "image-toolkit",
+  "description": "Image create & edit framework — Google Gemini for AI generation and semantic editing (recommended path), plus ImageMagick 7 for fast local processing (resize, crop, convert, watermark, favicon, batch, GIF, montage). Bundled generate_image.py runs via uv (no manual deps). Generic: prompts and assets come from the user. Command: /image",
+  "version": "0.1.0",
+  "author": {
+    "name": "Performance Dudes"
+  },
+  "keywords": ["image", "gemini", "imagemagick", "generation", "text-to-image", "editing", "favicon", "thumbnail", "watermark", "convert"]
+}
