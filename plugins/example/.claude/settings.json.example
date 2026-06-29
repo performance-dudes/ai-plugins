@@ -1,0 +1,23 @@
+{
+  "_comment": "Rename to .claude/settings.json to activate. This is a template — Claude does NOT read .example files. It shows a permissions block (allow / ask / deny) plus enabledPlugins. permissions gate what tools may run without a prompt: allow runs silently, ask prompts the user, deny refuses outright; deny wins over allow on a conflict.",
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Read"
+    ],
+    "ask": [
+      "Write",
+      "Bash(git push:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Read(./.env)",
+      "Read(./secrets/**)"
+    ]
+  },
+  "enabledPlugins": {
+    "example@ai-plugins": true
+  }
+}

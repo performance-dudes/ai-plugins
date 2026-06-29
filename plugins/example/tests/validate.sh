@@ -27,17 +27,28 @@ for f in \
   "skills/run-greet/SKILL.md" \
   "agents/greeter.md" \
   "themes/performance-dudes.json" \
-  "output-styles/terse.md"; do
+  "output-styles/terse.md" \
+  "skills/run-greet/references/advanced-greetings.md" \
+  "hooks/scripts/example-pretooluse.sh" \
+  "hooks/scripts/example-posttooluse.sh" \
+  ".claude/settings.json.example"; do
   [ -f "$PLUGIN_DIR/$f" ] && ok "$f" || bad "missing $f"
 done
 
 note "3. JSON component files parse"
-for j in themes/performance-dudes.json; do
+# .example templates are not loaded by Claude, but must still be valid JSON.
+for j in \
+  themes/performance-dudes.json \
+  hooks/hooks.json.example \
+  .claude/settings.json.example; do
   python3 -m json.tool "$PLUGIN_DIR/$j" >/dev/null 2>&1 && ok "$j parses" || bad "$j bad JSON"
 done
 
-note "4. Workflow script is syntactically valid JS"
+note "4. Workflow script + hook scripts are syntactically valid"
 node --check "$PLUGIN_DIR/workflows/greet.js" 2>/dev/null && ok "greet.js parses" || bad "greet.js syntax error"
+for sh in hooks/scripts/example-pretooluse.sh hooks/scripts/example-posttooluse.sh; do
+  bash -n "$PLUGIN_DIR/$sh" 2>/dev/null && ok "$sh parses" || bad "$sh syntax error"
+done
 
 note "5. Skill/agent frontmatter has name + description"
 for md in skills/run-greet/SKILL.md agents/greeter.md; do
