@@ -15,13 +15,13 @@ without human review.
 
 | Component | File | Triggered by | Runs |
 |-----------|------|--------------|------|
-| Workflow | `ocr/workflows/ocr.js` | command or skill, by `scriptPath` | Workflow tool (orchestrates agents) |
-| Command `/ocr` | `ocr/commands/ocr.md` | user types it | main session |
-| Command `/ocr-apply` | `ocr/commands/ocr-apply.md` | user types it | main session (Bash) |
-| Command `/ocr-searchable` | `ocr/commands/ocr-searchable.md` | user types it | main session (Bash) |
-| Command `/ocr-doctor` | `ocr/commands/ocr-doctor.md` | user types it | main session (Bash) |
-| Skill `document-ocr` | `ocr/skills/document-ocr/SKILL.md` | model, on matching request | main session |
-| Pipeline scripts | `ocr/scripts/*` | the workflow / commands, via Bash | on-device |
+| Workflow | `plugins/ocr/workflows/ocr.js` | command or skill, by `scriptPath` | Workflow tool (orchestrates agents) |
+| Command `/ocr` | `plugins/ocr/commands/ocr.md` | user types it | main session |
+| Command `/ocr-apply` | `plugins/ocr/commands/ocr-apply.md` | user types it | main session (Bash) |
+| Command `/ocr-searchable` | `plugins/ocr/commands/ocr-searchable.md` | user types it | main session (Bash) |
+| Command `/ocr-doctor` | `plugins/ocr/commands/ocr-doctor.md` | user types it | main session (Bash) |
+| Skill `document-ocr` | `plugins/ocr/skills/document-ocr/SKILL.md` | model, on matching request | main session |
+| Pipeline scripts | `plugins/ocr/scripts/*` | the workflow / commands, via Bash | on-device |
 
 ## Flow
 
@@ -56,5 +56,5 @@ skill ─┘      ├─ OCR        ocr.py (auge / Apple Vision, auto-rotate, se
 
 ## Tests
 
-`bash ocr/tests/validate.sh` — structure + syntax of every file, plus deterministic
+`bash plugins/ocr/tests/validate.sh` — structure + syntax of every file, plus deterministic
 unit tests (ocr.py session grouping; anwenden.py dry-run moves nothing).

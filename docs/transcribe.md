@@ -14,11 +14,11 @@ the deliverables. All domain knowledge is supplied by the user per conversation
 
 | Component | File | Triggered by | Runs |
 |-----------|------|--------------|------|
-| Workflow | `transcribe/workflows/transcribe.js` | command or skill, by `scriptPath` | Workflow tool (orchestrates agents) |
-| Command `/transcribe` | `transcribe/commands/transcribe.md` | user types it | main session |
-| Command `/transcribe-doctor` | `transcribe/commands/transcribe-doctor.md` | user types it | main session (Bash) |
-| Skill `run-transcription` | `transcribe/skills/transcription/SKILL.md` | model, on matching request | main session |
-| Pipeline scripts | `transcribe/scripts/*` | the workflow / fallback, via Bash | on-device |
+| Workflow | `plugins/transcribe/workflows/transcribe.js` | command or skill, by `scriptPath` | Workflow tool (orchestrates agents) |
+| Command `/transcribe` | `plugins/transcribe/commands/transcribe.md` | user types it | main session |
+| Command `/transcribe-doctor` | `plugins/transcribe/commands/transcribe-doctor.md` | user types it | main session (Bash) |
+| Skill `run-transcription` | `plugins/transcribe/skills/transcription/SKILL.md` | model, on matching request | main session |
+| Pipeline scripts | `plugins/transcribe/scripts/*` | the workflow / fallback, via Bash | on-device |
 
 ## Flow
 
@@ -50,5 +50,5 @@ skill      ──┘      │
 
 ## Tests
 
-`bash transcribe/tests/validate.sh` — structure + syntax of every file, plus a
+`bash plugins/transcribe/tests/validate.sh` — structure + syntax of every file, plus a
 deterministic unit test of the chunker (no audio, no models).

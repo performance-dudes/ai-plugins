@@ -23,7 +23,7 @@ process="$(printf '%s\n' "$changed" | grep -E '^(specs|docs|journal)/' || true)"
 
 # PRODUKT-Dateien berührt? = irgendeine Datei in einem Plugin-Ordner (Top-Level-Dir
 # mit .claude-plugin/), aber NICHT die Prozess-Ordner. README-only zählt nicht.
-plugins="$(for pj in */.claude-plugin/plugin.json; do [ -e "$pj" ] && printf '%s\n' "${pj%%/.claude-plugin/plugin.json}"; done)"
+plugins="$(for pj in plugins/*/.claude-plugin/plugin.json; do [ -e "$pj" ] && printf '%s\n' "${pj%%/.claude-plugin/plugin.json}"; done)"
 product=""
 while IFS= read -r f; do
   [ -z "$f" ] && continue

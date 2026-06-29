@@ -4,4 +4,4 @@
 # Wrapper ruft ihn nur, damit tests/run-all.sh ihn per Auto-Discovery findet.
 set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
-exec bash "$HERE/../../example/tests/validate.sh"
+exec bash "$HERE/../../plugins/example/tests/validate.sh"

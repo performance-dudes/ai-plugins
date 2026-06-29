@@ -29,7 +29,7 @@ Den im internen Marketplace `ai-plugins-internal` etablierten Konventions-Standa
 - **Tests bleiben code-nah** (`<plugin>/tests/validate.sh`), der Top-Level-Wrapper
   ruft sie nur. So wandern Tests mit dem Plugin (`git mv`), und der Aggregator
   findet sie trotzdem per Auto-Discovery — kein zentraler Edit pro Plugin-PR.
-- **`example/tests/validate.sh` offline-robust gemacht:** der `claude plugin
+- **`plugins/example/tests/validate.sh` offline-robust gemacht:** der `claude plugin
   validate`-Aufruf war ungeschützt (anders als bei den drei anderen Validatoren) →
   auf einem CI-Runner ohne `claude`-CLI wäre `run-all` rot geworden. Jetzt per
   `command -v claude` geschützt mit Skip-Note — konsistent zu context-aware/ocr/

@@ -5,7 +5,7 @@
 set -uo pipefail
 
 PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-MARKET_DIR="$(cd "$PLUGIN_DIR/.." && pwd)"
+MARKET_DIR="$(cd "$PLUGIN_DIR/../.." && pwd)"   # plugins/<name> -> repo root (marketplace root)
 fail=0
 
 note() { printf '\n=== %s ===\n' "$1"; }

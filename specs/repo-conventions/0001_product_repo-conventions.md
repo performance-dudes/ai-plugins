@@ -24,7 +24,13 @@ PR driftet (Code ohne Spec/Docs/Journal).
 - **Plugin-Ordner müssen rein bleiben.** Jede `.md` in `commands/`/`agents/` wird
   als **echtes** Command/Agent geladen — Doku/Specs/Tests im Plugin erzeugen
   Geister-Komponenten und brechen das Plugin. Meta-Artefakte gehören daher auf
-  **Repo-Top-Level**, neben die Plugins.
+  **Repo-Top-Level**, neben den `plugins/`-Ordner.
+- **Plugins liegen gebündelt unter `plugins/`.** Alle Plugins des Marketplaces
+  liegen in einem `plugins/`-Ordner (`plugins/<plugin>/`), nicht verstreut auf
+  Repo-Top-Level. Das hält die Wurzel übersichtlich (nur `plugins/` + Meta) und
+  trennt Runtime sauber von den Meta-Artefakten. `marketplace.json` verweist mit
+  `"source": "./plugins/<plugin>"`; `enabledPlugins` bleibt unberührt (nutzt
+  `name@marketplace`, keinen Pfad).
 - **specs/ nie in docs/.** Absicht (Felix): Spec = Intent/„was & warum", Docs =
   Erklärung der Komponenten. Vermischt man sie, verliert man beides.
 - **Drift verhindern.** Code ohne Spec-/Doc-/Journal-Anpassung „darf nicht
@@ -35,7 +41,8 @@ PR driftet (Code ohne Spec/Docs/Journal).
 ```
 <marketplace-repo>/
   README.md
-  <plugin>/                 # NUR Runtime-Vertrag (.claude-plugin/, skills/, commands/,
+  plugins/
+    <plugin>/               # NUR Runtime-Vertrag (.claude-plugin/, skills/, commands/,
                             #   agents/, hooks/, mcp/, output-styles/, themes/, workflows/, monitors/)
   specs/
     <plugin>/               # benannte Specs, z. B. 0001_product_<plugin>_<topic>.md

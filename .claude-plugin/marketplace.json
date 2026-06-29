@@ -7,25 +7,25 @@
   "plugins": [
     {
       "name": "example",
-      "source": "./example",
+      "source": "./plugins/example",
       "description": "Reference showcase of every Claude Code plugin component and technique — workflow, command, skill (calling the workflow), subagent, theme, output style, plus .example templates for hooks/MCP/LSP/monitors and a tests/ folder on how to test plugins and skills. Command: /greet",
       "version": "0.2.0"
     },
     {
       "name": "context-aware",
-      "source": "./context-aware",
+      "source": "./plugins/context-aware",
       "description": "Reference plugin for building context-aware plugins: workflows and agents that route ALL retrieval through the context-mode MCP (ctx_*), so raw bytes are indexed and searched in a sandbox, never dumped into the window. Requires context-mode (enabled once at the workspace level). Teaches the five patterns (index-once-slice-many, fetch-and-index, plain-JS glue, structured-output handoffs, lean orchestrator) and ships a runnable, domain-agnostic demo. Command: /context-aware",
       "version": "0.1.0"
     },
     {
       "name": "transcribe",
-      "source": "./transcribe",
+      "source": "./plugins/transcribe",
       "description": "Quality-first multi-speaker transcription on Apple Silicon — an on-device ffmpeg/Whisper/pyannote pipeline plus parallel Opus deliverables (verbatim clean transcript, minutes, quoted facts, personas, todos). Generic: all domain knowledge comes from user-provided context. Command: /transcribe",
       "version": "0.1.1"
     },
     {
       "name": "ocr",
-      "source": "./ocr",
+      "source": "./plugins/ocr",
       "description": "Quality-first OCR + auto-classification of scanned documents on Apple Silicon — on-device Apple Vision OCR (auge, auto-rotating) plus parallel Opus classification into a reviewable rename/sort proposal, with a separate dry-run apply step (undo log, searchable PDF text layers). Generic: all domain knowledge comes from user-provided context. Command: /ocr",
       "version": "0.1.2"
     }
