@@ -17,7 +17,7 @@ the user must install, with copy-paste fixes:
 - **ffmpeg** → `brew install ffmpeg`
 - **uv** → `brew install uv` (runs the Python scripts; pulls mlx-whisper / pyannote on first use)
 - **node ≥ 20** → `brew install node` (the Workflow tool needs it; without it the command uses the Bash fallback)
-- **HuggingFace token** → pyannote needs it; see `${CLAUDE_PLUGIN_ROOT}/docs/SETUP.md`
+- **HuggingFace token** → pyannote needs it; see https://github.com/performance-dudes/ai-plugins/blob/main/docs/transcribe/SETUP.md
 - **claude CLI** → required for the Opus deliverable step
 
 Note: `mlx-whisper` is Apple-Silicon only (Metal/MLX). On first run the models

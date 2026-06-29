@@ -41,7 +41,7 @@ fi
 if [ -f "$HOME/.cache/huggingface/token" ]; then
   ok "HuggingFace token (~/.cache/huggingface/token)"
 else
-  miss "HuggingFace token" "pyannote needs it — see docs/SETUP.md"
+  miss "HuggingFace token" "pyannote needs it — see https://github.com/performance-dudes/ai-plugins/blob/main/docs/transcribe/SETUP.md"
 fi
 
 case "$(uname -m)" in

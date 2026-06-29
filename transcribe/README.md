@@ -52,7 +52,7 @@ prompt. The workflow pins the clean and deliverable passes to Opus.
 
 ## Setup & testing
 
-- Setup: [`docs/SETUP.md`](docs/SETUP.md)
+- Setup: [`docs/transcribe/SETUP.md`](../docs/transcribe/SETUP.md) (liegt im Marketplace-Repo, außerhalb des Plugin-Ordners — Repo-Konvention)
 - Smoke test: `bash transcribe/tests/validate.sh`
 
 Quality over speed: a slower, complete, faithful transcript beats a fast,
