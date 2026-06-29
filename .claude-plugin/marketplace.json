@@ -12,6 +12,12 @@
       "version": "0.2.0"
     },
     {
+      "name": "context-aware",
+      "source": "./context-aware",
+      "description": "Reference plugin for building context-aware plugins: workflows and agents that route ALL retrieval through the context-mode MCP (ctx_*), so raw bytes are indexed and searched in a sandbox, never dumped into the window. Requires context-mode (enabled once at the workspace level). Teaches the five patterns (index-once-slice-many, fetch-and-index, plain-JS glue, structured-output handoffs, lean orchestrator) and ships a runnable, domain-agnostic demo. Command: /context-aware",
+      "version": "0.1.0"
+    },
+    {
       "name": "transcribe",
       "source": "./transcribe",
       "description": "Quality-first multi-speaker transcription on Apple Silicon — an on-device ffmpeg/Whisper/pyannote pipeline plus parallel Opus deliverables (verbatim clean transcript, minutes, quoted facts, personas, todos). Generic: all domain knowledge comes from user-provided context. Command: /transcribe",
