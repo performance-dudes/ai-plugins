@@ -1,0 +1,27 @@
+name: conventions
+
+# Mechanisches Gate für die Repo-Konventionen (SPEC-repo-conventions §7):
+#  - tests/run-all.sh muss grün sein (Struktur + Plugin-Suiten)
+#  - Spec-Touch: ein PR mit Produkt-Änderungen muss specs/docs/journal berühren
+#    (oder eine Commit-Message mit [skip-conventions: <grund>] tragen).
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  conventions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # voller Verlauf für den Diff gegen die Base
+      - name: run-all (Struktur + Suiten)
+        run: bash tests/run-all.sh
+      - name: Spec-Touch-Gate
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: origin/${{ github.base_ref }}
+        run: |
+          git fetch origin "${{ github.base_ref }}" --depth=0 || true
+          bash tests/spec-touch-check.sh

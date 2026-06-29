@@ -13,7 +13,7 @@ following the `example` plugin's house style.
 - Wrote `workflows/transcribe.js`: Pipeline → Chunk → parallel Opus clean passes
   → assemble → parallel Opus deliverables. Command and skill both invoke it by
   `scriptPath` (single source of truth), with a Bash fallback.
-- Added the PD structure: `specs/transcribe/reference.md` (US/AC), `docs/transcribe.md`
+- Added the PD structure: `specs/transcribe/0001_product_transcribe.md` (US/AC), `docs/transcribe.md`
   (state), a per-plugin `tests/validate.sh` with a real chunker unit test.
 
 ## Decisions & learnings

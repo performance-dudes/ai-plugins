@@ -13,8 +13,12 @@ ok()   { printf '  ✔ %s\n' "$1"; }
 bad()  { printf '  x %s\n' "$1"; fail=1; }
 
 note "1. Manifest + marketplace validate"
-claude plugin validate "$PLUGIN_DIR" >/dev/null 2>&1 && ok "plugin.json valid"        || bad "plugin.json invalid"
-claude plugin validate "$MARKET_DIR" >/dev/null 2>&1 && ok "marketplace.json valid"   || bad "marketplace.json invalid"
+if command -v claude >/dev/null 2>&1; then
+  claude plugin validate "$PLUGIN_DIR" >/dev/null 2>&1 && ok "plugin.json valid"        || bad "plugin.json invalid"
+  claude plugin validate "$MARKET_DIR" >/dev/null 2>&1 && ok "marketplace.json valid"   || bad "marketplace.json invalid"
+else
+  printf '  - claude CLI not found — skipping validate (run-all stays green offline)\n'
+fi
 
 note "2. Component files present"
 for f in \

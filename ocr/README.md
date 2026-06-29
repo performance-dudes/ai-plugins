@@ -83,5 +83,5 @@ that already have text are left untouched.
 
 ## Setup & testing
 
-- Setup: [`docs/SETUP.md`](docs/SETUP.md)
+- Setup: [`docs/ocr/SETUP.md`](../docs/ocr/SETUP.md) (liegt im Marketplace-Repo, außerhalb des Plugin-Ordners — Repo-Konvention)
 - Smoke test: `bash ocr/tests/validate.sh`

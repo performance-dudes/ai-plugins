@@ -1,7 +1,7 @@
 # ocr — plugin state
 
 Current-state documentation for the `ocr` plugin (intent lives in
-`specs/ocr/reference.md`; the running log is in `journal/`).
+`specs/ocr/0001_product_ocr.md`; the running log is in `journal/`).
 
 ## What it is
 

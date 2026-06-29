@@ -1,7 +1,7 @@
 # transcribe — plugin state
 
 Current-state documentation for the `transcribe` plugin (intent lives in
-`specs/transcribe/reference.md`; the running log is in `journal/`).
+`specs/transcribe/0001_product_transcribe.md`; the running log is in `journal/`).
 
 ## What it is
 
