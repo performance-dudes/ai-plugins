@@ -1,0 +1,18 @@
+{
+  "name": "context-aware",
+  "description": "Reference plugin for building context-aware Claude Code plugins: workflows and agents that route ALL retrieval through the context-mode MCP (ctx_*), so raw bytes are indexed and searched in a sandbox, never dumped into the conversation window. Requires the context-mode MCP (enabled once at the workspace level — not bundled per plugin). Teaches the five patterns (index-once-slice-many, fetch-and-index, plain-JS glue, structured-output handoffs, lean orchestrator) and ships a runnable, domain-agnostic demo. Command: /context-aware",
+  "version": "0.1.0",
+  "author": {
+    "name": "Performance Dudes"
+  },
+  "keywords": [
+    "context-mode",
+    "context-window",
+    "lean-context",
+    "workflow",
+    "subagent",
+    "mcp",
+    "reference",
+    "ctx"
+  ]
+}
