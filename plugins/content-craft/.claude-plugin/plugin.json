@@ -1,0 +1,9 @@
+{
+  "name": "content-craft",
+  "description": "Research-backed content & design craft — two generic user-space skills: blog-article-writing (AIDA/PAS frameworks, headline patterns, readability, editing checklist) and design-skills-2026 (WCAG 2.1 AA, Core Web Vitals, mobile-first responsive UI, typography, motion, onboarding UI patterns). Generic, evidence-based — no PD IP. Conversion-/PLG-psychology lives in the sales plugin.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Performance Dudes"
+  },
+  "keywords": ["blog", "writing", "content", "copywriting", "ux", "ui", "design", "accessibility", "wcag", "responsive", "skills"]
+}
