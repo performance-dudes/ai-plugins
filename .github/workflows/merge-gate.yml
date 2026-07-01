@@ -1,0 +1,27 @@
+# Merge-Gate als Required-CI-Check (SPEC-merge-gate, US-6).
+#
+# Der Check-Code ist aus dem Plugin merge-gate (performance-dudes/ai-plugins-internal)
+# nach .github/merge-gate/ vendored (decide.mjs + check.mjs). Um das Gate als
+# EIGENTLICHE Durchsetzung zu erzwingen, in den Repo-Settings → Branch protection
+# → "Require status checks" den Check `merge-gate` als required markieren (Admin-
+# Aktion). Der lokale Hook im Plugin ist nur schnelles Feedback.
+#
+# Trigger auf pull_request_review, damit ein nachträgliches Approval den Check
+# erneut auslöst (Approval überschreibt das Gate → Check wird grün).
+name: merge-gate
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_review:
+    types: [submitted, dismissed]
+
+jobs:
+  merge-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Merge-Gate-Check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: node .github/merge-gate/check.mjs
