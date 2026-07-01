@@ -1,0 +1,8 @@
+# Python-Bytecode (regeneriert sich, nie tracken)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# macOS
+.DS_Store
