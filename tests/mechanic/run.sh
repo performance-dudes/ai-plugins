@@ -37,6 +37,16 @@ if [ -f "$AG" ]; then
     && ok "model: claude-sonnet-4-6 (Versions-Pin)" || note "model-Pin != claude-sonnet-4-6"
 else note "agents/mechanic.md fehlt"; fi
 
+echo "[mechanic] AC-1-5: errand-Frontmatter (name + Haiku-Pin)"
+ER="$PLUG/agents/errand.md"
+if [ -f "$ER" ]; then
+  efm="$(awk 'NR==1&&/^---/{f=1;next} f&&/^---/{exit} f{print}' "$ER")"
+  printf '%s\n' "$efm" | grep -qE '^name:[[:space:]]*errand[[:space:]]*$' \
+    && ok "name: errand" || note "Frontmatter name != errand"
+  printf '%s\n' "$efm" | grep -qE '^model:[[:space:]]*claude-haiku-4-5[[:space:]]*$' \
+    && ok "model: claude-haiku-4-5 (Versions-Pin)" || note "model-Pin != claude-haiku-4-5"
+else note "agents/errand.md fehlt"; fi
+
 echo "[mechanic] AC-2-1: Marketplace-Eintrag"
 MP="$ROOT/.claude-plugin/marketplace.json"
 if [ -f "$MP" ]; then

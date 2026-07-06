@@ -1,42 +1,49 @@
 # mechanic
 
-A cost-tiered subagent for **mechanical, fully-specified execution** — pinned to the
-cheaper **Sonnet 4.6** tier so the premium tier (Opus / Sonnet 5) stays free for
-work that needs judgment.
+Cost-tiered subagents for **mechanical, fully-specified work** — two agents pinned to
+cheaper model versions so the premium tier (Opus / Sonnet 5) stays free for judgment.
+
+| Agent | `subagent_type` | Model pin | For |
+|---|---|---|---|
+| `mechanic` | `mechanic` | `claude-sonnet-4-6` | mechanical work that needs **code/context comprehension** |
+| `errand` | `mechanic:errand` | `claude-haiku-4-5` | **trivial, self-contained** transformations, no codebase understanding |
 
 ## Why
 
-Sonnet 4.6 is the previous, cheaper Sonnet generation (≈ $3/$15 per 1M tokens vs.
-the pricier Sonnet 5). For **deterministic** work — a task with a single correct
-output — the cheaper tier is enough. Routing that work here is a straight budget win
-with no quality loss, because there is no judgment to lose.
+Sonnet 4.6 (≈ $3/$15 per 1M) is cheaper than Sonnet 5; Haiku 4.5 (≈ $1/$5) is cheaper
+still. **Deterministic** work — a single correct output — doesn't need a premium
+model, so routing it down is a straight budget win with no quality loss. The only
+question is *which* cheap tier, and that's decided by how much understanding the task
+needs.
 
-## When to use
+## The routing rule
 
-Invoke via the Agent tool with `subagent_type: "mechanic"` when the task is
-**already decided** and success is objectively checkable:
+```
+Needs a DECISION (design, debug unknown cause, review, prose, weigh relevance)
+    -> general-purpose (premium tier)
 
-- apply a specified edit across one or many files
-- search-and-replace, rename a symbol, reorder/sort, reformat
-- generate boilerplate/scaffolding from a given shape
-- move/rename/copy files; mechanical refactors with a stated rule
-- extract a value, run a known command and report its output
+Needs to UNDERSTAND CODE/CONTEXT to execute a decided change
+    -> mechanic            (subagent_type "mechanic", Sonnet 4.6)
 
-## When NOT to use
+TRIVIAL self-contained transformation, no codebase understanding
+    -> errand              (subagent_type "mechanic:errand", Haiku 4.5)
+```
 
-Route to `general-purpose` (or a specialist) on the premium tier whenever the task
-needs a **decision**: design, architecture, naming choices, debugging an unknown
-cause, correctness/security review, writing prose or specs, or open-ended search
-where relevance must be weighed. **If the task needs a decision, it is not
-mechanical.** The agent is instructed to hand back rather than guess.
+- **`errand`** — classify/label, extract a field, reformat (JSON/CSV/whitespace/case),
+  literal find/replace with an exact old→new pair, yes/no checks, count, sort, normalize.
+- **`mechanic`** — apply a specified edit that must fit its surroundings, mechanical
+  refactor across files, generate boilerplate that must slot into an existing codebase,
+  run a known command and interpret its output.
 
-## Model pin
+Both agents are instructed to **hand back rather than guess** when a task turns out to
+sit in a neighbouring tier or the instruction is ambiguous.
 
-The agent pins `model: claude-sonnet-4-6` in its frontmatter. Claude Code's `model:`
-field accepts a full model ID (same values as the `--model` flag), so this selects
-Sonnet 4.6 specifically rather than the generic `sonnet` alias (which resolves to
-the current default, Sonnet 5). See
-[Claude Code subagents docs](https://code.claude.com/docs/en/sub-agents.md).
+## Model pins
+
+Each agent pins a full model ID in its frontmatter. Claude Code's `model:` field
+accepts a full model ID (same values as the `--model` flag), so this selects the exact
+version rather than a generic alias (`sonnet` → Sonnet 5, `haiku` → current default).
+See [Claude Code subagents docs](https://code.claude.com/docs/en/sub-agents.md).
 
 ## Install
 
@@ -44,6 +51,6 @@ the current default, Sonnet 5). See
 claude plugin marketplace add performance-dudes/ai-plugins
 ```
 
-Then enable `mechanic@ai-plugins` in your workspace `enabledPlugins`. A **fresh
-session** is required for a newly installed/updated agent to load (the agent
-registry is read at session start, not hot-reloaded).
+Enable `mechanic@ai-plugins` in your workspace `enabledPlugins`. A **fresh session** is
+required for newly installed/updated agents to load (the agent registry is read at
+session start, not hot-reloaded).

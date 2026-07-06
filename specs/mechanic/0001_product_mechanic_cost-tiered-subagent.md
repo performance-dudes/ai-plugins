@@ -1,4 +1,4 @@
-# Product-Spec: `mechanic` — cost-tiered mechanical subagent
+# Product-Spec: `mechanic` — cost-tiered mechanical subagents
 
 Spec-ID: `SPEC-mechanic` · Status: Entwurf · Datum: 2026-07-06 · Autor: Benny (mit Claude)
 
@@ -9,9 +9,18 @@ Methodik: `SPEC-repo-conventions` (Spec-Driven TDD, Struktur, Tests).
 
 ## 1. Thema
 
-Ein Plugin, das **einen** Subagent (`mechanic`) ausliefert, der per Frontmatter fest
-auf **Sonnet 4.6** (`claude-sonnet-4-6`) gepinnt ist und ausschließlich
-**mechanische, vollständig spezifizierte** Ausführungsarbeit übernimmt.
+Ein Plugin, das **zwei** Kosten-Tier-Subagents ausliefert, je per Frontmatter fest auf
+eine günstigere Modell-Version gepinnt, für **vollständig spezifizierte**, mechanische
+Ausführungsarbeit:
+
+- **`mechanic`** → `claude-sonnet-4-6`: mechanische Arbeit, die **Code-/Kontext-Verständnis**
+  braucht (spezifizierte Edits, Cross-File-Refactors, passendes Boilerplate).
+- **`errand`** → `claude-haiku-4-5`: **triviale, selbst-enthaltene** Transformationen
+  **ohne** Codebase-Verständnis (klassifizieren, extrahieren, umformatieren, literales
+  Suchen/Ersetzen).
+
+Routing-Regel: Entscheidung nötig → `general-purpose` (Premium); Code-Verständnis nötig
+→ `mechanic`; sonst → `errand`.
 
 ## 2. Warum (Begründung)
 
@@ -39,12 +48,14 @@ auf **Sonnet 4.6** (`claude-sonnet-4-6`) gepinnt ist und ausschließlich
 
 ## 4. User Stories & Acceptance Criteria
 
-### US-mech-1 — Agent lädt & pinnt 4.6
+### US-mech-1 — Agenten laden & pinnen ihre Modell-Version
 | AC | Soll | Test |
 |----|------|------|
 | AC-1-1 | `plugins/mechanic/.claude-plugin/plugin.json` ist valides JSON mit `name: "mechanic"`. | config-valid (`run.sh`) |
 | AC-1-2 | `plugins/mechanic/agents/mechanic.md` hat wohlgeformtes Frontmatter mit `name: mechanic` und `model: claude-sonnet-4-6`. | config-valid (`run.sh`) |
 | AC-1-3 | In frischer Session meldet ein via `subagent_type: "mechanic"` gespawnter Agent die Modell-ID `claude-sonnet-4-6`. | e2e (manuell, dokumentiert) |
+| AC-1-5 | `plugins/mechanic/agents/errand.md` hat wohlgeformtes Frontmatter mit `name: errand` und `model: claude-haiku-4-5`. | config-valid (`run.sh`) |
+| AC-1-6 | In frischer Session meldet ein via `subagent_type: "mechanic:errand"` gespawnter Agent die Modell-ID `claude-haiku-4-5`. | e2e (manuell, dokumentiert) |
 
 ### US-mech-2 — Marketplace & Struktur
 | AC | Soll | Test |

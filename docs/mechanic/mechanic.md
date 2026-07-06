@@ -1,33 +1,45 @@
-# Doc: `mechanic` agent
+# Doc: `mechanic` plugin (agents `mechanic` + `errand`)
 
-The `mechanic` plugin ships a single component — the `mechanic` subagent.
+The `mechanic` plugin ships two cost-tiered subagents, each pinned to a cheaper model
+version so the premium tier stays free for judgment.
 
-## What it is
+## The two agents
 
-A worker pinned to **Sonnet 4.6** (`claude-sonnet-4-6`) for **mechanical,
-fully-specified** tasks. It has the same broad tool access as `general-purpose`
-(Read, Edit, MultiEdit, Write, Grep, Glob, Bash, NotebookEdit) but is behaviourally
-constrained: it executes decided work and hands back the moment a decision is needed.
+| Agent | `subagent_type` | Model pin | Tier | For |
+|---|---|---|---|---|
+| `mechanic` | `mechanic` | `claude-sonnet-4-6` | mid | mechanical work needing code/context comprehension |
+| `errand` | `mechanic:errand` | `claude-haiku-4-5` | cheapest | trivial self-contained transformations, no codebase understanding |
 
-## Selecting it
+Both have broad tool access but are behaviourally constrained and instructed to hand
+back the moment a task belongs to a neighbouring tier or the instruction is ambiguous.
+
+## Selecting a tier — the routing rule
 
 ```
-Agent tool → subagent_type: "mechanic"
+Needs a DECISION            -> general-purpose  (premium)
+Needs CODE/CONTEXT to do    -> mechanic         (Sonnet 4.6)
+TRIVIAL transformation      -> errand           (Haiku 4.5)
 ```
 
-Give it a **fully specified** instruction. The scope is the instruction: it will not
-make opportunistic changes, reformat untouched lines, or resolve ambiguity on its own.
+- **errand** — classify/label, extract a field, reformat (JSON/CSV/whitespace/case),
+  literal find/replace with exact old→new, yes/no checks, count, sort, normalize.
+- **mechanic** — apply a specified edit that must fit its surroundings, refactor across
+  files, boilerplate that must slot into a codebase, run a known command and interpret.
+- **general-purpose** — design, debugging an unknown cause, review, prose, open-ended
+  relevance-weighted search.
+
+Mnemonic: needs a decision → premium; needs code understanding → mechanic; otherwise →
+errand.
 
 ## Model pinning — how it works
 
 | Path | Result |
 |------|--------|
-| Agent-tool `model` param | enum `{sonnet, opus, haiku, fable}` — `sonnet` = Sonnet 5 (current default). No version pin. |
-| Agent frontmatter `model:` | accepts a **full model ID** (same values as `--model`) → `claude-sonnet-4-6` pins 4.6. |
+| Agent-tool `model` param | enum `{sonnet, opus, haiku, fable}` — resolves to current defaults (Sonnet 5 / current Haiku). No version pin. |
+| Agent frontmatter `model:` | accepts a **full model ID** (same values as `--model`) → `claude-sonnet-4-6` / `claude-haiku-4-5` pin the exact version. |
 
-This is why the pin lives in a shipped plugin rather than an ad-hoc `model` argument:
-the frontmatter is the only place a specific version can be selected, and a plugin
-makes that pin reproducible and shareable.
+The pin lives in shipped plugin frontmatter because that is the only place a specific
+version can be selected, and a plugin makes it reproducible and shareable.
 
 Source: [Claude Code subagents documentation](https://code.claude.com/docs/en/sub-agents.md),
 section "Choose a model".
@@ -35,13 +47,13 @@ section "Choose a model".
 ## Operational note
 
 The agent registry is read at **session start** and is not hot-reloaded. After
-installing or updating the plugin, start a **fresh session** before the agent
-resolves. Verify with a one-line spawn that returns its model ID — it should read
-`claude-sonnet-4-6`.
+installing or updating the plugin, start a **fresh session**. Verify with a one-line
+spawn that returns each agent's model ID (`claude-sonnet-4-6` / `claude-haiku-4-5`).
 
-## When to reach for it vs. general-purpose
+## Model comparison
 
-- **mechanic** → the "what" is decided, only execution remains; success is objectively
-  checkable. Cheaper tier, no quality loss.
-- **general-purpose** (premium tier) → any judgment: design, debugging an unknown
-  cause, review, prose, open-ended relevance-weighted search.
+| | Haiku 4.5 (`errand`) | Sonnet 4.6 (`mechanic`) | Opus 4.8 (`general-purpose`) |
+|---|---|---|---|
+| In/Out per 1M | $1 / $5 | $3 / $15 | $5 / $25 |
+| Context / max out | 200K / 64K | 1M / 128K | 1M / 128K |
+| `effort` param | no | yes | yes (to `max`) |
