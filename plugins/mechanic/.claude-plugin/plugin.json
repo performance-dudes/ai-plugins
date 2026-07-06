@@ -1,0 +1,9 @@
+{
+  "name": "mechanic",
+  "description": "Cost-tiered mechanical subagent — ships one agent (`mechanic`) pinned to the cheaper Sonnet 4.6 tier for deterministic, fully-specified execution work (bulk edits, search-and-replace, formatting, boilerplate, mechanical refactors), so the premium tier (Opus / Sonnet 5) stays reserved for judgment. Inspired by general-purpose; behaviourally constrained to no-judgment tasks. Invoke via the Agent tool with subagent_type \"mechanic\".",
+  "version": "0.1.0",
+  "author": {
+    "name": "Performance Dudes"
+  },
+  "keywords": ["subagent", "agent", "cost", "sonnet-4.6", "mechanical", "infrastructure"]
+}
