@@ -45,7 +45,7 @@
       "name": "mechanic",
       "source": "./plugins/mechanic",
       "description": "Cost-tiered mechanical subagents — two agents pinned to cheaper model versions so the premium tier (Opus / Sonnet 5) stays reserved for judgment. `mechanic` (Sonnet 4.6) for mechanical work that needs code/context comprehension (specified edits, cross-file refactors, boilerplate that must fit); `errand` (Haiku 4.5) for trivial self-contained transformations that need no codebase understanding (classify, extract, reformat, literal find/replace). Routing: needs code understanding -> mechanic; needs a decision -> general-purpose; otherwise -> errand. Invoke via the Agent tool with subagent_type \"mechanic\" or \"mechanic:errand\".",
-      "version": "0.2.0"
+      "version": "0.3.0"
     }
   ]
 }

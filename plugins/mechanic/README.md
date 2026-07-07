@@ -45,6 +45,22 @@ accepts a full model ID (same values as the `--model` flag), so this selects the
 version rather than a generic alias (`sonnet` → Sonnet 5, `haiku` → current default).
 See [Claude Code subagents docs](https://code.claude.com/docs/en/sub-agents.md).
 
+## Tool access
+
+Neither agent declares a `tools:` allow-list, so both inherit the **full tool set of
+the session** — the same broad access `general-purpose` has: file/search/edit tools,
+Bash, web tools, **and every MCP server the session exposes** (Playwright, context-mode,
+Gmail, Calendar, and so on). Most MCP tools are **deferred**: their schemas load on
+demand, so an agent fetches what it needs with `ToolSearch` before calling it (batch
+every tool into one `select:` query). A pinned `tools:` list would have silently
+excluded MCP and `ToolSearch`, which is why there is none.
+
+Broad tool access is **not** broad scope. The cost tier is enforced by the model pin
+and the agent's contract, not by withholding tools: `errand` still does one trivial
+transformation, `mechanic` still executes a decided change, and both still hand back
+the moment a task needs a decision. MCP is there for when the mechanical task genuinely
+needs it (read a sheet, drive a page, pull a message), not as licence to widen the job.
+
 ## Install
 
 ```bash
