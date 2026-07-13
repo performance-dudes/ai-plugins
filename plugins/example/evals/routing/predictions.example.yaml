@@ -1,0 +1,22 @@
+# A CAPTURED run of the REAL plugin — one predicted route per case, produced the
+# way ../README.md shows (claude -p ... --output-format json, then classified).
+# Committed so score_routing.py and validate.sh run deterministically with NO
+# model call.
+#
+# Do NOT hand-edit a route here to make the score look better — that would score
+# a fiction. Regenerate it by actually re-running the plugin. This sample is
+# all-correct so CI stays green; the README walks through an imperfect run and
+# why the fix goes into the plugin, not here.
+
+model: example-captured-sample
+predictions:
+  - { case: r01-explicit-en,  route: greet }
+  - { case: r02-explicit-de,  route: greet }
+  - { case: r03-slash,        route: greet }
+  - { case: r04-implicit-en,  route: greet }
+  - { case: r05-implicit-de,  route: greet }
+  - { case: r06-paraphrase,   route: greet }
+  - { case: r07-clean-meta,   route: none }
+  - { case: r08-clean-substr, route: none }
+  - { case: r09-clean-unrel,  route: none }
+  - { case: r10-clean-adver,  route: none }

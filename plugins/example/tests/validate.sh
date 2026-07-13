@@ -56,6 +56,30 @@ for md in skills/run-greet/SKILL.md agents/greeter.md; do
     && ok "$md frontmatter" || bad "$md missing name/description"
 done
 
+note "6. Evals present + routing scorer green on the committed sample"
+for f in \
+  "evals/README.md" \
+  "evals/routing/ground_truth.yaml" \
+  "evals/routing/predictions.example.yaml" \
+  "evals/greeting/cases.yaml" \
+  "evals/scripts/score_routing.py" \
+  "evals/scripts/judge.py"; do
+  [ -f "$PLUGIN_DIR/$f" ] && ok "$f" || bad "missing $f"
+done
+if command -v uv >/dev/null 2>&1; then
+  # The deterministic routing scorer must PASS on the committed sample (exit 0).
+  # A real run's misses are PLUGIN bugs — fixed at the plugin, never by editing cases.
+  uv run "$PLUGIN_DIR/evals/scripts/score_routing.py" >/dev/null 2>&1 \
+    && ok "score_routing.py PASS on predictions.example.yaml" \
+    || bad "routing scorer failed (sample regressed, or scorer broke)"
+  # judge.py needs an API key to run; here we only check it is syntactically valid.
+  uv run --with pyyaml --with "anthropic>=0.40" python -c \
+    "import py_compile; py_compile.compile('$PLUGIN_DIR/evals/scripts/judge.py', doraise=True)" >/dev/null 2>&1 \
+    && ok "judge.py parses" || bad "judge.py syntax error"
+else
+  printf '  - uv not found — skipping eval scorer run (run-all stays green offline)\n'
+fi
+
 note "Result"
 if [ "$fail" -eq 0 ]; then echo "  ALL CHECKS PASSED"; else echo "  FAILURES ABOVE"; fi
 exit "$fail"

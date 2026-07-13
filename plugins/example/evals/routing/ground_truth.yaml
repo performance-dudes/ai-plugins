@@ -1,0 +1,101 @@
+# LOCKED, human-curated routing ground truth for the example plugin.
+#
+# This measures the PLUGIN — its run-greet skill description, the /greet command,
+# the greeter agent — NOT the cases. Once a case here correctly encodes the
+# expectation, it is FROZEN: a mismatch is a plugin bug to fix AT THE PLUGIN,
+# never a case to loosen so the run goes green.
+#
+# Cases are deliberately DIVERSE (en/de, explicit/implicit/slash, several
+# near-miss families) to resist overfitting to one prompt shape.
+#
+# `route` is what SHOULD fire: 'greet' (the run-greet skill or /greet) or
+# 'none' (stay silent). `clean: true` marks a precision/specificity case that
+# MUST route to 'none'. `difficulty` is documentation only — not scored.
+#
+# YAML, not JSON, on purpose: the per-case `note` is the calibration anchor and
+# lives best as an inline comment next to the case (Claude Code's own plugin-eval
+# tooling configures in YAML too — see ../README.md).
+
+task: routing
+routes: [greet, none]
+
+cases:
+  - case: r01-explicit-en
+    prompt: "greet Felix"
+    route: greet
+    clean: false
+    difficulty: easy
+    lang: en
+    note: canonical explicit ask
+
+  - case: r02-explicit-de
+    prompt: "begrüße bitte das ganze Team"
+    route: greet
+    clean: false
+    difficulty: easy
+    lang: de
+    note: same intent, German — must not be English-only
+
+  - case: r03-slash
+    prompt: "/greet Anna"
+    route: greet
+    clean: false
+    difficulty: easy
+    lang: en
+    note: the command form routes to the same workflow
+
+  - case: r04-implicit-en
+    prompt: "say hi to the Performance Dudes"
+    route: greet
+    clean: false
+    difficulty: medium
+    lang: en
+    note: implicit — the word 'greet' never appears
+
+  - case: r05-implicit-de
+    prompt: "sag den Dudes mal kurz hallo"
+    route: greet
+    clean: false
+    difficulty: medium
+    lang: de
+    note: implicit, colloquial German
+
+  - case: r06-paraphrase
+    prompt: "can you welcome our new hire Sam on board?"
+    route: greet
+    clean: false
+    difficulty: hard
+    lang: en
+    note: welcome/onboard paraphrase — greeting intent without the trigger word
+
+  - case: r07-clean-meta
+    prompt: "what does greet.js actually return?"
+    route: none
+    clean: true
+    difficulty: medium
+    lang: en
+    note: meta-question ABOUT the code, not a request to greet — must stay silent
+
+  - case: r08-clean-substr
+    prompt: "grep for 'greet' across the logs"
+    route: none
+    clean: true
+    difficulty: hard
+    lang: en
+    note: keyword collision — 'greet' appears but the task is a search
+
+  - case: r09-clean-unrel
+    prompt: "summarize this PDF for me"
+    route: none
+    clean: true
+    difficulty: easy
+    lang: en
+    note: wholly unrelated intent — the specificity floor
+
+  - case: r10-clean-adver
+    prompt: "write a Python function called greet() with tests"
+    route: none
+    clean: true
+    difficulty: hard
+    lang: en
+    note: "adversarial — mentions greet AND is imperative, but it is a coding task"

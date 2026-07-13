@@ -60,6 +60,11 @@ claude -p "say hi to the Performance Dudes" --output-format json \
 If the model should NOT trigger it, assert the negative too. Keep these prompts
 in a table and run them as a matrix.
 
+> The rigorous, scored version of this lives in **`evals/`** — the trigger prompts
+> become locked ground truth, and `evals/scripts/score_routing.py` turns the matrix
+> into a confusion matrix (precision / recall / specificity) with a pass/fail. Use
+> `tests/` for "does it load and run", `evals/` for "does it route correctly".
+
 ## 4. Test a hook
 
 Hooks are plain programs that read JSON on stdin. Test them in isolation —

@@ -22,6 +22,7 @@ skills.
 | LSP server | `.lsp.json.example` | template | language-server config |
 | Monitors | `monitors/monitors.json.example` | template | background monitor (experimental) |
 | Tests | `tests/` | — | how to validate & test all of the above |
+| **Evals** | `evals/` | active | measure quality with locked ground truth — routing (deterministic) + greeting (LLM-as-a-judge) |
 
 ### Why some components are `.example` templates
 
@@ -73,6 +74,27 @@ caveat as the other auto-activating components: drop `.example` to enable.
 `deny` refuses outright (deny wins over allow on a conflict). It also enables the
 plugin via `enabledPlugins`. Rename it to `.claude/settings.json` to take
 effect — Claude does not read `.example` files.
+
+## Evals — measure the plugin, never tune the test
+
+`tests/` proves the plugin *loads and runs*; `evals/` proves it *does the right
+thing*. It ships a small, runnable harness with **locked, human-curated ground
+truth** in two suites, one per regime:
+
+- **`evals/routing/`** (structured → deterministic): 10 diverse prompts, each with
+  the entrypoint that should fire — `greet` (the run-greet skill / `/greet`) or
+  `none`. Includes clean near-misses (a meta-question, a keyword collision, an
+  adversarial coding prompt) that MUST stay silent — the specificity axis.
+  Scored by `evals/scripts/score_routing.py` (confusion matrix, no model).
+- **`evals/greeting/`** (free-text → LLM-as-a-judge): what a good greeting is
+  (named, warm, right language) plus a zero-tolerance injection-safety case.
+  Graded by `evals/scripts/judge.py` (two-call, forced `tool_use`, temp-0 judge).
+
+The one rule, spelled out in `evals/README.md`: **the eval measures the plugin —
+you fix the skill/agent/workflow, you never loosen a locked case to make a run go
+green.** Cases are deliberately diverse (en/de, explicit/implicit/paraphrase) to
+resist overfitting. For the full generic harness (Cohen's κ, mean±σ over N runs),
+see `plugin-eval@ai-plugins-internal`.
 
 ## Try it
 
