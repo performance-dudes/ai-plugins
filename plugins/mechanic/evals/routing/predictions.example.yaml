@@ -1,0 +1,36 @@
+# Captured routing run for the mechanic plugin — the sample CI scores.
+#
+# HOW THIS WAS PRODUCED: build_router_prompt.py INJECTED THE REAL OBJECT — it read
+# the verbatim frontmatter descriptions from the real agents/*.md and the prompts
+# from ground_truth.yaml, stripped every answer field, and issued neutral t01… ids
+# in a deterministic shuffle (so nothing leaked the route). Three independent BLIND
+# router passes over that prompt were UNANIMOUS and matched the locked ground truth
+# on every case (accuracy 1.000, macro-F1 1.000, under-routing 0.000, zero variance).
+# This file is that unanimous run, translated back to case ids.
+#
+# THE ONE RULE: if a future run misroutes a case, that is a PLUGIN bug — sharpen the
+# errand/mechanic description or the routing rule and re-capture. NEVER edit a locked
+# case to make this go green. See ../README.md.
+
+model: mechanic-routing-blind-3run-majority
+predictions:
+  - {case: i01-single-json-de,   route: inline}
+  - {case: i02-single-lookup,    route: inline}
+  - {case: i03-single-yesno,     route: inline}
+  - {case: i04-single-tinyedit,  route: inline}
+  - {case: i05-single-count-de,  route: inline}
+  - {case: e01-batch-classify,   route: errand}
+  - {case: e02-batch-reformat,   route: errand}
+  - {case: e03-batch-extract-de, route: errand}
+  - {case: e04-batch-normalize,  route: errand}
+  - {case: e05-batch-scan,       route: errand}
+  - {case: m01-rename-symbol,    route: mechanic}
+  - {case: m02-flag-fit,         route: mechanic}
+  - {case: m03-migration-de,     route: mechanic}
+  - {case: m04-run-interpret,    route: mechanic}
+  - {case: m05-move-module,      route: mechanic}
+  - {case: g01-design-de,        route: general-purpose}
+  - {case: g02-debug-unknown,    route: general-purpose}
+  - {case: g03-review,           route: general-purpose}
+  - {case: g04-name-choice,      route: general-purpose}
+  - {case: g05-prose-de,         route: general-purpose}

@@ -1,0 +1,266 @@
+# LOCKED, human-curated routing ground truth for the `mechanic` plugin.
+#
+# This measures the PLUGIN — the errand/mechanic agent DESCRIPTIONS and the
+# routing guidance in the README — NOT the cases. Once a case here correctly
+# encodes the expectation it is FROZEN: a mismatch is a plugin bug to fix AT THE
+# PLUGIN (sharpen a description, the routing rule), never a case to loosen so a
+# run goes green.
+#
+# WHAT ROUTES WHERE — four outcomes, two independent axes:
+#   inline           do it yourself in the orchestrator, NO subagent.
+#                    Trivial AND small/single: the spawn + context-transfer cost
+#                    of delegating outweighs the benefit. (Runs on the premium
+#                    orchestrator model — capability is never the issue here.)
+#   errand   Haiku   trivial, no code understanding, BUT large batch / high
+#                    volume — the cheap-model saving amortises over the volume,
+#                    so it beats doing it inline on the premium model.
+#   mechanic Sonnet  a DECIDED change that needs code/context comprehension to
+#            4.6     execute (fit an edit to its surroundings, cross-file refactor,
+#                    boilerplate that must slot in, run+interpret a known command).
+#   general  premium needs a DECISION: design, debug an unknown cause, review,
+#   -purpose         a naming/architecture choice, prose/specs.
+#
+# TWO axes, not one ladder:
+#   • capability ladder (for UNDER-ROUTING risk): errand < mechanic < {inline,
+#     general-purpose}. Sending a task to a model too weak → it fails → retry at
+#     premium. THIS is the expensive error; the plugin's asymmetric rule is
+#     "prefer one tier too EXPENSIVE over one too cheap."
+#   • delegation economics (inline vs errand): a single trivial task inline (zero
+#     overhead) vs a batch offloaded to Haiku (cheap tokens × volume). Getting
+#     this wrong is WASTEFUL, not dangerous.
+#
+# Every case carries a `trap` — the tempting-but-WRONG neighbour route — so the
+# eval measures boundary judgement, not keyword matching. Cases are DIVERSE
+# (de/en, single/batch, several near-miss families) to resist overfitting.
+#
+# Fields: route = correct outcome. capability = 1 errand · 2 mechanic · 3 inline
+# /general (premium). volume = single | batch. trap = the seductive wrong route.
+# difficulty is documentation only (not scored).
+
+task: routing
+routes: [inline, errand, mechanic, general-purpose]
+
+cases:
+  # ── inline: trivial AND single → keep it in the mother process, no subagent ──
+  - case: i01-single-json-de
+    prompt: "formatier mir kurz diesen einen JSON-Schnipsel schön: {\"a\":1,\"b\":2}"
+    route: inline
+    capability: 3
+    volume: single
+    trap: errand
+    family: format
+    lang: de
+    difficulty: easy
+    note: one pasted snippet — delegating a single reformat costs more than doing it
+
+  - case: i02-single-lookup
+    prompt: "what's the value of the `main` field in this package.json I just pasted?"
+    route: inline
+    capability: 3
+    volume: single
+    trap: errand
+    family: extract
+    lang: en
+    difficulty: easy
+    note: single field lookup, self-contained — no reason to spawn an agent
+
+  - case: i03-single-yesno
+    prompt: "is `feat: add login` a valid conventional-commit header? just yes/no"
+    route: inline
+    capability: 3
+    volume: single
+    trap: errand
+    family: classify
+    lang: en
+    difficulty: easy
+    note: one yes/no check — the archetypal thing to answer inline
+
+  - case: i04-single-tinyedit
+    prompt: "change the version on line 2 of this README from 0.3.0 to 0.4.0"
+    route: inline
+    capability: 3
+    volume: single
+    trap: mechanic
+    family: edit
+    lang: en
+    difficulty: medium
+    note: one literal edit at a named spot — trivial and single, not a refactor
+
+  - case: i05-single-count-de
+    prompt: "zähl mir schnell, wie viele TODO-Kommentare in dieser einen Datei stehen"
+    route: inline
+    capability: 3
+    volume: single
+    trap: errand
+    family: count
+    lang: de
+    difficulty: easy
+    note: single-file trivial count — inline; only a big batch would justify Haiku
+
+  # ── errand (Haiku): trivial, no code understanding, BUT batch / high volume ──
+  - case: e01-batch-classify
+    prompt: "classify each of these 800 changelog lines as feat, fix or chore"
+    route: errand
+    capability: 1
+    volume: batch
+    trap: inline
+    family: classify
+    lang: en
+    difficulty: medium
+    note: same op as i03 but ×800 — now the cheap-model volume saving is the point
+
+  - case: e02-batch-reformat
+    prompt: "convert all 240 test-fixture JSON files from 4-space to 2-space indent"
+    route: errand
+    capability: 1
+    volume: batch
+    trap: mechanic
+    family: format
+    lang: en
+    difficulty: medium
+    note: touches many files but is a purely mechanical reformat — no code understanding
+
+  - case: e03-batch-extract-de
+    prompt: "zieh aus jeder dieser rund 500 Logzeilen den Timestamp und die IP-Adresse"
+    route: errand
+    capability: 1
+    volume: batch
+    trap: inline
+    family: extract
+    lang: de
+    difficulty: medium
+    note: high-volume trivial extraction — offload to Haiku, don't burn premium tokens
+
+  - case: e04-batch-normalize
+    prompt: "normalize every country value to its ISO-2 code across this 12k-row CSV"
+    route: errand
+    capability: 1
+    volume: batch
+    trap: mechanic
+    family: normalize
+    lang: en
+    difficulty: medium
+    note: big but rule-based normalization, no surrounding code to comprehend
+
+  - case: e05-batch-scan
+    prompt: "go through all ~900 markdown docs and list which ones have no H1 heading"
+    route: errand
+    capability: 1
+    volume: batch
+    trap: inline
+    family: scan
+    lang: en
+    difficulty: medium
+    note: long trivial scan over many files — throughput job for the cheap tier
+
+  # ── mechanic (Sonnet 4.6): decided change that needs code/context comprehension ─
+  - case: m01-rename-symbol
+    prompt: "rename the `Cart` class to `Basket` everywhere and fix all imports and usages"
+    route: mechanic
+    capability: 2
+    volume: batch
+    trap: errand
+    family: refactor
+    lang: en
+    difficulty: hard
+    note: looks like find/replace but needs to understand usages/imports — not literal
+
+  - case: m02-flag-fit
+    prompt: "add a `--dry-run` flag to the CLI, wired the same way the existing flags are"
+    route: mechanic
+    capability: 2
+    volume: single
+    trap: general-purpose
+    family: fit-edit
+    lang: en
+    difficulty: hard
+    note: the WHAT is decided; executing it means matching the existing wiring — mechanical-with-comprehension
+
+  - case: m03-migration-de
+    prompt: "leg eine neue DB-Migration nach dem Muster der bestehenden in migrations/ an, die eine Spalte deleted_at ergänzt"
+    route: mechanic
+    capability: 2
+    volume: single
+    trap: general-purpose
+    family: boilerplate-fit
+    lang: de
+    difficulty: hard
+    note: boilerplate that must slot into an existing pattern — decided, needs the codebase
+
+  - case: m04-run-interpret
+    prompt: "run the build and tell me which type errors it reports"
+    route: mechanic
+    capability: 2
+    volume: single
+    trap: errand
+    family: run-cmd
+    lang: en
+    difficulty: medium
+    note: running is trivial but interpreting the output against the code needs comprehension
+
+  - case: m05-move-module
+    prompt: "extract the date helpers from utils.js into a new date.js and update every import"
+    route: mechanic
+    capability: 2
+    volume: batch
+    trap: errand
+    family: refactor
+    lang: en
+    difficulty: hard
+    note: multi-file move with import rewiring — needs to understand the dependency graph
+
+  # ── general-purpose (premium): needs a DECISION / judgement ──────────────────
+  - case: g01-design-de
+    prompt: "entwirf das Datenmodell für ein neues Benachrichtigungs-Feature"
+    route: general-purpose
+    capability: 3
+    volume: single
+    trap: mechanic
+    family: design
+    lang: de
+    difficulty: hard
+    note: open design decision — no single correct output, needs judgement
+
+  - case: g02-debug-unknown
+    prompt: "the API returns 500 intermittently under load — figure out why"
+    route: general-purpose
+    capability: 3
+    volume: single
+    trap: mechanic
+    family: debug
+    lang: en
+    difficulty: hard
+    note: unknown root cause — investigation, not a decided change
+
+  - case: g03-review
+    prompt: "review this diff for security and correctness issues"
+    route: general-purpose
+    capability: 3
+    volume: single
+    trap: mechanic
+    family: review
+    lang: en
+    difficulty: hard
+    note: weighing relevance/severity is judgement — the premium tier
+
+  - case: g04-name-choice
+    prompt: "pick a better name for the `doStuff()` function and rename it accordingly"
+    route: general-purpose
+    capability: 3
+    volume: single
+    trap: mechanic
+    family: naming
+    lang: en
+    difficulty: hard
+    note: the rename is mechanical but CHOOSING the name is the decision — escalate
+
+  - case: g05-prose-de
+    prompt: "schreib aus diesem Changelog die Release-Notes für v2.0"
+    route: general-purpose
+    capability: 3
+    volume: single
+    trap: errand
+    family: prose
+    lang: de
+    difficulty: medium
+    note: looks like reformatting but writing user-facing prose is a judgement task

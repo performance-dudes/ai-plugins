@@ -12,9 +12,10 @@ description: >
   interpreting its output.
   USE WHEN the "what" is decided and success is objectively checkable, AND doing it
   right requires comprehending code/files — not just pattern-substitution.
-  DO NOT USE (route DOWN to errand) for trivial, self-contained one-shot
-  transformations that need no codebase understanding — classify, extract a field,
-  reformat, literal find/replace with exact old→new, yes/no checks. Those go to the
+  DO NOT USE (route DOWN) for trivial transformations that need no codebase
+  understanding — classify, extract a field, reformat, literal find/replace with
+  exact old→new, yes/no checks. A SINGLE such item stays INLINE in the orchestrator
+  (delegating one lone item costs more than it saves); a BATCH of them goes to the
   even cheaper Haiku tier via subagent_type "mechanic:errand".
   DO NOT USE (route UP to general-purpose) for anything needing a DECISION — design,
   architecture, naming choices, debugging an unknown cause, prose/specs, security or

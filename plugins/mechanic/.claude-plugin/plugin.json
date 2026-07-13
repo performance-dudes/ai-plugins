@@ -1,7 +1,7 @@
 {
   "name": "mechanic",
-  "description": "Cost-tiered mechanical subagents — two agents pinned to cheaper model versions to preserve premium (Opus / Sonnet 5) budget for judgment work. `mechanic` (Sonnet 4.6) for mechanical work that needs code/context comprehension (specified edits, cross-file refactors, boilerplate that must fit); `errand` (Haiku 4.5) for trivial self-contained transformations that need no codebase understanding (classify, extract, reformat, literal find/replace). Sharp routing: needs code understanding -> mechanic; needs a decision -> general-purpose; otherwise -> errand. Invoke via the Agent tool with subagent_type \"mechanic\" or \"mechanic:errand\".",
-  "version": "0.3.0",
+  "description": "Cost-tiered mechanical subagents — two agents pinned to cheaper model versions to preserve premium (Opus / Sonnet 5) budget for judgment work. `mechanic` (Sonnet 4.6) for mechanical work that needs code/context comprehension (specified edits, cross-file refactors, boilerplate that must fit); `errand` (Haiku 4.5) for trivial no-understanding transformations run as a HIGH-VOLUME BATCH. Sharp routing: single trivial task -> do it INLINE (delegating one item costs more than it saves); batch of trivial tasks -> errand; needs code understanding -> mechanic; needs a decision -> general-purpose. Prefer one tier too expensive over one too cheap — a too-cheap route fails and retries at premium. Invoke via the Agent tool with subagent_type \"mechanic\" or \"mechanic:errand\".",
+  "version": "0.4.0",
   "author": {
     "name": "Performance Dudes"
   },

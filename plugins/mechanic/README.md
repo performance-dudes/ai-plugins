@@ -25,18 +25,56 @@ Needs a DECISION (design, debug unknown cause, review, prose, weigh relevance)
 Needs to UNDERSTAND CODE/CONTEXT to execute a decided change
     -> mechanic            (subagent_type "mechanic", Sonnet 4.6)
 
-TRIVIAL self-contained transformation, no codebase understanding
+TRIVIAL transformation, no codebase understanding — as a BATCH / at volume
     -> errand              (subagent_type "mechanic:errand", Haiku 4.5)
+
+TRIVIAL transformation, but a SINGLE small item
+    -> INLINE — do it yourself, do NOT delegate
 ```
 
-- **`errand`** — classify/label, extract a field, reformat (JSON/CSV/whitespace/case),
-  literal find/replace with an exact old→new pair, yes/no checks, count, sort, normalize.
+- **inline** — one JSON snippet to format, one field to read, one yes/no check, one
+  literal edit at a named spot. Delegating a lone trivial task loses money: an agent
+  run burns ~4× the tokens of a plain turn (spawn + context transfer + reintegration),
+  which outweighs the cheap-model saving on a single item. Keep it in the orchestrator.
+- **`errand`** — the SAME trivial ops, but **at volume**: classify 800 lines, reformat
+  240 files, extract from 500 log rows, normalize a 12k-row CSV, scan 900 docs. Now the
+  cheap-model saving amortises over the batch and delegating wins.
 - **`mechanic`** — apply a specified edit that must fit its surroundings, mechanical
   refactor across files, generate boilerplate that must slot into an existing codebase,
   run a known command and interpret its output.
+- **`general-purpose`** — design, debug an unknown cause, review, a naming/architecture
+  choice, prose/specs. No single correct output; needs judgement.
 
 Both agents are instructed to **hand back rather than guess** when a task turns out to
-sit in a neighbouring tier or the instruction is ambiguous.
+sit in a neighbouring tier, is a lone item that belongs inline, or the instruction is
+ambiguous.
+
+### Prefer one tier too expensive over one too cheap
+
+The routing error is **asymmetric**. Over-provisioning (routing up) just spends a bit
+more. **Under-provisioning (routing down) is the expensive mistake**: a too-cheap tier
+that isn't up to the task fails, and you pay for the failed cheap attempt **plus** the
+retry at the correct tier — the cascade pays cheap+strong, never just strong, and
+small/large model errors are correlated so the query the cheap model flubs is
+disproportionately a hard one. So when in doubt, **round up a tier**. The eval tracks
+this as a first-class **under-routing rate**, separate from plain accuracy.
+
+## Evals — is the routing actually sharp?
+
+The plugin's whole value is a **correct routing decision**, so that is what
+[`evals/`](evals/README.md) measures — not that the agents load, but that a task
+lands in the right tier. `evals/routing/ground_truth.yaml` holds locked, diverse
+cases across all four outcomes (inline · errand · mechanic · general-purpose), each
+with a deliberate near-miss `trap` (the tempting wrong neighbour). The output is a
+label, so the regime is deterministic: `evals/scripts/score_routing.py` builds a
+confusion matrix and reports **accuracy · macro-F1 · under-routing rate**, plus an
+illustrative **cost model** (baseline all-premium → routed, with a retry penalty for
+under-routing) that answers "how much do we save, and how much does a too-cheap route
+cost us?".
+
+**The one rule:** the eval tests the **plugin** (these agent descriptions, this
+routing rule). A misroute is a bug to fix *here* — sharpen a description — never a
+case to loosen so the run goes green. See [`evals/README.md`](evals/README.md).
 
 ## Model pins
 
