@@ -26,6 +26,35 @@ on purpose. A suite that only tests `"greet X"` ten ways proves nothing; one tha
 also throws meta-questions, keyword collisions, and adversarial coding prompts at
 the router measures whether the plugin *understood the intent*.
 
+## The other rule — test the REAL object, inject it, NEVER a copy
+
+Just as load-bearing as "don't tune the cases": **the eval must run against the
+real object under test** — the actual `SKILL.md`, the actual agent frontmatter, the
+actual command/workflow file, invoked exactly as it ships. Never against a
+paraphrase, a summary, or a hand-kept copy of it pasted into your test harness.
+
+Why this is a hard rule, not a nicety:
+
+- A copy **drifts**. The moment the real skill description changes and your pasted
+  copy doesn't, the eval measures *the copy* — a green run then proves nothing about
+  the plugin. You have built a test that tests itself.
+- A copy **leaks**. When you re-type the object into a prompt you unconsciously
+  smooth it, add examples that happen to mirror your cases, or drop the awkward
+  clause that was the whole point — and the number comes back beautiful and
+  meaningless.
+
+So **inject, don't duplicate**: the harness READS the real file at run time.
+- Structured/routing: drive the *installed* plugin headlessly (`claude -p "…"`) or
+  read the real agent/skill file and feed its verbatim content — the routes come
+  from the shipping object, not a description of it. (`mechanic/evals/routing/
+  build_router_prompt.py` shows the pattern: it reads the real `agents/*.md`
+  frontmatter at build time, so changing the plugin automatically changes the test.)
+- Free-text: `judge.py` calls the **real greeter** with its production system
+  prompt — not a retyped "pretend you are a greeter."
+
+If you ever catch yourself pasting a skill/agent description into an eval file,
+stop: reference the real file instead. A test of a copy is not a test of the plugin.
+
 ## The one decision rule — pick the regime per suite
 
 ```
@@ -122,20 +151,55 @@ delete the check.
 ## The discipline (both suites)
 
 1. **Lock the expectation before the run.** The human-written note/description is
-   the measuring stick, not the judge.
-2. **Run the real plugin — no mock.** Capture what actually ships.
-3. **Always include clean / precision cases.** Without them the specificity /
+   the measuring stick, not the judge. A case is lock-ready only when **two domain
+   experts would reach the same pass/fail** on it — if they wouldn't, the expectation
+   is still fuzzy; sharpen it, don't freeze it (Anthropic's clarity bar).
+2. **Run the real plugin — no mock.** Capture what actually ships. And test the
+   **real object**, injected not copied (see the rule above).
+3. **Grade the output, not the tool-call path.** Assert on the observable outcome
+   (which entrypoint fired, the greeting produced) — never on an exact multi-step
+   trajectory. Path-grading is rigid and over-fits (Anthropic).
+4. **Always include clean / precision cases.** Without them the specificity /
    false-positive axis is invisible.
-4. **Grade difficulty** (easy → hard) so you see *where* the plugin gets timid.
-5. **Run N times, report mean±σ / pass@k.** One run is an anecdote.
-6. **Feed the loop.** A confirmed false trigger → a new locked `clean` case; a miss
-   → a new seeded case. Then fix the plugin and re-measure.
+5. **Grade difficulty** (easy → hard) so you see *where* the plugin gets timid.
+6. **Run N trials, report pass^k / mean±σ.** One trial is an anecdote. Anthropic
+   treats non-determinism as first-class: **pass@k** (≥1 of k succeeds) for
+   exploration, **pass^k** (all k succeed) as the bar when a suite is allowed to call
+   itself green for customer-facing reliability.
+7. **Start from real failures, feed the loop.** Anthropic's advice is to seed a suite
+   with **20–50 simple tasks drawn from real failures**, not pretty synthetic ones. A
+   confirmed false trigger → a new locked `clean` case; a real miss → a new seeded
+   case. Then fix the plugin and re-measure.
+
+## The vocabulary (Anthropic's terms, so we speak the standard)
+
+Anthropic's "Demystifying evals for AI agents" names the parts; this harness maps to
+them one-to-one, so use these words:
+
+| Anthropic term | here |
+|---|---|
+| **evaluation suite** | a sub-folder (`routing/`, `greeting/`) |
+| **task** | one locked case (a prompt + its expectation) |
+| **trial** | one run of a case (repeat N for pass^k) |
+| **grader** | `score_routing.py` (deterministic) / `judge.py` (LLM) |
+| **transcript** | the captured output (`predictions.*.yaml`, the judged response) |
+| **outcome** | PASS / FAIL |
+| **evaluation harness** | the scripts + cases |
+| **agent harness / scaffold** | the REAL plugin under test (`claude -p`, the real agent) |
 
 ## Sources
 
-- [Extend Claude with skills — Claude Code Docs](https://code.claude.com/docs/en/skills)
-- [cc-plugin-eval — 4-stage plugin component-triggering eval (YAML config, programmatic-first + LLM judge)](https://github.com/sjnims/cc-plugin-eval)
+First-hand Anthropic method (the canonical grounding):
+- [Demystifying evals for AI agents — Anthropic (9 Jan 2026)](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) — the vocabulary above, pass@k/pass^k, "tasks from real failures", grade-output-not-path, deterministic-first graders.
+- [Define success criteria and build evaluations — Claude Docs](https://docs.claude.com/en/docs/test-and-evaluate/develop-tests) — the grader hierarchy (code-based → LLM-based → human).
+- [Anthropic courses — Prompt evaluations](https://raw.githubusercontent.com/anthropics/courses/master/prompt_evaluations/README.md) — the official prompt-eval workflow.
+
+There is **no first-party plugin-eval framework** (not even in preview): officially
+`plugin validate` (hygiene) + headless `claude -p` + your own assertions. The one
+first-party eval tool is `skill-creator` (skills only). This harness fills that gap.
+- [Extend Claude with skills — Claude Code Docs](https://code.claude.com/docs/en/skills) — the built-in `skill-creator` skill-eval loop (skills only).
+- [cc-plugin-eval — plugin component-triggering eval (YAML config, programmatic-first + LLM judge)](https://github.com/sjnims/cc-plugin-eval)
+- [skill-eval-action — grade skills against YAML cases (`expect_skill`, ≥1 negative)](https://github.com/skill-bench/skill-eval-action)
 - [Measuring Claude Code skill activation with sandboxed evals — Scott Spence](https://scottspence.com/posts/measuring-claude-code-skill-activation-with-sandboxed-evals)
-- [Demystifying evals for AI agents — Anthropic](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
 - [Test-case configuration (YAML as native format) — promptfoo](https://www.promptfoo.dev/docs/configuration/test-cases/)
 - Deeper generic harness: `plugin-eval@ai-plugins-internal` (confusion-matrix scorer, Cohen's κ, mean±σ).

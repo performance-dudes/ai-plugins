@@ -108,6 +108,30 @@ def _bool(d, key, default=False):
     return v if isinstance(v, bool) else default
 
 
+def _agent_system(agent_ref):
+    """INJECT THE REAL OBJECT UNDER TEST — never a pasted copy. Read the shipping
+    agents/<ref>.md and return its body (everything after the frontmatter) as the
+    system prompt. If the plugin's agent changes, the next eval run tests the change
+    automatically; a copy pasted into the case file would drift and measure itself."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    plugin_root = os.path.dirname(os.path.dirname(here))  # evals/scripts -> plugin root
+    path = os.path.join(plugin_root, "agents", f"{agent_ref}.md")
+    with open(path, "r", encoding="utf-8") as fh:
+        text = fh.read()
+    parts = text.split("---", 2)          # strip YAML frontmatter, keep the body
+    return (parts[2] if len(parts) == 3 else text).strip()
+
+
+def _target_system(t):
+    """Resolve the target system prompt. Precedence: a reference to the REAL agent
+    file (`agent:`) is preferred; an explicit `system:` string is a back-compat
+    fallback. Pasting the agent's prompt into the case is the anti-pattern this
+    guards against — reference the file instead."""
+    if t.get("agent"):
+        return _agent_system(t["agent"])
+    return t.get("system", "")
+
+
 def call_target(client, case, model):
     t = case["target"]
     if t.get("response"):
@@ -116,7 +140,7 @@ def call_target(client, case, model):
         model=t.get("model", model),
         max_tokens=512,
         temperature=t.get("temperature", 0.3),
-        system=t.get("system", ""),
+        system=_target_system(t),
         messages=[{"role": m["role"], "content": m["text"]} for m in t["messages"]],
     )
     return "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
