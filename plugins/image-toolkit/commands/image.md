@@ -1,6 +1,6 @@
 ---
 description: Create or edit an image — Gemini for AI generation/semantic edits, ImageMagick for local processing
-argument-hint: [what you want — e.g. "a hero image of sneakers, 16:9" or "make logo.png background transparent"]
+argument-hint: what you want — e.g. "a hero image of sneakers, 16:9" or "make logo.png background transparent"
 ---
 
 # /image — create or edit an image
