@@ -39,12 +39,25 @@ Routing-Regel: Entscheidung nötig → `general-purpose` (Premium); Code-Verstä
   **glasklare Description** (wann nutzen / wann NICHT) plus die Anweisung, bei
   Urteilsbedarf **zurückzugeben statt zu raten**. Ein falscher mechanischer Rateschuss
   ist teurer als ein sauberer Hand-back.
+- **Die Regel muss im Context liegen, nicht nur im README.** Claude Code lädt von
+  einem Agent ausschließlich das Frontmatter-Feld `description:` ins Modell. Die
+  eigentliche Routing-Regel — die Kaskade, die `inline`-Route, die
+  Asymmetrie („lieber eine Tier zu teuer") und die Parallelisierung — steht im
+  README und wird **nie** geladen. Der Orchestrator sieht also zwei Werkzeuge, aber
+  nicht die Regel, wann welches. OpenCode-Setups lösen das über `instructions: []`
+  (eine immer geladene `AGENTS.md`); in Claude Code ist der **einzige** Plugin-Weg
+  dorthin ein `SessionStart`-Hook mit `additionalContext`. Genau dafür — und nur
+  dafür — bekommt das Plugin eine Hook-Komponente.
 
 ## 3. Nicht-Ziele
 
-- Kein Command, keine Skills, kein MCP, keine Hooks — nur die Agent-Komponente.
-- Keine automatische Routing-Logik im Orchestrator; die Auswahl trifft der Aufrufer
-  anhand der Description.
+- Kein Command, keine Skills, kein MCP — nur die Agent-Komponente plus **genau einen**
+  kontext-injizierenden `SessionStart`-Hook.
+- **Kein Enforcement.** Der Hook stellt die Regel bereit, er erzwingt sie nicht: kein
+  `PreToolUse`-Block, kein Umschreiben von Agent-Aufrufen, kein Veto. Die
+  Routing-Entscheidung trifft weiterhin der Aufrufer — jetzt nur informiert statt
+  blind.
+- Keine automatische Routing-Logik im Orchestrator.
 
 ## 4. User Stories & Acceptance Criteria
 
@@ -69,14 +82,62 @@ Routing-Regel: Entscheidung nötig → `general-purpose` (Premium); Code-Verstä
 | AC-3-1 | Die Agent-Description nennt explizit **wann nutzen** (mechanisch/spezifiziert) und **wann NICHT** (Urteil/Design/Debug/Review). | review |
 | AC-3-2 | Der Agent-Body weist an, bei Urteilsbedarf zurückzugeben statt zu raten. | review |
 
+### US-mech-4 — Die Routing-Regel liegt im System-Context
+
+Als Orchestrator will ich die Routing-Kaskade **im Context haben**, nicht nur zwei
+Agent-Descriptions, damit ich `inline` vs. `errand` überhaupt unterscheiden kann und
+weiß, wie ein Batch parallelisiert wird.
+
+| AC | Soll | Test |
+|----|------|------|
+| AC-4-1 | `plugins/mechanic/hooks/hooks.json` ist valides JSON und registriert genau einen `SessionStart`-Hook, der `hooks/sessionstart-routing.sh` über `${CLAUDE_PLUGIN_ROOT}` aufruft. | config-valid (`run.sh`) |
+| AC-4-2 | Der Hook gibt auf einem SessionStart-Payload **valides JSON** mit `hookSpecificOutput.hookEventName == "SessionStart"` und nicht-leerem `additionalContext` aus. | hook-behavior (`run.sh`) |
+| AC-4-3 | Der `additionalContext` ist **byte-identisch** mit `hooks/routing-card.md` — die Karte ist die einzige Quelle, der Hook dupliziert sie nicht. | hook-behavior (`run.sh`) |
+| AC-4-4 | Die Karte nennt alle **vier** Routen (`inline`, `mechanic:errand`, `mechanic`, `general-purpose`), die Asymmetrie-Regel („round up") und einen **Parallelisierungs-Abschnitt** mit der Disjunktheits-Bedingung für schreibende Fan-outs. | config-valid (`run.sh`) |
+| AC-4-5 | Fehlt oder ist `routing-card.md` unlesbar, terminiert der Hook mit Exit 0 und leerer Ausgabe — eine Session darf daran nie scheitern. | hook-behavior (`run.sh`) |
+| AC-4-6 | Der Hook ist zero-dep (reines `bash`, kein `jq`/`python`/`node`) und `bash -n`-sauber. | script-run (`run.sh`) |
+| AC-4-7 | In frischer Session enthält der Context nach Start die Routing-Karte. | e2e (manuell, dokumentiert) |
+| AC-4-8 | `routing-card.md` bleibt **unter 1400 Zeichen** (≈ 350 Tokens). | config-valid (`run.sh`) |
+
+**Context-Budget ist ein Erstklass-Constraint (AC-4-8).** Die Karte wird in **jeden**
+Session-Abschnitt injiziert, ihre Länge ist also eine Dauerlast auf dem Fenster jedes
+Nutzers. Sie ist für ein LLM geschrieben, nicht für Menschen: nur **Delta-Information**
+gegenüber dem, was ohnehin im Context steht. Die beiden Agent-Descriptions liefern
+bereits „was ist trivial", „was ist mechanisch", „wann hand-back" — das gehört **nicht**
+noch einmal in die Karte. Ihr Existenzgrund sind exakt die drei Dinge, die **nirgends**
+sonst im Context stehen: die `inline`-Route, die Round-up-Asymmetrie und die
+Parallelisierungs-Regeln. Prosa, Begründungen und Beispiele leben im README (nicht
+geladen), nicht in der Karte. Wächst die Karte über das Budget, wird gekürzt — nicht
+das Budget erhöht.
+
+**Warum `SessionStart` und nicht `UserPromptSubmit`:** der Block wird **einmal je
+Session-Abschnitt** berechnet statt in jedem Turn, und `SessionStart` feuert auch bei
+`compact` — die Regel überlebt damit die Verdichtung, die sie sonst als Erstes
+verlöre.
+
 ## 5. Tests
 
-Einteiliges Plugin (nur Agent-Komponente) → alle Tests unter `tests/mechanic/`
-(config-valid), eingehängt via Auto-Discovery in `tests/run-all.sh`. AC-1-3 (e2e)
-ist manuell in `tests/mechanic/README.md` beschrieben, da es eine echte frische
-Session erfordert.
+Einteiliges Plugin (Agent- + Hook-Komponente, kein Build-Subprojekt) → alle Tests
+unter `tests/mechanic/`, eingehängt via Auto-Discovery in `tests/run-all.sh`.
+Test-Typen: `config-valid` (Manifest/Frontmatter/Karte), `script-run` (`bash -n`),
+`hook-behavior` (Hook real ausführen, Ausgabe gegen die Karte prüfen). AC-1-3, AC-1-6
+und AC-4-7 (e2e) sind manuell in `tests/mechanic/README.md` beschrieben, da sie eine
+echte frische Session erfordern.
 
 ## 6. Offen / im PR zu begründen
 
 - AC-1-3 bleibt zunächst manuell (kein automatisierter E2E-Harness im Repo für
   Modell-ID-Assertions). Bei Bedarf später als echter E2E-Test nachziehen.
+- AC-4-7 bleibt manuell (nur in einer echten Session beobachtbar), ist aber
+  **vollständig verifiziert**: 2026-07-25, frische Session nach Installation von 0.5.0 —
+  die Karte liegt wörtlich als `SessionStart hook additional context` im Modell-Context.
+  Die Gegenprobe nach `/compact` ist ebenfalls bestanden: die Karte ist danach erneut
+  vollständig da. Damit ist auch die tragende Begründung für `SessionStart` statt
+  `UserPromptSubmit` — Überleben der Verdichtung — empirisch belegt, nicht nur
+  konstruktiv.
+- Die Routing-Evals (`evals/routing/`) messen die Kaskade bislang **ohne** die Karte
+  im Context — der Router-Prompt injiziert nur die Agent-Descriptions. Ob die Karte
+  die Trefferquote weiter hebt, ist damit noch nicht gemessen; die Suite steht mit
+  pass³ = 1.0 aktuell am Deckeneffekt. Offener Punkt: härtere Near-Misses ergänzen
+  (insbesondere Parallelisierungs-Fälle, für die es noch **gar keine** Cases gibt),
+  bis die Suite wieder diskriminiert.

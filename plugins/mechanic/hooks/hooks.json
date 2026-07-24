@@ -1,0 +1,17 @@
+{
+  "description": "mechanic — SessionStart injection of the cost-tier routing card (cascade, inline route, round-up rule, parallelism). Fires on startup, resume, clear and compact so the rule survives context compaction.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/sessionstart-routing.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -49,6 +49,42 @@ Both agents are instructed to **hand back rather than guess** when a task turns 
 sit in a neighbouring tier, is a lone item that belongs inline, or the instruction is
 ambiguous.
 
+### The rule ships in the context — `SessionStart` hook
+
+A subtlety that decides whether any of the above actually happens: Claude Code loads
+only each agent's frontmatter `description:` into the model. **This README is never
+loaded.** So without help the orchestrator sees two tools and no rule — in particular
+it never learns that `inline` is an option, or how to fan a batch out safely.
+
+`hooks/` closes that gap. On `SessionStart` (including `compact`, so it survives
+compaction) the hook injects [`hooks/routing-card.md`](hooks/routing-card.md) verbatim
+as `additionalContext`:
+
+| File | Role |
+|---|---|
+| `hooks/routing-card.md` | the card — single source of the injected text (**< 1400 chars**) |
+| `hooks/sessionstart-routing.sh` | emits it verbatim; pure bash, zero-dep, fail-open |
+| `hooks/hooks.json` | registers the `SessionStart` hook |
+
+The card is written **for an LLM, not for a human**: it carries only the delta over
+what is already in the context — the `inline` route, the round-up rule, and the
+parallelism rules. The agent descriptions already cover what counts as trivial or
+mechanical, so the card does not repeat it. Rationale lives here and in
+[`docs/mechanic/mechanic.md`](../../docs/mechanic/mechanic.md).
+
+It **informs, it does not enforce** — no `PreToolUse` veto, no rewriting of calls. The
+test suite asserts the injected text is byte-identical to the card, so hook and card
+cannot drift.
+
+### Parallelism — new in 0.5.0
+
+The card also carries what neither agent description says: how to run a batch
+**concurrently**. Fan N agents out in **one** message block; one agent per independent
+chunk, never more agents than chunks; read-only fan-out is always safe; a **writing**
+fan-out needs **disjoint file sets** (name each agent's paths, or run them
+sequentially); parallelise within a stage, and a stage consuming another's output
+waits.
+
 ### Prefer one tier too expensive over one too cheap
 
 The routing error is **asymmetric**. Over-provisioning (routing up) just spends a bit

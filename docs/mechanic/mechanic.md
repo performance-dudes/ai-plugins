@@ -31,6 +31,48 @@ TRIVIAL transformation      -> errand           (Haiku 4.5)
 Mnemonic: needs a decision → premium; needs code understanding → mechanic; otherwise →
 errand.
 
+## The `SessionStart` hook — putting the rule in the context
+
+Claude Code loads only an agent's frontmatter `description:` into the model. The
+routing rule itself — the cascade above, the `inline` route, the round-up asymmetry,
+the parallelism rules — lives in this doc and the README, and **neither is ever
+loaded**. Without the hook the orchestrator sees two tools but not the rule for
+choosing between them (and never learns that a lone trivial item shouldn't be
+delegated at all).
+
+| File | Role |
+|---|---|
+| `hooks/routing-card.md` | the card — **single source** of the injected text |
+| `hooks/sessionstart-routing.sh` | emits the card verbatim as `additionalContext` |
+| `hooks/hooks.json` | registers the hook on `SessionStart` |
+
+```
+SessionStart (startup · resume · clear · compact)
+   └─ sessionstart-routing.sh
+        └─ {"hookSpecificOutput":{"hookEventName":"SessionStart",
+                                  "additionalContext": <routing-card.md verbatim>}}
+```
+
+Design decisions, each load-bearing:
+
+- **`SessionStart`, not `UserPromptSubmit`** — the block is paid once per session
+  segment instead of every turn, and `SessionStart` also fires on `compact`, so the
+  rule survives the compaction that would otherwise drop it first.
+- **Injected, never duplicated** — the script `cat`s the card; it holds no copy of the
+  text. `tests/mechanic/run.sh` asserts `additionalContext` is byte-identical to
+  `routing-card.md`, so the two cannot drift. (Repo doctrine: test the real object.)
+- **Under 1400 characters (AC-4-8)** — the card sits in every user's context window,
+  so its length is a permanent tax. It carries only what is *not* already there: the
+  two agent descriptions already cover "what is trivial" and "when to hand back". The
+  card's reason to exist is the `inline` route, the round-up rule, and parallelism.
+  Prose and rationale belong here in the docs, not in the card. Over budget → shorten
+  the card, don't raise the budget.
+- **Zero-dep, fail-open** — pure bash (no `jq`/`python`/`node`, since a hook that
+  can't run fails silently). A missing or unreadable card exits 0 with no output; a
+  session must never break because of it.
+- **No enforcement** — it injects context only. No `PreToolUse` veto, no rewriting of
+  agent calls. The caller still decides; it just decides informed.
+
 ## Model pinning — how it works
 
 | Path | Result |
