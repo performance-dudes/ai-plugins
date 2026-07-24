@@ -38,5 +38,17 @@ for pj in plugins/*/.claude-plugin/plugin.json; do
 done
 [ "$fail" -eq 0 ] && ok "alle Plugin-Ordner rein"
 
+echo "[structure] US-conv-4: Marketplace-Manifest deckt sich mit den Plugins"
+# Gilt fuer JEDES Plugin: registriert, source loest auf, Version identisch zu
+# plugin.json. Die Implementierung liegt zentral in tests/lib/, damit die
+# plugin-lokalen Suites dieselbe Pruefung aufrufen statt sie zu kopieren.
+bash "$ROOT/tests/lib/check-version-sync.sh"
+rc=$?
+case "$rc" in
+  0) ;;
+  2) note "Versions-Check nicht ausfuehrbar (kein JSON-Parser) — gilt als Verstoss" ;;
+  *) fail=1 ;;
+esac
+
 if [ "$fail" -eq 0 ]; then echo "[structure] PASS"; else echo "[structure] FAIL"; fi
 exit "$fail"

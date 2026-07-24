@@ -82,8 +82,15 @@ zieht ein Nutzer beim `marketplace update` eine andere Version als die, gegen di
 getestet wurde — die Suite grün, die Auslieferung falsch. Genau das passierte beim
 Bump auf 0.5.0: `plugin.json` wurde gehoben, der Marketplace-Eintrag blieb auf 0.3.0
 stehen, und die lokale Suite merkte nichts, weil AC-2-1 nur die **Registrierung**
-prüfte, nicht die Version. Gefangen hat es erst die CI (`validate.yml`). Der Check
-gehört auf beide Ebenen, damit der Fehler vor dem Push auffällt.
+prüfte, nicht die Version. Gefangen hat es erst die CI (`validate.yml`).
+
+Der Check gehört auf beide Ebenen, damit der Fehler vor dem Push auffällt. Die
+Implementierung liegt deshalb **nicht** hier, sondern zentral in
+`tests/lib/check-version-sync.sh`: diese Suite ruft sie für `mechanic` auf,
+`tests/structure/check.sh` für **alle** Plugins (SPEC-repo-conventions US-conv-4),
+und `validate.yml` fährt dieselbe Datei. Eine Implementierung, drei Aufrufer — eine
+Zweitfassung würde genau das Auseinanderlaufen wiederholen, das den Fehler erst
+möglich gemacht hat.
 
 ### US-mech-3 — Description trennt mechanisch von Urteil
 | AC | Soll | Test |

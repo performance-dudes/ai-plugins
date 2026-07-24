@@ -19,7 +19,7 @@ bash tests/run-all.sh             # gesamtes Repo (findet mechanic automatisch)
 | AC-1-2 | `agents/mechanic.md` Frontmatter: `name: mechanic`, `model: claude-sonnet-4-6` |
 | AC-1-5 | `agents/errand.md` Frontmatter: `name: errand`, `model: claude-haiku-4-5` |
 | AC-2-1 | `marketplace.json` registriert `./plugins/mechanic` |
-| AC-2-3 | `marketplace.json`-Version == `plugin.json`-Version (Drift = falsche Auslieferung) |
+| AC-2-3 | `marketplace.json`-Version == `plugin.json`-Version (Drift = falsche Auslieferung) — delegiert an `tests/lib/check-version-sync.sh mechanic` |
 | AC-4-1 | `hooks/hooks.json` valide, `SessionStart` registriert, Pfad über `${CLAUDE_PLUGIN_ROOT}` |
 | AC-4-4 | Karte nennt alle vier Routen, Round-up-Regel, Parallelisierung, Disjunktheit |
 | AC-4-8 | `routing-card.md` < 1400 Zeichen (Context-Budget) |

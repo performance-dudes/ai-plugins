@@ -24,24 +24,13 @@ jobs:
             python3 -m json.tool "$f" >/dev/null && echo "  ok $f"
           done
 
-          echo "== marketplace sources resolve =="
-          python3 - <<'PY'
-          import json, pathlib, sys
-          mk = json.load(open('.claude-plugin/marketplace.json'))
-          bad = 0
-          for p in mk['plugins']:
-              src = pathlib.Path(p['source'])
-              pj = src / '.claude-plugin' / 'plugin.json'
-              if not pj.is_file():
-                  print(f"  MISS {p['name']}: {pj} not found"); bad = 1
-                  continue
-              ver = json.load(open(pj)).get('version')
-              if ver != p.get('version'):
-                  print(f"  MISS {p['name']}: marketplace {p.get('version')} != plugin.json {ver}"); bad = 1
-              else:
-                  print(f"  ok {p['name']} ({ver})")
-          sys.exit(bad)
-          PY
+          echo "== marketplace sources resolve + Versionen konsistent =="
+          # Bewusst DERSELBE Helper, den tests/structure/check.sh und die
+          # Plugin-Suiten aufrufen. Vorher stand hier eine eigene Kopie dieser
+          # Prüfung — die lokale Suite hatte sie gar nicht, also konnte lokal grün
+          # und CI rot auseinanderlaufen (passiert am 2026-07-06, drei Wochen
+          # unentdeckt). Eine Implementierung, drei Aufrufer.
+          bash tests/lib/check-version-sync.sh
 
           echo "== per-plugin smoke tests =="
           for t in plugins/*/tests/validate.sh; do

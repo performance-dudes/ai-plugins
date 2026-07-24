@@ -30,10 +30,25 @@ Aggregator findet ihn trotzdem.
 ## Nutzung
 
 ```bash
-bash tests/run-all.sh           # alle Suiten, offline; Auto-Discovery hängt jede tests/<plugin>/run.sh ein
-bash tests/structure/check.sh   # nur die Struktur-Konvention
-bash tests/ocr/run.sh           # nur eine Plugin-Suite
+bash tests/run-all.sh                   # alle Suiten, offline; Auto-Discovery hängt jede tests/<plugin>/run.sh ein
+bash tests/structure/check.sh           # nur die Struktur-Konvention (inkl. Marketplace-Konsistenz)
+bash tests/ocr/run.sh                   # nur eine Plugin-Suite
+bash tests/lib/check-version-sync.sh    # nur Marketplace vs. plugin.json (optional: <plugin-name>)
 ```
+
+## `tests/lib/` — geteilte Checks
+
+Prüfungen, die **mehr als eine Ebene** braucht, liegen hier einmal und werden
+aufgerufen statt kopiert.
+
+| Datei | Prüft | Aufgerufen von |
+|---|---|---|
+| `check-version-sync.sh` | Marketplace-Eintrag ↔ `plugin.json`: registriert, `source` löst auf, Version identisch | `tests/structure/check.sh` (alle Plugins) · `tests/mechanic/run.sh` (nur mechanic) · `.github/workflows/validate.yml` |
+
+Der Grund ist ein realer Vorfall: dieselbe Prüfung existierte nur als Kopie in
+`validate.yml` und fehlte in `run-all.sh`. Ergebnis — lokal grün, CI **acht Runs
+lang** rot, drei Wochen unbemerkt. Eine Implementierung, drei Aufrufer; wer einen
+neuen Aufrufer braucht, ruft diese Datei, statt die Logik nachzubauen.
 
 ## Offline-Verhalten
 

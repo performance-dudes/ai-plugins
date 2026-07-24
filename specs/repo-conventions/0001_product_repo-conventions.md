@@ -159,6 +159,36 @@ Issue getrackt (siehe §4).
 | AC-3-1 | CI-Gate schlägt fehl, wenn ein Code-Diff ohne Spec/Doc/Journal-Diff kommt (ohne Begründungs-Marker). | CI |
 | AC-3-2 | `craft`-Workflow prüft PR-Vollständigkeit und meldet fehlende Artefakte. | workflow self-test |
 
+### US-conv-4 — Marketplace-Manifest deckt sich mit den Plugins
+
+Als Nutzer will ich, dass die im Marketplace angebotene Version **die** ist, die auch
+im Plugin steckt — sonst ziehe ich beim `marketplace update` etwas anderes, als
+getestet wurde.
+
+| AC | Soll | Test |
+|----|------|------|
+| AC-4-1 | Jedes Plugin unter `plugins/*/` mit `.claude-plugin/plugin.json` ist in `.claude-plugin/marketplace.json` registriert. | `tests/structure/check.sh` |
+| AC-4-2 | Für **jedes** registrierte Plugin gilt: `version` im Marketplace-Eintrag == `version` in `plugin.json`, beide gesetzt. | `tests/structure/check.sh` |
+| AC-4-3 | Jeder `source`-Pfad im Marketplace löst auf eine existierende `plugin.json` auf. | `tests/structure/check.sh` |
+| AC-4-4 | Die Prüfung existiert **einmal** (`tests/lib/check-version-sync.sh`); repo-weiter Check, Plugin-Suiten und CI rufen dieselbe Implementierung. | review + `tests/structure/check.sh` |
+
+**Warum das ein eigenes AC ist.** Die Version steht an zwei Orten, und Drift ist
+unsichtbar: das Plugin funktioniert, die Tests sind grün, nur die Auslieferung zeigt
+auf etwas anderes. Real passiert am 2026-07-06 — ein Versions-Bump ohne
+Marketplace-Nachzug ließ `validate.yml` **acht Runs lang** rot laufen, bis es
+zufällig auffiel. Zwei Lehren stecken darin, beide in AC-4-4 adressiert:
+
+1. **Die Prüfung lag nur in der CI, nicht in der lokalen Suite.** Wer `run-all.sh`
+   grün sah, hatte keinen Grund, an die CI zu denken.
+2. **Sie existierte als Kopie.** `validate.yml` trug seine eigene Implementierung;
+   eine zweite in einer Plugin-Suite hätte das Auseinanderlaufen nur verdoppelt.
+   Deshalb liegt sie jetzt zentral in `tests/lib/` und wird von allen drei Stellen
+   aufgerufen — dieselbe Doktrin wie bei den Evals: **das reale Objekt aufrufen,
+   nicht eine gepflegte Zweitfassung.**
+
+Ein dauerhaft roter Check ist zudem schlimmer als gar keiner: er trainiert alle
+darauf, ihn zu überlesen. Rot heißt handeln, nicht gewöhnen.
+
 ## 9. Phasen (Rollout)
 
 - **PR 1 (diese):** Konventions-Spec + Top-Level-Struktur + Fix der Spec-in-docs-
