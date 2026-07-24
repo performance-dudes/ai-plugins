@@ -65,20 +65,21 @@ def _save_parts(parts, out_path: str) -> bool:
     return saved
 
 
-def generate(prompt: str, model: str, aspect: str, size: str, out: str) -> bool:
+def generate(prompt: str, model: str, aspect: str, size: str, out: str, person: str | None = None) -> bool:
     from google.genai import types
 
     client = _client()
+    img_kwargs = {"aspect_ratio": aspect, "image_size": size}
+    # person_generation wird nur im Gemini Enterprise Agent Platform mode unterstuetzt.
+    # In der Developer API (Standard) fuehrt es zu einem ValueError -> nur setzen, wenn angefordert.
+    if person:
+        img_kwargs["person_generation"] = person
     resp = client.models.generate_content(
         model=model,
         contents=prompt,
         config=types.GenerateContentConfig(
             response_modalities=["TEXT", "IMAGE"],
-            image_config=types.ImageConfig(
-                aspect_ratio=aspect,
-                image_size=size,
-                person_generation="allow_adult",
-            ),
+            image_config=types.ImageConfig(**img_kwargs),
         ),
     )
     return _save_parts(resp.candidates[0].content.parts, out)
@@ -114,12 +115,18 @@ def main() -> int:
     p.add_argument("--model", default="gemini-2.5-flash-image", help="image model id")
     p.add_argument("--aspect", default="16:9", help="aspect ratio, e.g. 1:1, 16:9, 4:3")
     p.add_argument("--size", default="2K", help="image size: 1K or 2K (generate only)")
+    p.add_argument(
+        "--person-generation",
+        dest="person",
+        default=None,
+        help="z.B. allow_adult — NUR im Enterprise Agent Platform mode; in der Developer API weglassen (Default)",
+    )
     args = p.parse_args()
 
     if args.edit:
         ok = edit(args.edit, args.prompt, args.model, args.aspect, args.out)
     else:
-        ok = generate(args.prompt, args.model, args.aspect, args.size, args.out)
+        ok = generate(args.prompt, args.model, args.aspect, args.size, args.out, args.person)
 
     if not ok:
         print("No image returned — check the prompt, model, or your quota.", file=sys.stderr)
