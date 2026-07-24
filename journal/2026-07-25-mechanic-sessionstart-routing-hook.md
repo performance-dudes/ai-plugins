@@ -92,9 +92,17 @@ Suite grün sein, während die Auslieferung eine andere Version gezogen hätte a
 getestete. Neu: **AC-2-3** koppelt beide Versionen und ist in `tests/mechanic/run.sh`
 in beide Richtungen verifiziert (künstlich erzeugter Drift → Exit 1).
 
-Vorbestehend und **nicht** in diesem Commit gefixt: `context-aware` steht mit
-marketplace 0.1.0 gegen plugin.json 0.1.1. Fremdes Plugin — ob 0.1.1 released werden
-soll, ist nicht hier zu entscheiden. `validate.yml` bleibt bis dahin rot.
+Dabei fiel auf: `validate.yml` war **seit dem 6. Juli** (`4334995`) rot, nicht erst
+seit diesem Commit — dort wurde `context-scout` auf Sonnet 4.6 gepinnt und
+`context-aware`s plugin.json auf 0.1.1 gehoben, ohne den Marketplace-Eintrag
+nachzuziehen. Acht Runs in Folge rot. Das ist die zweite Lehre neben der Test-Lücke:
+ein dauerhaft roter Check verliert seine Signalwirkung, weil alle lernen, ihn zu
+überlesen — der Fund war reiner Zufall, weil dieser Push zufällig denselben Job
+auslöste.
+
+Nach Rückfrage separat nachgezogen (`13cd7ec`): der Code-Change lag ohnehin seit drei
+Wochen auf main, das Anheben der Versionsnummer ist Buchhaltung, kein neuer Release.
+Seither sind **alle sieben** Plugins konsistent und `validate.yml` ist grün.
 
 ## Offen
 - **Die Evals messen die Karte noch nicht.** `evals/routing/build_router_prompt.py`
