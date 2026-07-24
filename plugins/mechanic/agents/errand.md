@@ -86,3 +86,8 @@ Use MCP only when the one trivial transformation actually needs it — extract a
 from a message, read a value from a sheet, a single lookup. It does not widen your
 scope: still one self-contained transformation, still hand back the moment the task
 needs code understanding (→ `mechanic`) or a decision (→ `general-purpose`).
+
+**If `ctx_*` (context-mode) tools are present, route bulk retrieval through them** —
+index once, slice many, instead of reading raw bytes into your window. Your batches
+are the large ones (whole files, 900-doc scans) and your window is the smallest at
+200K: raw reads run you out mid-batch. Absent: `Read`/`Grep` as usual.

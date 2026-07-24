@@ -97,6 +97,19 @@ möglich gemacht hat.
 |----|------|------|
 | AC-3-1 | Die Agent-Description nennt explizit **wann nutzen** (mechanisch/spezifiziert) und **wann NICHT** (Urteil/Design/Debug/Review). | review |
 | AC-3-2 | Der Agent-Body weist an, bei Urteilsbedarf zurückzugeben statt zu raten. | review |
+| AC-3-3 | Beide Agent-Bodies weisen an, Bulk-Retrieval über `ctx_*` zu routen, **wenn** die Tools vorhanden sind — sonst `Read`/`Grep`. | config-valid (`run.sh`) |
+
+**Warum AC-3-3 im Agent-Body und nicht in der Routing-Karte.** `context-mode` bringt
+einen eigenen `SessionStart`-Hook mit, der seinen Context injiziert — aber
+`SessionStart` feuert **pro Session, nicht pro Subagent**. Was der Orchestrator über
+`ctx_*` weiß, erreicht den Subagenten also nicht. Die Anweisung muss dorthin, wo der
+Subagent sie liest: in sein Agent-File. Die Routing-Karte bleibt frei davon — sie
+zeigt auf die Agenten, die Agenten kennen ihre Tools selbst (und die Karte hat ein
+Zeichenbudget, AC-4-8).
+
+Bedingt formuliert, weil `context-mode` project-scoped installiert sein kann: ohne
+die Tools muss der Agent normal weiterarbeiten, nicht nach etwas greifen, das es
+nicht gibt.
 
 ### US-mech-4 — Die Routing-Regel liegt im System-Context
 

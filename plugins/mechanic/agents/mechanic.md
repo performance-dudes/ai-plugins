@@ -91,3 +91,9 @@ then call it like any other tool. Batch every tool you expect to need into one
 widen scope — use MCP only when the decided task actually calls for it (read a sheet,
 drive a page, pull a message), and still hand back anything that turns into a
 decision.
+
+**If `ctx_*` (context-mode) tools are present, route bulk retrieval through them** —
+index once, slice many, instead of reading raw bytes into your window. Applies to
+large files, whole directories, long scans, fetched pages. Absent: `Read`/`Grep` as
+usual. Your window is 1M but shared with the task; spending it on bytes you could
+have sliced is the common failure.

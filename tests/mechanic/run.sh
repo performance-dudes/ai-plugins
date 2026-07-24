@@ -48,6 +48,21 @@ if [ -f "$ER" ]; then
     && ok "model: claude-haiku-4-5 (Versions-Pin)" || note "model-Pin != claude-haiku-4-5"
 else note "agents/errand.md fehlt"; fi
 
+echo "[mechanic] AC-3-3: Beide Bodies routen Bulk-Retrieval über ctx_* (falls vorhanden)"
+for a in mechanic errand; do
+  f="$PLUG/agents/$a.md"
+  if [ -f "$f" ]; then
+    grep -q 'ctx_\*' "$f" && grep -qi 'present' "$f" \
+      && ok "$a.md: bedingte ctx_*-Anweisung" \
+      || note "$a.md: keine bedingte ctx_*-Anweisung"
+  fi
+done
+# Gegenprobe: die Routing-Karte bleibt frei davon (AC-4-8-Budget, Karte zeigt nur
+# auf die Agenten — die kennen ihre Tools selbst).
+grep -qi 'ctx_\|context-mode' "$PLUG/hooks/routing-card.md" \
+  && note "Routing-Karte erwähnt ctx_/context-mode — gehört in die Agent-Bodies" \
+  || ok "Routing-Karte bleibt frei von ctx_-Details"
+
 echo "[mechanic] AC-2-1: Marketplace-Eintrag"
 MP="$ROOT/.claude-plugin/marketplace.json"
 if [ -f "$MP" ]; then

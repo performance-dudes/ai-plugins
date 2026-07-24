@@ -144,3 +144,18 @@ claude plugin marketplace add performance-dudes/ai-plugins
 Enable `mechanic@ai-plugins` in your workspace `enabledPlugins`. A **fresh session** is
 required for newly installed/updated agents to load (the agent registry is read at
 session start, not hot-reloaded).
+
+### Retrieval via `ctx_*` when context-mode is present
+
+Both agent bodies instruct: if `ctx_*` (context-mode) tools are exposed, route **bulk
+retrieval** through them — index once, slice many — instead of pulling raw bytes into
+the window. Absent, they use `Read`/`Grep` normally.
+
+It lives in the agent bodies, not the routing card, for a structural reason:
+context-mode ships its own `SessionStart` hook, but `SessionStart` fires **per
+session, not per subagent** — what the orchestrator learns about `ctx_*` never
+reaches the subagent. The card stays free of it (it points at the agents; the agents
+know their own tools) and keeps its character budget.
+
+`errand` gains the most: it runs the largest batches on the smallest window (Haiku
+4.5, 200K), where raw reads run out mid-batch.
