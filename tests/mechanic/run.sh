@@ -54,6 +54,24 @@ if [ -f "$MP" ]; then
   json_valid "$MP" && ok "marketplace.json ist valides JSON" || note "marketplace.json ist kein valides JSON"
   grep -q '"source"[[:space:]]*:[[:space:]]*"\./plugins/mechanic"' "$MP" \
     && ok 'source: "./plugins/mechanic"' || note "mechanic nicht in marketplace.json registriert"
+  # AC-2-3: Die Version im Marketplace-Eintrag MUSS der in plugin.json entsprechen.
+  # Sonst zieht ein Nutzer beim Marketplace-Update eine andere Version als die,
+  # gegen die hier getestet wurde. CI (validate.yml) bricht daran ab.
+  if command -v python3 >/dev/null 2>&1; then
+    mp_ver="$(python3 -c "
+import json,sys
+m=json.load(open(sys.argv[1]))
+print(next((p.get('version','') for p in m.get('plugins',[]) if p.get('name')=='mechanic'), ''))
+" "$MP" 2>/dev/null)"
+    pj_ver="$(python3 -c "
+import json,sys; print(json.load(open(sys.argv[1])).get('version',''))
+" "$PLUG/.claude-plugin/plugin.json" 2>/dev/null)"
+    if [ -n "$mp_ver" ] && [ "$mp_ver" = "$pj_ver" ]; then
+      ok "Version konsistent: marketplace.json == plugin.json ($pj_ver)"
+    else
+      note "Versions-Drift: marketplace.json '$mp_ver' != plugin.json '$pj_ver'"
+    fi
+  fi
 else note "marketplace.json fehlt"; fi
 
 echo "[mechanic] AC-4-1: hooks.json registriert den SessionStart-Hook"

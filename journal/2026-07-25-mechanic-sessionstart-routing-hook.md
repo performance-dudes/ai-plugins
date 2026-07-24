@@ -79,6 +79,23 @@ Kostenwirkung: zwei Agents auf derselben Datei verlieren Updates.
   überlebt genau das Ereignis, das sie sonst als Erstes verlöre. Jetzt gemessen statt
   nur konstruiert.
 
+## Nachtrag — Versions-Drift, von der CI gefangen
+
+Der erste Push lief lokal grün, aber `validate.yml` schlug fehl:
+`marketplace 0.3.0 != plugin.json 0.5.0`. Der Bump war nur an **einem** der beiden
+Orte passiert. Beides war schon vor diesem Commit inkonsistent (0.3.0 ↔ 0.4.0), der
+Bump hat den Abstand nur vergrößert.
+
+Die eigentliche Lehre ist die Test-Lücke: AC-2-1 prüfte, **ob** `mechanic` im
+Marketplace registriert ist — nicht, **mit welcher Version**. Damit konnte die lokale
+Suite grün sein, während die Auslieferung eine andere Version gezogen hätte als die
+getestete. Neu: **AC-2-3** koppelt beide Versionen und ist in `tests/mechanic/run.sh`
+in beide Richtungen verifiziert (künstlich erzeugter Drift → Exit 1).
+
+Vorbestehend und **nicht** in diesem Commit gefixt: `context-aware` steht mit
+marketplace 0.1.0 gegen plugin.json 0.1.1. Fremdes Plugin — ob 0.1.1 released werden
+soll, ist nicht hier zu entscheiden. `validate.yml` bleibt bis dahin rot.
+
 ## Offen
 - **Die Evals messen die Karte noch nicht.** `evals/routing/build_router_prompt.py`
   injiziert nur die Agent-Descriptions, nicht die Karte — die gemessene pass³ = 1.0

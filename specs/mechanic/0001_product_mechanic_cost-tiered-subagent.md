@@ -75,6 +75,15 @@ Routing-Regel: Entscheidung nötig → `general-purpose` (Premium); Code-Verstä
 |----|------|------|
 | AC-2-1 | `mechanic` ist in `.claude-plugin/marketplace.json` mit `source: "./plugins/mechanic"` registriert. | config-valid (`run.sh`) |
 | AC-2-2 | Plugin-Ordner bleibt rein (kein specs/docs/journal/plans darin); Meta liegt Top-Level. | `tests/structure/check.sh` |
+| AC-2-3 | Die `version` im Marketplace-Eintrag ist **identisch** mit der in `plugins/mechanic/.claude-plugin/plugin.json`. | config-valid (`run.sh`) |
+
+**Warum AC-2-3 (Versions-Kopplung).** Die Version steht an zwei Orten. Driften sie,
+zieht ein Nutzer beim `marketplace update` eine andere Version als die, gegen die hier
+getestet wurde — die Suite grün, die Auslieferung falsch. Genau das passierte beim
+Bump auf 0.5.0: `plugin.json` wurde gehoben, der Marketplace-Eintrag blieb auf 0.3.0
+stehen, und die lokale Suite merkte nichts, weil AC-2-1 nur die **Registrierung**
+prüfte, nicht die Version. Gefangen hat es erst die CI (`validate.yml`). Der Check
+gehört auf beide Ebenen, damit der Fehler vor dem Push auffällt.
 
 ### US-mech-3 — Description trennt mechanisch von Urteil
 | AC | Soll | Test |
