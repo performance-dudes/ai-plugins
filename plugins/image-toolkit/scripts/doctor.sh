@@ -15,19 +15,37 @@ else
   miss "ImageMagick not found — brew install imagemagick"
 fi
 
-# uv — runs the bundled Gemini script (mandatory for AI generation)
+# uv — runs the bundled generation script (mandatory for AI generation)
 if command -v uv >/dev/null 2>&1; then
   ok "uv ($(uv --version | awk '{print $2}'))"
 else
   miss "uv not found — brew install uv  (runs scripts/generate_image.py)"
 fi
 
-# GEMINI_API_KEY — recommended AI-generation path
+# Provider credentials. All three are optional on their own — you need at least
+# one for AI generation; ImageMagick-only work needs none. Never print a value.
+providers=0
+
 if [ -n "${GEMINI_API_KEY:-}" ]; then
-  ok "GEMINI_API_KEY set (AI generation/editing available)"
+  ok "GEMINI_API_KEY set — provider 'gemini' available (default)"
+  providers=$((providers + 1))
 else
-  miss "GEMINI_API_KEY not set — export it in ~/.zshrc for AI generation (get a key at aistudio.google.com). ImageMagick-only work needs no key."
+  miss "GEMINI_API_KEY not set — export it in ~/.zshrc for the 'gemini' provider (key at aistudio.google.com)"
 fi
+
+if [ -n "${AZURE_OPENAI_API_KEY:-}" ] && [ -n "${AZURE_OPENAI_ENDPOINT:-}" ]; then
+  ok "AZURE_OPENAI_API_KEY + AZURE_OPENAI_ENDPOINT set — providers 'azure' and 'flux' available"
+  providers=$((providers + 1))
+  [ -n "${AZURE_OPENAI_API_VERSION:-}" ] \
+    && ok "AZURE_OPENAI_API_VERSION set (overrides the built-in default)" \
+    || ok "AZURE_OPENAI_API_VERSION unset — using the built-in default (fine)"
+  [ -n "${AZURE_IMAGE_DEPLOYMENT:-}" ] && ok "AZURE_IMAGE_DEPLOYMENT set (custom azure deployment name)"
+  [ -n "${AZURE_FLUX_DEPLOYMENT:-}" ] && ok "AZURE_FLUX_DEPLOYMENT set (custom flux deployment name)"
+else
+  miss "AZURE_OPENAI_API_KEY / AZURE_OPENAI_ENDPOINT not both set — export them in ~/.zshrc for the 'azure' and 'flux' providers"
+fi
+
+[ "$providers" -eq 0 ] && miss "No AI provider configured — only the ImageMagick half will work"
 
 # Optional helpers ImageMagick may delegate to
 command -v rsvg-convert >/dev/null 2>&1 && ok "rsvg-convert (crisp SVG->raster)" || miss "rsvg-convert optional, for high-quality SVG rasterization — brew install librsvg"

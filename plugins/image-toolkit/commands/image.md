@@ -1,5 +1,5 @@
 ---
-description: Create or edit an image — Gemini for AI generation/semantic edits, ImageMagick for local processing
+description: Create or edit an image — Gemini / gpt-image-2 / FLUX.2 for AI generation and semantic edits, ImageMagick for local processing
 argument-hint: what you want — e.g. "a hero image of sneakers, 16:9" or "make logo.png background transparent"
 ---
 
@@ -12,29 +12,43 @@ if you need detail):
 
 | Want | Use | How |
 |------|-----|-----|
-| Generate from a description, AI edit ("add snow", "make it a watercolor"), illustration/art | **Gemini** (recommended) | the bundled script below |
+| Generate from a description, AI edit ("add snow", "make it a watercolor"), illustration/art | **an AI provider** | the bundled script below |
 | Resize, crop, rotate, convert format, transparent/solid background, watermark, favicon, thumbnail, batch, GIF, montage | **ImageMagick** | `magick …` (local, deterministic, no API cost) |
-| Generate then size/optimize exactly | **both** | Gemini → then `magick` post-process |
+| Generate then size/optimize exactly | **both** | AI → then `magick` post-process |
 
-## AI generation / editing (Gemini)
+## AI generation / editing
 
-Bundled script, runs via `uv` (no manual deps — PEP-723 header provisions
-`google-genai` + Pillow on first run). Needs `GEMINI_API_KEY` in the env.
+Bundled script, runs via `uv` (no manual deps — PEP-723 header provisions the
+SDKs on first run). Three providers, all configured purely through env vars:
+
+| `--provider` | Default model | Pick it for | Needs |
+|---|---|---|---|
+| `gemini` *(default)* | `gemini-3-pro-image` | all-round, character consistency, 4K, transparency | `GEMINI_API_KEY` |
+| `azure` | `gpt-image-2` | text *inside* the image, face-preserving edits, arbitrary 4K sizes | `AZURE_OPENAI_ENDPOINT` + `AZURE_OPENAI_API_KEY` |
+| `flux` | `FLUX.2-pro` | cinematic photorealism; no person/minor gate | same Azure pair |
 
 ```bash
-# Generate
+# Generate (default provider)
 uv run ${CLAUDE_PLUGIN_ROOT}/scripts/generate_image.py \
   --prompt "Professional product photo of sneakers on a white background" \
   --aspect 16:9 --size 2K --out /tmp/hero_raw.png
 
-# Edit an existing image (natural language)
+# Text in the image -> gpt-image-2
+uv run ${CLAUDE_PLUGIN_ROOT}/scripts/generate_image.py --provider azure \
+  --prompt "Café sign reading 'ROASTED DAILY'" --aspect 16:9 --size 4K --out /tmp/sign.png
+
+# Edit an existing image (natural language, any provider)
 uv run ${CLAUDE_PLUGIN_ROOT}/scripts/generate_image.py \
   --edit logo.png --prompt "Replace the background with a soft gradient" \
   --out /tmp/logo_edited.png
 ```
 
-Flags: `--model` (default `gemini-2.5-flash-image`), `--aspect` (`1:1`, `16:9`,
-`4:3`, …), `--size` (`1K`/`2K`, generate only), `--out`.
+Flags: `--provider`, `--model` (overrides the per-provider default), `--aspect`
+(`1:1`, `16:9`, `4:3`, `9:16`, `3:4`), `--size` (`1K`/`2K`/`4K`), `--quality`
+(azure: `low`/`medium`/`high`), `--out`.
+
+⚠️ `gpt-image-2` cannot return a **transparent background** — use `gemini`, or
+generate on white and strip it: `magick in.png -fuzz 10% -transparent white out.png`.
 
 ## Local processing (ImageMagick)
 
@@ -51,9 +65,10 @@ magick mogrify -path thumbs/ -resize 200x200 *.jpg            # batch
 ## How to respond
 
 1. Decide engine from the request. If it needs **generation or semantic editing**
-   → Gemini script. If it's **deterministic pixel work** → `magick`. If both →
-   generate, then post-process.
-2. If Gemini is needed but `GEMINI_API_KEY` is unset, say so and offer the
-   ImageMagick path where it applies; suggest `/image-doctor`.
+   → the script, picking the provider from the table above. If it's
+   **deterministic pixel work** → `magick`. If both → generate, then post-process.
+2. If AI generation is needed but no provider credentials are set, say so and
+   offer the ImageMagick path where it applies; suggest `/image-doctor`.
+   Never print a key or endpoint back to the user.
 3. Run the command(s), report the **output path**, and `open` the result so the
    user sees it.

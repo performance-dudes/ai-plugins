@@ -25,10 +25,31 @@ for f in \
   "skills/image-toolkit/SKILL.md" \
   "skills/image-toolkit/references/imagemagick.md" \
   "skills/image-toolkit/references/gemini-image-api.md" \
+  "skills/image-toolkit/references/azure-image-api.md" \
   "scripts/generate_image.py" "scripts/doctor.sh" \
   "README.md"; do
   [ -f "$PLUGIN_DIR/$f" ] && ok "$f" || bad "missing $f"
 done
+
+note "2b. No secrets or environment-specific values committed"
+# The plugin must ship zero credentials and zero endpoints: keys, resource
+# hostnames and deployment URLs all come from the environment at run time.
+# Placeholders (<your-resource>, ${AZURE_*}) are what the docs are allowed to show.
+leaks=0
+while IFS= read -r hit; do
+  bad "possible secret/endpoint literal: $hit"
+  leaks=1
+done < <(
+  grep -rInE \
+    -e '[A-Za-z0-9_-]*\.(openai\.azure\.com|services\.ai\.azure\.com)' \
+    -e 'AIza[0-9A-Za-z_-]{20,}' \
+    -e '(api[_-]?key|API[_-]?KEY)[[:space:]]*[=:][[:space:]]*["'"'"']?[A-Za-z0-9]{24,}' \
+    "$PLUGIN_DIR" --exclude-dir=__pycache__ 2>/dev/null \
+    | grep -v '<your-resource>' \
+    | grep -v '\${AZURE' \
+    | grep -v 'grep -rInE'
+)
+[ "$leaks" -eq 0 ] && ok "no credential or endpoint literals found"
 
 note "3. Shell scripts: syntax + executable"
 while IFS= read -r f; do

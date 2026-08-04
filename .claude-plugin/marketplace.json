@@ -32,8 +32,8 @@
     {
       "name": "image-toolkit",
       "source": "./plugins/image-toolkit",
-      "description": "Image create & edit framework — Google Gemini for AI generation and semantic editing (recommended path), plus ImageMagick 7 for fast local processing (resize, crop, convert, watermark, favicon, batch, GIF, montage). Bundled generate_image.py runs via uv (no manual deps). Generic: prompts and assets come from the user. Command: /image",
-      "version": "0.1.1"
+      "description": "Image create & edit framework — three AI providers for generation and semantic editing (Google Gemini, Azure OpenAI gpt-image-2, Azure FLUX.2), plus ImageMagick 7 for fast local processing (resize, crop, convert, watermark, favicon, batch, GIF, montage). Bundled generate_image.py runs via uv (no manual deps). Generic: prompts and assets come from the user, all credentials and endpoints from the environment. Command: /image",
+      "version": "0.2.0"
     },
     {
       "name": "content-craft",

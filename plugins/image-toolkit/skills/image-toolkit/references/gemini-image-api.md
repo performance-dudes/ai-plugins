@@ -16,32 +16,41 @@
 
 ## Verfügbare Modelle
 
+Stand **2026-08-04**, live gegen die Developer API verifiziert (`GET /v1beta/models`).
+
 ### Gemini Native Image Models (generateContent endpoint)
 
 | Model ID | Status | Notes |
 |----------|--------|-------|
-| `gemini-2.5-flash-image` | **GA (Stable)** | Recommended for production |
-| `gemini-3.1-flash-image-preview` | Preview | Fast, up to 4K, thinkingLevel support |
-| `gemini-3-pro-image-preview` | Preview | Studio quality, 4K, complex layouts |
+| `gemini-3-pro-image` | **GA — Default** | "Nano Banana Pro". Studio quality, bis 4K, ~94 % Textgenauigkeit, starkes Reference-Handling |
+| `gemini-3.1-flash-image` | GA | "Nano Banana 2". Schneller, günstiger Generalist für hohes Volumen, bis 4K |
+| `gemini-3.1-flash-lite-image` | GA | Günstigste Stufe |
+| `gemini-2.5-flash-image` | GA (Legacy) | Ursprüngliches Nano Banana. Von den 3.x-Modellen überholt — nur noch für Reproduzierbarkeit |
+| `gemini-3-pro-image-preview` | Preview | Preview-Alias von `gemini-3-pro-image` |
+| `gemini-3.1-flash-image-preview` | Preview | Preview-Alias von `gemini-3.1-flash-image` |
 
-### Imagen Models (predict endpoint)
+### Imagen Models (predict endpoint) — ⚠️ deprecated
 
 | Model ID | Status | Notes |
 |----------|--------|-------|
-| `imagen-4.0-generate-001` | GA | Standard, up to 2K |
-| `imagen-4.0-ultra-generate-001` | GA | Highest quality |
-| `imagen-4.0-fast-generate-001` | GA | Lowest latency |
+| `imagen-4.0-generate-001` | ⚠️ deprecated | **Abschaltung 2026-08-17** |
+| `imagen-4.0-ultra-generate-001` | ⚠️ deprecated | dito |
+| `imagen-4.0-fast-generate-001` | ⚠️ deprecated | dito |
+
+**Nichts Neues mehr auf Imagen 4 bauen.** Die Gemini-3.x-Bildmodelle ersetzen alle
+drei Stufen und liegen in Qualität wie Latenz darüber.
 
 ### Model selection guide
 
 | Use case | Recommended model |
 |----------|-------------------|
-| Standard production | `gemini-2.5-flash-image` |
-| Interactive editing (multi-turn) | `gemini-2.5-flash-image` |
-| Best text-in-image quality | `gemini-3-pro-image-preview` |
-| Lowest latency | `imagen-4.0-fast-generate-001` |
-| Highest image quality | `imagen-4.0-ultra-generate-001` |
-| High volume, fast | `gemini-3.1-flash-image-preview` |
+| Standard production, beste Qualität | `gemini-3-pro-image` |
+| Interactive editing (multi-turn) | `gemini-3-pro-image` |
+| Character consistency über eine Serie | `gemini-3-pro-image` |
+| Hohes Volumen, kostensensibel | `gemini-3.1-flash-image` |
+| Niedrigste Latenz / günstigste Stufe | `gemini-3.1-flash-lite-image` |
+| Bestes Text-im-Bild | `gemini-3-pro-image` — sonst `gpt-image-2`, siehe `azure-image-api.md` |
+| Motiv, das Gemini verweigert | FLUX.2 (kein Person-Gate) — siehe `azure-image-api.md` |
 
 ---
 
@@ -147,7 +156,7 @@ client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 def generate_image(
     prompt: str,
-    model: str = "gemini-2.5-flash-image",
+    model: str = "gemini-3-pro-image",
     aspect_ratio: str = "16:9",
     image_size: str = "2K",
     output_path: str = "output.png",
@@ -222,7 +231,7 @@ def generate_imagen(
 def edit_image(
     image_path: str,
     edit_prompt: str,
-    model: str = "gemini-2.5-flash-image",
+    model: str = "gemini-3-pro-image",
     output_path: str = "/tmp/edited.png",
 ) -> None:
     with open(image_path, "rb") as f:
@@ -275,7 +284,7 @@ def multi_turn_edit(image_path: str) -> None:
 
     # Round 1
     r1 = client.models.generate_content(
-        model="gemini-2.5-flash-image",
+        model="gemini-3-pro-image",
         contents=contents,
         config=types.GenerateContentConfig(
             response_modalities=["TEXT", "IMAGE"]
@@ -292,7 +301,7 @@ def multi_turn_edit(image_path: str) -> None:
     )
 
     r2 = client.models.generate_content(
-        model="gemini-2.5-flash-image",
+        model="gemini-3-pro-image",
         contents=contents,
         config=types.GenerateContentConfig(
             response_modalities=["TEXT", "IMAGE"]
@@ -314,7 +323,7 @@ def multi_turn_edit(image_path: str) -> None:
 ```bash
 #!/usr/bin/env bash
 GEMINI_API_KEY="${GEMINI_API_KEY:?GEMINI_API_KEY not set}"
-MODEL="gemini-2.5-flash-image"
+MODEL="gemini-3-pro-image"
 OUTPUT="/tmp/generated.png"
 
 RESPONSE=$(curl -s -X POST \
@@ -355,7 +364,7 @@ GEMINI_API_KEY="${GEMINI_API_KEY:?GEMINI_API_KEY not set}"
 INPUT_IMAGE="$1"
 EDIT_PROMPT="${2:-Add snow to this scene}"
 OUTPUT="/tmp/edited.png"
-MODEL="gemini-2.5-flash-image"
+MODEL="gemini-3-pro-image"
 
 # Base64 encode (macOS)
 IMAGE_B64=$(base64 -i "$INPUT_IMAGE")
@@ -445,7 +454,7 @@ def generate_streaming(prompt: str, output_path: str = "/tmp/streamed.png"):
     image_data = b""
 
     for chunk in client.models.generate_content_stream(
-        model="gemini-2.5-flash-image",
+        model="gemini-3-pro-image",
         contents=prompt,
         config=types.GenerateContentConfig(
             response_modalities=["TEXT", "IMAGE"],
@@ -468,7 +477,7 @@ def generate_streaming(prompt: str, output_path: str = "/tmp/streamed.png"):
 
 ```bash
 curl -s -X POST \
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:streamGenerateContent?alt=sse" \
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image:streamGenerateContent?alt=sse" \
   -H "x-goog-api-key: ${GEMINI_API_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -813,10 +822,11 @@ def edit_with_flash31(image_path: str, prompt: str, output_prefix: str = "edited
 - Keep text-in-image under 25 characters
 
 ### Model selection
-- Fast + cheap: `imagen-4.0-fast-generate-001`
-- Best text rendering: `gemini-3-pro-image-preview`
-- Standard production: `gemini-2.5-flash-image`
-- Interactive editing: `gemini-2.5-flash-image` (supports multi-turn)
+- Fast + cheap: `gemini-3.1-flash-lite-image` (Imagen 4 ist deprecated, Abschaltung 2026-08-17)
+- High volume: `gemini-3.1-flash-image`
+- Best text rendering: `gemini-3-pro-image`
+- Standard production: `gemini-3-pro-image`
+- Interactive editing: `gemini-3-pro-image` (supports multi-turn)
 
 ### Error handling
 - Always check for both `inlineData` and `text` in response parts
