@@ -92,7 +92,9 @@ DIR="$(abspath "$DIR")"
 BACKGROUND="$(abspath "$BACKGROUND")"
 ICON="$(abspath "$ICON")"
 
-mkdir -p "$PROFILE_DIR"
+# Only create the target directory for a real install — a --dry-run must leave the
+# filesystem untouched.
+[ "$DRY_RUN" = 0 ] && mkdir -p "$PROFILE_DIR"
 
 export PD_TEMPLATE_FILE="$TEMPLATE_FILE" PD_NAME="$NAME" PD_EMOJI="$EMOJI" PD_COLOR="$COLOR" \
        PD_DIR="$DIR" PD_BACKGROUND="$BACKGROUND" PD_ICON="$ICON" PD_BLEND="$BLEND" \
@@ -104,8 +106,10 @@ import json, os, sys
 E = os.environ.get
 HOME = E("PD_HOME")
 
+# Progress goes to stderr, never stdout: with --dry-run stdout carries the JSON and
+# must stay pipeable (`… --dry-run | python3 -m json.tool`).
 def warn(msg):  print(f"  \033[33m!\033[0m {msg}", file=sys.stderr)
-def ok(msg):    print(f"  \033[32m✓\033[0m {msg}")
+def ok(msg):    print(f"  \033[32m✓\033[0m {msg}", file=sys.stderr)
 
 def srgb(hexstr, alpha=1.0):
     """#RRGGBB -> iTerm2's sRGB component dict."""
