@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
+CONTEXT_MODE_COMMAND="${CONTEXT_MODE_BIN:-context-mode}"
+CONTEXT_MODE_BIN="$(command -v "$CONTEXT_MODE_COMMAND" || true)"
+PROJECT_NAME="$(basename "$ROOT")"
+SOURCE="${CONTEXT_MODE_SOURCE:-${PROJECT_NAME} context}"
+
+if [[ -z "$CONTEXT_MODE_BIN" || ! -x "$CONTEXT_MODE_BIN" ]]; then
+  echo "[context-mode] index failed - executable not found" >&2
+  exit 1
+fi
+
+set +e
+INDEX_OUTPUT="$(
+  "$CONTEXT_MODE_BIN" index "$ROOT" \
+  --project "$ROOT" \
+  --source "$SOURCE" \
+  --max-depth 20 \
+  --max-files 10000 \
+  --ext ".md,.mdx,.rst,.txt,.json,.yaml,.yml,.ts,.tsx,.js,.jsx,.mjs,.py,.pyi,.rs,.go,.sh,.ps1,.java,.scala,.groovy,.hcl,.tf,.tfvars,.tfbackend,.tftpl,.tpl,.toml,.ini,.cfg,.conf,.j2,.mmd,.ipynb,.xml,.properties,.hbs,.css,.scss,.html,.htm,.sql" \
+  --exclude "**/.git/**" \
+  --exclude "**/node_modules/**" \
+  --exclude "**/.terraform/**" \
+  --exclude "**/.venv/**" \
+  --exclude "**/__pycache__/**" \
+  --exclude "**/.pytest_cache/**" \
+  --exclude "**/.mypy_cache/**" \
+  --exclude "**/.gradle/**" \
+  --exclude "**/.idea/**" \
+  --exclude "**/.next/**" \
+  --exclude "**/.cache/**" \
+  --exclude "**/dist/**" \
+  --exclude "**/build/**" \
+  --exclude "**/coverage/**" \
+  --exclude "**/logs/**" \
+  --exclude "**/.env*" \
+  --exclude "**/*credentials*" \
+  --exclude "**/*secrets*" \
+  --exclude "**/*private*" \
+  --exclude "**/*.db" \
+  --exclude "**/*.sqlite*" \
+  --exclude "**/*.pyc" \
+  --exclude "**/*.pkl" \
+  --exclude "**/*.pickle" \
+  --exclude "**/*.csv" \
+  --exclude "**/*.jsonl" \
+  --exclude "**/*.tfplan" \
+  --exclude "**/*.tfstate*" \
+  --exclude "**/*.log" \
+  --exclude "**/*.pem" \
+  --exclude "**/*.key" \
+  --exclude "**/*.p12" \
+  --exclude "**/*.pfx" \
+  --exclude "**/*.zip" \
+  --exclude "**/*.jar" \
+  --exclude "**/*.exe" \
+  --exclude "**/*.png" \
+  --exclude "**/*.jpg" \
+  --exclude "**/*.jpeg" \
+  --exclude "**/*.gif" \
+  --exclude "**/*.ico" \
+  --exclude "**/*.pdf" \
+  --exclude "**/*.docx" \
+  --exclude "**/*.pptx" \
+  --exclude "**/*.xlsx" \
+  --exclude "**/*.ttf" \
+  --exclude "**/*.woff*" 2>&1
+)"
+INDEX_STATUS=$?
+set -e
+
+if (( INDEX_STATUS != 0 )); then
+  ERROR_DETAIL="$(printf '%s\n' "$INDEX_OUTPUT" | sed '/^[[:space:]]*$/d' | tail -n 1)"
+  [[ -n "$ERROR_DETAIL" ]] || ERROR_DETAIL="context-mode exited without a diagnostic"
+  printf '[context-mode] index failed for %s (exit %s): %s\n' "$SOURCE" "$INDEX_STATUS" "$ERROR_DETAIL" >&2
+  exit "$INDEX_STATUS"
+fi
+
+if [[ "$INDEX_OUTPUT" =~ Indexed[[:space:]]+([0-9,]+)[[:space:]]+files[[:space:]]+\(([0-9,]+)[[:space:]]+sections\) ]]; then
+  FILE_COUNT="${BASH_REMATCH[1]}"
+  SECTION_COUNT="${BASH_REMATCH[2]}"
+else
+  printf '[context-mode] index failed for %s: completion counts were not reported\n' "$SOURCE" >&2
+  printf '%s\n' "$INDEX_OUTPUT" | tail -n 5 >&2
+  exit 1
+fi
+
+json_escape() {
+  local value="$1"
+  value="${value//\\/\\\\}"
+  value="${value//\"/\\\"}"
+  value="${value//$'\n'/\\n}"
+  value="${value//$'\r'/\\r}"
+  printf '%s' "$value"
+}
+
+ESCAPED_SOURCE="$(json_escape "$SOURCE")"
+printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"[context-mode] index ready - %s: %s files / %s sections indexed."}}\n' \
+  "$ESCAPED_SOURCE" "$FILE_COUNT" "$SECTION_COUNT"

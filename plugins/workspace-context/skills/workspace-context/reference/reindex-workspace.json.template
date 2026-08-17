@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "bash ./.github/hooks/reindex-workspace.sh",
+        "powershell": ".\\.github\\hooks\\reindex-workspace.ps1",
+        "cwd": ".",
+        "timeoutSec": 300
+      }
+    ]
+  }
+}

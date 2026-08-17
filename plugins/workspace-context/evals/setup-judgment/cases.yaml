@@ -1,0 +1,122 @@
+# Evaluation suite: does the skill classify the root correctly and avoid the
+# failure modes it names itself?
+#
+# WHY NOT A TRIGGERING SUITE. The skill sets `disable-model-invocation: true` — it
+# never fires on its own, only on explicit invocation. Measuring "does it trigger"
+# would measure a config flag, which `tests/` already asserts deterministically.
+# What genuinely varies is the JUDGMENT the skill asks for once invoked, so that is
+# what this suite measures.
+#
+# Regime: DETERMINISTIC. Each task asks for one structured label plus a set of
+# boolean flags — matched programmatically, no judge variance.
+#
+# LOCKED. A failing case is a PLUGIN bug: sharpen SKILL.md, never soften the case.
+# The `note` on each case is the calibration anchor.
+
+# --- Axis 1: single repository vs. multi-repository parent ------------------
+# The skill states it explicitly: "For a single repository, do not describe it as a
+# sibling repository workspace; for a multi-repository parent, state the repository
+# count or scope when known." Getting this wrong produces an AGENTS.md that lies
+# about the shape of the thing it documents.
+
+classification:
+  - id: single-monorepo
+    scenario: >-
+      The root contains one .git directory, a package.json with a workspaces field,
+      and the directories apps/, packages/ and docs/.
+    expect: single-repo
+    note: >-
+      A monorepo is ONE repository with internal packages. The workspaces field is a
+      package-manager concept, not sibling repositories — the tempting wrong answer.
+
+  - id: single-plain
+    scenario: >-
+      The root contains one .git directory, src/, tests/ and a README.
+    expect: single-repo
+    note: Unambiguous baseline. If this one is wrong, nothing else is meaningful.
+
+  - id: parent-siblings
+    scenario: >-
+      The root has no .git of its own. It contains six subdirectories, each with its
+      own .git directory.
+    expect: workspace
+    note: >-
+      The defining shape of a multi-repository parent — no own .git, children have
+      theirs. Repository count is known here (six) and should be stated.
+
+  - id: parent-with-own-git
+    scenario: >-
+      The root has its own .git and also contains four subdirectories that each have
+      a .git of their own; the subdirectories are gitignored by the root.
+    expect: workspace
+    note: >-
+      The realistic meta-repo case: the parent is itself versioned AND hosts siblings.
+      Own .git alone must not decide it — the gitignored children make it a workspace.
+
+  - id: parent-worktrees
+    scenario: >-
+      The root contains three subdirectories; each holds a .bare/ directory and a
+      main/ directory, and their .git is a file rather than a directory.
+    expect: workspace
+    note: >-
+      Worktree layout. `.git` as a FILE is the tell. A check that looks only for .git
+      directories misses this and would classify it as a single repository.
+
+# --- Axis 2: failure modes the skill names about its own output -------------
+# Each expects the model to recognise a proposed AGENTS.md as faulty, and to name
+# which rule it breaks. These come from the skill's own contract, not invented.
+
+rejection:
+  - id: leftover-placeholder
+    artefact: >-
+      A proposed AGENTS.md containing the line: 'Query with ctx_search(queries:
+      ["focused question"], source: "<project-name> context")'.
+    expect: reject
+    reason_key: placeholder
+    note: >-
+      "Replace every <placeholder> before writing the file." A placeholder that
+      survives makes the instruction unusable — agents would query a literal
+      <project-name>.
+
+  - id: child-build-commands
+    artefact: >-
+      A proposed parent AGENTS.md that includes a section "Build: run `mvn verify`
+      in the api module before pushing".
+    expect: reject
+    reason_key: child-specific
+    note: >-
+      "Do not copy child repository build commands … into the parent file." The
+      nearest repository AGENTS.md stays authoritative; duplicating it here creates
+      two sources of truth that drift.
+
+  - id: deletion-claim
+    artefact: >-
+      A proposed AGENTS.md stating "The session-start hook fully reconciles deleted
+      files on every start."
+    expect: reject
+    reason_key: deletion-overclaim
+    note: >-
+      The skill is explicit that the CLI keeps cached results for deleted files and
+      that this claim must not be made. Overclaiming here is worse than silence — it
+      invites trust in a guarantee that does not hold.
+
+  - id: sibling-wording-for-single
+    artefact: >-
+      For a root that is one plain repository, a proposed AGENTS.md opening with
+      "This workspace contains several sibling repositories."
+    expect: reject
+    reason_key: wrong-shape
+    note: Axis 1 failure, surfacing in the written artefact.
+
+  - id: sound-artefact
+    artefact: >-
+      A proposed AGENTS.md for a six-sibling parent that names the repository count,
+      gives a concrete source label, tells agents to prefer ctx_search over grep,
+      names ctx_execute for data-heavy analysis, states the index exclusions and the
+      hook's failure behavior, and contains no placeholders.
+    expect: accept
+    reason_key: none
+    note: >-
+      CLEAN CASE, mandatory per repo convention. Covers every element of the content
+      contract. If this is rejected, the skill has become so restrictive that nothing
+      passes — the failure mode opposite to the four above.
