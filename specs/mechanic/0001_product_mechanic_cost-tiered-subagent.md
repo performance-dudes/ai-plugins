@@ -34,7 +34,7 @@ Routing-Regel: Entscheidung nötig → `general-purpose` (Premium); Code-Verstä
   auf. Ein versions-genauer Pin ist **nur** über das Frontmatter-Feld `model:` mit
   voller Modell-ID möglich (offiziell dokumentiert, akzeptiert dieselben Werte wie
   `--model`). Ein ausgeliefertes Plugin ist der reproduzierbare, teilbare Träger
-  dieses Pins — für Benny **und** Tsveti identisch.
+  dieses Pins — für **jede** Person, die das Plugin installiert, identisch.
 - **Verhaltens-Leitplanke, nicht nur Modellwahl.** Der Wert entsteht erst durch eine
   **glasklare Description** (wann nutzen / wann NICHT) plus die Anweisung, bei
   Urteilsbedarf **zurückzugeben statt zu raten**. Ein falscher mechanischer Rateschuss
