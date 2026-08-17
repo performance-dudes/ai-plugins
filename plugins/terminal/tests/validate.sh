@@ -121,13 +121,13 @@ else
   bad "template could not resolve without --dir"
 fi
 
-note "11. Flag mode + idempotent write (AC-term-4-1)"
+note "11. Flag mode + repeat run stays a single profile (AC-term-4-1)"
 "$INSTALL" --name "Test Profile" --emoji "🧪" --color "#3B7DED" --dir "$TMP" >/dev/null 2>&1
 T="$ITERM_PROFILE_DIR/Test Profile.json"
 [ -f "$T" ] && ok "profile written" || bad "profile not written"
 "$INSTALL" --name "Test Profile" --emoji "🧪" --color "#3B7DED" --dir "$TMP" >/dev/null 2>&1
 COUNT=$(find "$ITERM_PROFILE_DIR" -name '*.json' | wc -l | tr -d ' ')
-[ "$COUNT" = "1" ] && ok "second run overwrote in place (1 file)" || bad "second run created duplicates ($COUNT files)"
+[ "$COUNT" = "1" ] && ok "second run created no duplicate (1 file)" || bad "second run created duplicates ($COUNT files)"
 
 note "12. Colour conversion is exact"
 python3 - "$T" <<'PY' && ok "#3B7DED round-trips exactly" || bad "colour conversion is lossy"
@@ -151,6 +151,34 @@ python3 "$PLUGIN_DIR/evals/scripts/score_triggering.py" --self-test 2>&1 | sed '
 "$PLUGIN_DIR/../terminal/evals/scripts/score_triggering.py" --emit-prompt 2>/dev/null \
   | grep -q "Bound Hosts" && ok "prompt injects the real SKILL.md" \
   || bad "prompt does not contain the skill — harness would measure itself"
+
+note "15. A non-resolvable relative path fails loudly (AC-term-2-4)"
+# Regression: `cd "$(dirname "$p")"` used to fail silently, leaving "/<basename>" —
+# a plausible absolute path pointing at the filesystem root. A typo in --background
+# would have landed in the profile and rendered blank without a word.
+OUT2="$("$INSTALL" --name "Bad Path" --emoji "🧪" --color "#3B7DED" --dir "$TMP" \
+        --background "definitely/missing/dir/bg.jpg" --dry-run 2>&1)"; RC=$?
+if [ "$RC" != 0 ] && printf '%s' "$OUT2" | grep -q "cannot resolve"; then
+  ok "aborts with a message instead of inventing /bg.jpg"
+else
+  bad "non-resolvable path did not abort (rc=$RC)"
+fi
+printf '%s' "$OUT2" | grep -q '"/bg.jpg"' && bad 'wrote the bogus "/bg.jpg" path' || ok "no bogus root path produced"
+
+note "16. An existing, differing profile is never clobbered (AC-term-4-4)"
+P="$ITERM_PROFILE_DIR/Test Profile.json"
+printf 'HAND EDITED\n' > "$P"
+if "$INSTALL" --name "Test Profile" --emoji "🧪" --color "#3B7DED" --dir "$TMP" >/dev/null 2>&1; then
+  bad "overwrote a hand-edited profile without --force"
+else
+  ok "refused to overwrite (exit non-zero)"
+fi
+grep -q 'HAND EDITED' "$P" && ok "hand-edited content survived" || bad "hand-edited content was destroyed"
+"$INSTALL" --name "Test Profile" --emoji "🧪" --color "#3B7DED" --dir "$TMP" --force >/dev/null 2>&1
+grep -q 'HAND EDITED' "$P" && bad "--force did not replace" || ok "--force replaces on request"
+# Unchanged input must stay a quiet no-op, not an error.
+"$INSTALL" --name "Test Profile" --emoji "🧪" --color "#3B7DED" --dir "$TMP" >/dev/null 2>&1 \
+  && ok "identical rerun is a no-op (exit 0)" || bad "identical rerun failed"
 
 printf '\n'
 [ "$fail" = 0 ] && { printf 'terminal: ALL CHECKS PASSED\n'; exit 0; }

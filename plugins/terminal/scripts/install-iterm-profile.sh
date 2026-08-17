@@ -2,8 +2,10 @@
 # Install an iTerm2 Dynamic Profile — from a bundled template or from flags.
 #
 # Resolves every machine-specific path at install time, warns per missing asset
-# instead of writing a broken path (iTerm2 renders those silently, with no image
-# and no error), and is idempotent: rerunning overwrites the profile in place.
+# instead of writing a broken path (iTerm2 renders those silently, with no image and
+# no error), and never clobbers an existing profile that differs from what it would
+# write — rerunning with unchanged input is a no-op, replacing edited work needs
+# --force.
 #
 # Requires: bash, python3 (stdlib only — no pip, no venv).
 
@@ -12,7 +14,7 @@ set -euo pipefail
 PLUGIN_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PROFILE_DIR="${ITERM_PROFILE_DIR:-$HOME/Library/Application Support/iTerm2/DynamicProfiles}"
 
-TEMPLATE="" NAME="" EMOJI="" COLOR="" DIR="" BACKGROUND="" ICON="" BLEND="" DRY_RUN=0
+TEMPLATE="" NAME="" EMOJI="" COLOR="" DIR="" BACKGROUND="" ICON="" BLEND="" DRY_RUN=0 FORCE=0
 
 usage() {
   cat <<'USAGE'
@@ -32,6 +34,8 @@ Options:
   --blend <0..1>      Image/background blend, default 0.098. Above ~0.25 text suffers.
   --list              List bundled templates and exit.
   --dry-run           Print the resulting JSON, write nothing.
+  --force             Replace an existing profile even if it differs (it is otherwise
+                      left untouched, so hand-made edits are never lost).
   -h, --help          This text.
 
 Templates may declare candidate paths for their assets. Missing assets are reported
@@ -61,6 +65,7 @@ while [ $# -gt 0 ]; do
     --blend)      BLEND="$2"; shift 2 ;;
     --list)       list_templates; exit 0 ;;
     --dry-run)    DRY_RUN=1; shift ;;
+    --force)      FORCE=1; shift ;;
     -h|--help)    usage; exit 0 ;;
     *) echo "unknown option: $1" >&2; usage >&2; exit 2 ;;
   esac
@@ -83,10 +88,25 @@ if [ -n "$TEMPLATE" ]; then
 fi
 
 # Expand ~ and make paths absolute — iTerm2 requires absolute, and resolves nothing.
+#
+# The `cd … && pwd` must not fail silently: if the parent directory does not exist,
+# the substitution is empty and what remains is "/<basename>" — a plausible-looking
+# absolute path pointing at the filesystem root. A typo in --background would land in
+# the profile unnoticed and iTerm2 would render it blank without a word.
 abspath() {
   [ -z "$1" ] && return 0
-  local p="${1/#\~/$HOME}"
-  case "$p" in /*) printf '%s' "$p" ;; *) printf '%s' "$(cd "$(dirname "$p")" 2>/dev/null && pwd)/$(basename "$p")" ;; esac
+  local p="${1/#\~/$HOME}" parent
+  case "$p" in
+    /*) printf '%s' "$p" ;;
+    *)
+      parent="$(cd "$(dirname "$p")" 2>/dev/null && pwd)" || parent=""
+      if [ -z "$parent" ]; then
+        echo "error: cannot resolve '$1' — the directory '$(dirname "$p")' does not exist" >&2
+        exit 2
+      fi
+      printf '%s' "$parent/$(basename "$p")"
+      ;;
+  esac
 }
 DIR="$(abspath "$DIR")"
 BACKGROUND="$(abspath "$BACKGROUND")"
@@ -98,7 +118,7 @@ ICON="$(abspath "$ICON")"
 
 export PD_TEMPLATE_FILE="$TEMPLATE_FILE" PD_NAME="$NAME" PD_EMOJI="$EMOJI" PD_COLOR="$COLOR" \
        PD_DIR="$DIR" PD_BACKGROUND="$BACKGROUND" PD_ICON="$ICON" PD_BLEND="$BLEND" \
-       PD_PROFILE_DIR="$PROFILE_DIR" PD_DRY_RUN="$DRY_RUN" PD_HOME="$HOME"
+       PD_PROFILE_DIR="$PROFILE_DIR" PD_DRY_RUN="$DRY_RUN" PD_HOME="$HOME" PD_FORCE="$FORCE"
 
 python3 <<'PYEOF'
 import json, os, sys
@@ -221,10 +241,29 @@ if E("PD_DRY_RUN") == "1":
 
 target = os.path.join(E("PD_PROFILE_DIR"), profile["Name"] + ".json")
 existed = os.path.exists(target)
+
+# Never clobber a profile someone has edited. Idempotence ("rerunning changes
+# nothing") is not the same promise as "your customisations survive" — iTerm2 marks
+# these profiles Rewritable, so hand-tuning them is expected, and a silent overwrite
+# would destroy exactly that work. Identical content is written anyway: that is a
+# genuine no-op and keeps repeat runs quiet.
+if existed and E("PD_FORCE") != "1":
+    current = open(target).read()
+    if current != text:
+        print(f"\nrefusing to overwrite: {target}", file=sys.stderr)
+        print("  It exists and differs from what would be written — possibly edited "
+              "by hand\n  (iTerm2 profiles are Rewritable, so that is a normal thing "
+              "to have done).", file=sys.stderr)
+        print("  Re-run with --force to replace it, or move the file aside first.",
+              file=sys.stderr)
+        sys.exit(3)
+    print(f"\nUnchanged: {target}")
+    sys.exit(0)
+
 with open(target, "w") as fh:
     fh.write(text)
 
-print(f"\n{'Updated' if existed else 'Installed'}: {target}")
+print(f"\n{'Replaced' if existed else 'Installed'}: {target}")
 print("iTerm2 reloads within a second — no restart needed.")
 if hint := meta.get("after_install"):
     print(hint)

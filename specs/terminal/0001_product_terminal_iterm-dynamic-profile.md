@@ -91,6 +91,10 @@ können, ohne dessen Verzeichnisstruktur zu haben.
 - **AC-term-2-3** — Bleibt nach der Auflösung ein `{{…}}`-Token in `Bound Hosts` oder
   `Working Directory` stehen, bricht der Installer mit einer Meldung ab, statt ein
   unbrauchbares Profil zu schreiben.
+- **AC-term-2-4** — Lässt sich ein relativer Pfad nicht auflösen (Elternverzeichnis
+  existiert nicht), bricht der Installer mit Meldung ab. Er darf **nicht** still
+  `/<basename>` erzeugen: das ist ein plausibel aussehender absoluter Pfad auf die
+  Dateisystemwurzel, und iTerm2 rendert ihn kommentarlos ohne Bild.
 
 ### US-term-3 — Fehlende Assets kosten nur das Asset
 
@@ -113,6 +117,12 @@ Als jemand ohne Zugang zum privaten Asset-Repo will ich das Profil trotzdem nutz
 - **AC-term-4-2** — `--dry-run` schreibt nichts und gibt das resultierende JSON aus.
 - **AC-term-4-3** — Das erzeugte JSON ist valide und von iTerm2 ladbar (Top-Level
   `Profiles`-Array).
+- **AC-term-4-4** — Existiert am Ziel bereits ein Profil, dessen Inhalt vom zu
+  schreibenden **abweicht**, wird es **nicht** überschrieben; der Installer bricht mit
+  Hinweis ab, `--force` erzwingt das Ersetzen. Bei identischem Inhalt bleibt der Lauf
+  ein stiller No-op. Begründung: iTerm2 markiert diese Profile `Rewritable`, Handarbeit
+  daran ist also vorgesehen — Idempotenz ist nicht dasselbe Versprechen wie
+  „deine Anpassungen überleben".
 
 ### US-term-5 — Das Wissen ist auffindbar, wenn es gebraucht wird
 

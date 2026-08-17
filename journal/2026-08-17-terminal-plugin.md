@@ -92,6 +92,32 @@ gewandert. Die Konsequenz ist im Workspace-Repo gelandet: die Regel „Sub-Repos
 von hier aus verändern" trägt jetzt das Warum und den einen Befehl, der sie
 entschärft (`cat <sub-repo>/CLAUDE.md`, bevor dort geschrieben wird).
 
+## Nachtrag — was das Review gefunden hat
+
+Ein Tandem-Review (zwei unabhängige Reviewer) hat zwei weitere Defekte gefunden, beide
+im Installer, beide von meiner Suite nicht abgedeckt:
+
+- **`abspath()` scheiterte still.** `cd "$(dirname "$p")"` bei nicht existierendem
+  Elternverzeichnis lieferte eine leere Substitution — übrig blieb `/<basename>`. Ein
+  Tippfehler im `--background`-Pfad wäre als plausibel aussehender absoluter Pfad auf
+  die Dateisystemwurzel im Profil gelandet, und iTerm2 hätte ihn kommentarlos ohne Bild
+  gerendert. Jetzt: Abbruch mit Meldung (AC-term-2-4, §15).
+- **Ein bestehendes Profil wurde bedingungslos überschrieben.** `existed` steuerte nur
+  den Text der Erfolgsmeldung, geschrieben wurde immer. Wer sein Profil angepasst hatte,
+  verlor die Arbeit wortlos. Jetzt bricht der Installer bei abweichendem Inhalt ab,
+  `--force` erzwingt (AC-term-4-4, §16).
+
+Der zweite ist der lehrreichere, weil ich ihn selbst plausibel wegargumentiert hatte:
+mein Test prüfte **Idempotenz** — „ein zweiter Lauf erzeugt keine zweite Datei" — und
+war grün. Das ist aber eine andere Zusage als „deine Anpassungen überleben". Idempotenz
+schützt vor Duplikaten, nicht vor Datenverlust. Ein grüner Test zur benachbarten Frage
+hat die eigentliche Lücke verdeckt.
+
+Dazu ein dritter Punkt, der keine Codefrage war: mein Freigabe-Kommentar behauptete, die
+Paraphrase der privaten README sei aus dem Template entfernt. War sie nicht ganz — eine
+Zeile stand noch. Wer eine Bereinigung meldet, sollte sie nachzählen statt sie zu
+erinnern.
+
 ## Follow-ups
 
 - **E2E-Lücke:** dass `Bound Hosts` korrekt im Profil steht, ist statisch geprüft;

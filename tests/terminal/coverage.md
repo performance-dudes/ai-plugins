@@ -18,6 +18,7 @@ Suite: [`plugins/terminal/tests/validate.sh`](../../plugins/terminal/tests/valid
 | AC-term-2-1 keine Home-Pfade im Template | `templates/*.json` (`{{HOME}}`) |
 | AC-term-2-2 `{{HOME}}` überall aufgelöst | `install-iterm-profile.sh` → `subst()` |
 | AC-term-2-3 Abbruch bei Rest-Token | `install-iterm-profile.sh` (`sys.exit` auf `{{`) |
+| AC-term-2-4 Pfad-Auflösung bricht laut ab | `install-iterm-profile.sh` → `abspath()` |
 | AC-term-3-1 Kandidatenliste | `install-iterm-profile.sh` → `first_existing()`, `_meta.assets` |
 | AC-term-3-2 Feld weglassen + Warnung | `install-iterm-profile.sh` (`profile.pop` + `warn`) |
 | AC-term-3-3 Begleitfelder mitentfernen | `install-iterm-profile.sh` → `also_remove` |
@@ -25,6 +26,7 @@ Suite: [`plugins/terminal/tests/validate.sh`](../../plugins/terminal/tests/valid
 | AC-term-4-1 idempotent | `install-iterm-profile.sh` (Schreiben nach `<Name>.json`) |
 | AC-term-4-2 `--dry-run` schreibt nichts | `install-iterm-profile.sh` (`mkdir` erst bei echtem Lauf) |
 | AC-term-4-3 valides Profil-JSON | `install-iterm-profile.sh` (`json.dumps`) |
+| AC-term-4-4 kein Clobbering | `install-iterm-profile.sh` (Inhaltsvergleich + `--force`) |
 | AC-term-5-1/2 Triggering | `skills/iterm-dynamic-profile/SKILL.md` (`description`) |
 | AC-term-5-3 stumme Fehlerbilder benannt | `skills/…/SKILL.md` („Verifying"-Tabelle) |
 
@@ -46,6 +48,8 @@ Suite: [`plugins/terminal/tests/validate.sh`](../../plugins/terminal/tests/valid
 | AC-term-4-1 | §11 zweiter Lauf → weiterhin genau 1 Datei | script-run |
 | AC-term-4-2 | §7 Dry-Run liefert JSON **und** schreibt nichts | script-run |
 | AC-term-4-3 | §7/§8 `python3 -m json.tool`, `Profiles`-Array | config-valid |
+| AC-term-2-4 | §15 nicht auflösbarer Pfad → Abbruch, kein `/bg.jpg` | script-run |
+| AC-term-4-4 | §16 handeditiertes Profil überlebt; `--force` ersetzt; gleicher Inhalt = No-op | script-run |
 | AC-term-5-1/2 | `evals/triggering/cases.yaml` (10 positive, 6 near-miss/clean) | eval |
 | AC-term-5-3 | — **Lücke**, siehe unten | — |
 
@@ -53,7 +57,7 @@ Suite: [`plugins/terminal/tests/validate.sh`](../../plugins/terminal/tests/valid
 
 | Komponente | abgedeckt durch |
 |---|---|
-| `install-iterm-profile.sh` | §3 (`bash -n`), §7–§12 (Verhalten in beiden Modi, beide Degradationspfade, Farbumrechnung) |
+| `install-iterm-profile.sh` | §3 (`bash -n`), §7–§12 (Verhalten in beiden Modi, beide Degradationspfade, Farbumrechnung), §15–§16 (Pfad-Auflösung, Clobber-Schutz) |
 | `templates/performance-dudes.json` | §3, §5, §6, §7–§9 |
 | `skills/…/SKILL.md` | §4 (Frontmatter), §14 (wird real in den Eval-Prompt injiziert) |
 | `commands/iterm-profile.md` | §2 (Existenz) |
