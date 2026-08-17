@@ -1,16 +1,15 @@
 {
   "_meta": {
-    "description": "Performance Dudes — checkered flag badge, brand orange, pit-lane wallpaper.",
+    "description": "Performance Dudes — checkered flag badge, brand orange, speed-lines wallpaper.",
     "assets": {
       "background": {
         "field": "Background Image Location",
         "candidates": [
           "{{HOME}}/Developer/performance-dudes/brand/backgrounds/teams/teams-bg-speed-lines.jpg",
           "{{HOME}}/Developer/brand/backgrounds/teams/teams-bg-speed-lines.jpg",
-          "{{HOME}}/Developer/performance-dudes/brand/hero-images/hero-pit-lane.png",
           "{{HOME}}/Developer/performance-dudes/website/public/og-image.jpg"
         ],
-        "missing_hint": "Preferred source: performance-dudes/brand (private) -> backgrounds/teams/. Clone it into the workspace and rerun. The last candidate falls back to the public website repo; without any of them the profile still installs, just without a wallpaper."
+        "missing_hint": "Preferred source: the private brand repo. Clone it into the workspace and rerun. The last candidate falls back to the public website repo; without any of them the profile still installs, just without a wallpaper."
       },
       "icon": {
         "field": "Custom Icon Path",
@@ -23,7 +22,7 @@
         "missing_hint": "Source: performance-dudes/website (PUBLIC) -> public/icons/. Everyone can clone that one, so a missing icon here usually just means the repo is not in the workspace yet."
       }
     },
-    "after_install": "Wallpaper variants live in performance-dudes/brand under backgrounds/teams/: speed-lines (subtle, the default here), pit-lane (strongest recognition), garage (technical). Their README documents when to use which — they are the same motifs used as video-call backgrounds."
+    "after_install": "Further wallpaper variants live in the private brand repo; its README documents when to use which. They are the same motifs used as video-call backgrounds — the one installed here is the calmest, which is what a surface under scrolling text needs."
   },
   "Profiles": [
     {
