@@ -6,17 +6,34 @@
 # → "Require status checks" den Check `merge-gate` als required markieren (Admin-
 # Aktion). Der lokale Hook im Plugin ist nur schnelles Feedback.
 #
-# Trigger auf pull_request_review, damit ein nachträgliches Approval den Check
-# erneut auslöst (Approval überschreibt das Gate → Check wird grün).
+# TRIGGER — das Gate kennt drei Freigabewege, jeder braucht seinen eigenen:
+#
+#   pull_request_review   ein Approval überschreibt das Gate.
+#   pull_request: edited  der Marker [merge-gate: ok] steht im PR-Body.
+#   issue_comment         der Marker steht in einem Kommentar.
+#
+# Der dritte war lange nicht verdrahtet, mit der Folge, dass ein korrekt gesetzter
+# Marker das Gate NICHT grün machte: der Check lief nach dem Setzen schlicht nie
+# wieder. Das sah aus wie ein unerfüllbares Gate und war ein fehlender Trigger.
+#
+# issue_comment lässt sich dabei nicht einfach als vierter Auslöser desselben Jobs
+# anhängen: ein solcher Lauf hat keinen PR-Kontext, checkt den Default-Branch aus
+# und sein Check-Run landet auf dessen SHA — er taucht in der PR-Checkliste gar
+# nicht auf. Deshalb stößt der Kommentar-Pfad den ECHTEN Lauf neu an, statt ein
+# zweites, unsichtbares Ergebnis zu erzeugen.
 name: merge-gate
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, edited]
   pull_request_review:
     types: [submitted, dismissed]
+  issue_comment:
+    types: [created, edited]
 
 jobs:
   merge-gate:
+    # Der eigentliche Check — nur in Events mit PR-Kontext.
+    if: github.event_name != 'issue_comment'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,3 +42,36 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: node .github/merge-gate/check.mjs
+
+  rerun-on-marker:
+    # Ein Kommentar auf einem PR kann den Marker tragen. Statt hier selbst zu
+    # entscheiden (das Ergebnis wäre am falschen SHA und für die Branch-Protection
+    # unsichtbar), wird der letzte merge-gate-Lauf des PR-Heads neu gestartet — der
+    # läuft im richtigen Kontext und aktualisiert den sichtbaren Check.
+    if: github.event_name == 'issue_comment' && github.event.issue.pull_request
+    runs-on: ubuntu-latest
+    steps:
+      - name: Re-run merge-gate for this PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          # Nur reagieren, wenn der Kommentar den Marker auf einer eigenen Zeile trägt.
+          # Sonst würde jeder Wortbeitrag einen CI-Lauf auslösen.
+          BODY=$(gh api "repos/$REPO/issues/comments/${{ github.event.comment.id }}" -q .body)
+          if ! printf '%s' "$BODY" | grep -qE '^[[:space:]]*\[merge-gate:[[:space:]]*ok\][[:space:]]*$'; then
+            echo "Kommentar trägt keinen Freigabe-Marker — nichts zu tun."
+            exit 0
+          fi
+          HEAD_SHA=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json headRefOid -q .headRefOid)
+          RUN_ID=$(gh api "repos/$REPO/actions/workflows/merge-gate.yml/runs?head_sha=$HEAD_SHA&per_page=1" \
+                     -q '.workflow_runs[0].id // empty')
+          if [ -z "$RUN_ID" ]; then
+            echo "::warning::Kein merge-gate-Lauf für $HEAD_SHA gefunden — bitte den Check von Hand neu starten."
+            exit 0
+          fi
+          echo "Starte merge-gate-Lauf $RUN_ID für $HEAD_SHA neu."
+          gh api -X POST "repos/$REPO/actions/runs/$RUN_ID/rerun-failed-jobs" \
+            || gh api -X POST "repos/$REPO/actions/runs/$RUN_ID/rerun"

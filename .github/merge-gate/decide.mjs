@@ -27,11 +27,45 @@ export function filesOf(pr) {
   return (pr?.files || []).map((f) => (typeof f === "string" ? f : f.path)).filter(Boolean);
 }
 
-export function markerInPr(pr) {
+// DER VERTRAG: Der Marker zählt nur als **letzte nicht-leere Zeile** eines Beitrags
+// (Body, Kommentar oder Review — jeder für sich). Übernommen aus der Fassung in
+// ai-plugins-internal, wo sie aus einem realen Vorfall stammt: ein Body mit dem
+// Marker in einem Codeblock plus dem Satz „ich habe noch KEINEN Cold-Review
+// gemacht" lieferte hier allow=true. Diese Datei trug bis dahin die schwächere
+// Variante (Treffer irgendwo im Text), womit sich dieselbe Aktion je nach Repo
+// verschieden verhielt.
+//
+// WARUM NICHT Codeblöcke erkennen: dort bereits versucht und verworfen — es lief
+// auf ein Wettrüsten hinaus (Inline-Zitat, ```, ~~~, verschachtelte ````, eingerückte
+// Blöcke, HTML-Kommentare) und erzeugte falsche Blocks auf legitimem Input. Eine
+// Heuristik, die echte Freigaben verwirft, ist schlimmer als eine, die ein Zitat
+// durchlässt.
+function letzteNichtLeereZeile(text) {
+  const zeilen = String(text).split(/\r?\n/);
+  for (let i = zeilen.length - 1; i >= 0; i--) {
+    if (zeilen[i].trim() !== "") return zeilen[i];
+  }
+  return "";
+}
+
+// Teile des PR, in denen ein Marker stehen darf — je Beitrag einzeln bewertet.
+function markerParts(pr) {
   const parts = [pr?.body || ""];
   for (const c of pr?.comments || []) parts.push(c?.body || "");
   for (const r of pr?.reviews || []) parts.push(r?.body || "");
-  return MARKER_RE.test(parts.join("\n"));
+  return parts;
+}
+
+export function markerInPr(pr) {
+  return markerParts(pr).some((t) => MARKER_RE.test(letzteNichtLeereZeile(t)));
+}
+
+// Steht der Marker zwar irgendwo, aber nicht an der geforderten Stelle? Das ist der
+// häufigste Fall und war bislang von "gar kein Marker" nicht unterscheidbar — die
+// Meldung verlangte dann, etwas zu setzen, das sichtbar schon dastand.
+export function markerMisplaced(pr) {
+  if (markerInPr(pr)) return false;
+  return markerParts(pr).some((t) => MARKER_RE.test(t));
 }
 
 export function approvalInPr(pr) {
@@ -41,10 +75,20 @@ export function approvalInPr(pr) {
 }
 
 // Kernentscheidung. Eingaben sind bereits extrahiert (testbar ohne gh).
-export function decide({ files, hasMarker, hasApproval }) {
+export function decide({ files, hasMarker, hasApproval, misplaced }) {
   if (hasApproval) return { allow: true, reason: "menschliches Approval überschreibt das Gate" };
   if (!requiresMarker(files)) return { allow: true, reason: "kein Produkt-Touch (docs/specs/journal/…) — Gate nicht einschlägig" };
   if (hasMarker) return { allow: true, reason: "Freigabe-Marker [merge-gate: ok] vorhanden" };
+  if (misplaced) {
+    return {
+      allow: false,
+      misplaced: true,
+      reason:
+        "Freigabe-Marker gefunden, aber nicht an der geforderten Stelle: er muss die " +
+        "LETZTE nicht-leere Zeile seines Beitrags sein (Body, Kommentar oder Review). " +
+        "Steht Text darunter, zählt er nicht.",
+    };
+  }
   return {
     allow: false,
     reason:
@@ -54,5 +98,10 @@ export function decide({ files, hasMarker, hasApproval }) {
 
 // Bequemer Einstieg ab dem rohen PR-Objekt.
 export function decidePr(pr) {
-  return decide({ files: filesOf(pr), hasMarker: markerInPr(pr), hasApproval: approvalInPr(pr) });
+  return decide({
+    files: filesOf(pr),
+    hasMarker: markerInPr(pr),
+    hasApproval: approvalInPr(pr),
+    misplaced: markerMisplaced(pr),
+  });
 }
