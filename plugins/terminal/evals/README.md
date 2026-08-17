@@ -48,4 +48,4 @@ sähe ein abgeschnittener Lauf wie ein schlechter Skill aus.
 **Ein Trial ist eine Anekdote.** Triggering ist stochastisch; für eine belastbare
 Aussage mehrere Trials fahren und mean±σ berichten, für Verlässlichkeitsaussagen
 pass^k. Der Scorer bewertet einen Lauf — die Aggregation über N Läufe ist bewusst
-nicht eingebaut, dafür gibt es die volle Harness in `plugin-eval@ai-plugins-internal`.
+nicht eingebaut — dafür gibt es eine dedizierte, generische Eval-Harness.

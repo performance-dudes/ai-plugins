@@ -66,10 +66,9 @@ Mensch die Ausgabe gelesen hat.
 - **Akzentfarbe `#EA580C`** (Brand-Orange) statt des gewachsenen `#E43B2E`. Letzteres
   war in keinem Repo belegt — eine Abweichung, die im Template zementiert worden
   wäre.
-- **Wallpaper `teams-bg-speed-lines.jpg`**: dasselbe Motiv, das als Teams-Hintergrund
-  dient. Laut dem README in `brand/backgrounds/teams/` die ruhigste der drei
-  Varianten — für eine Fläche unter laufendem Text die richtige Wahl. Der Skill
-  verweist auf die anderen beiden.
+- **Wallpaper aus dem privaten Brand-Repo**, referenziert statt kopiert. Gewählt wurde
+  die ruhigste der dort angebotenen Varianten — eine Fläche unter laufendem Text muss
+  zurücktreten.
 - **Deterministische Eval statt Judge.** Der Output je Task ist ein Label, also wird
   gematcht. Ein Judge hätte hier nur Varianz addiert.
 - **Keine Bild-Assets im Plugin.** Sie würden dupliziert und hingen am versionierten

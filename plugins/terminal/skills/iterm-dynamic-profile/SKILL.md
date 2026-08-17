@@ -129,8 +129,11 @@ teammate with a working profile minus the wallpaper is a success; a teammate sta
 at an unexplained plain terminal is a support ticket.
 
 The bundled `scripts/install-iterm-profile.sh` does both. It resolves every path,
-warns per missing asset, and is idempotent — rerunning it overwrites the profile in
-place rather than accumulating duplicates.
+warns per missing asset, and never clobbers an existing profile: rerunning with
+unchanged input is a quiet no-op, and a profile that differs from what would be
+written is left alone until you pass `--force`. That matters because iTerm2 marks
+these profiles `Rewritable` — editing them by hand is expected, so a silent overwrite
+would destroy exactly that work.
 
 ```bash
 # from a bundled template

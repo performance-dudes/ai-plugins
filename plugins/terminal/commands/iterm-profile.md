@@ -31,5 +31,7 @@ Then:
    on rather than reporting plain success — a profile without its wallpaper is a
    partial result, and iTerm2 will not say so on its own.
 
-An existing profile of the same name is overwritten in place. If the user already
-has a hand-made profile for this project, say so and confirm before replacing it.
+An existing profile of the same name is **not** overwritten when its content differs —
+the installer stops and asks for `--force`. Do not reach for that flag on the user's
+behalf: show them what exists, and let them decide whether to replace it. An identical
+rerun is a no-op and needs no confirmation.

@@ -41,6 +41,8 @@ scripts/install-iterm-profile.sh \
 ```
 
 `--dry-run` prints the JSON without writing. `--list` shows bundled templates.
+`--force` replaces an existing profile whose content differs — without it, the
+installer stops rather than overwrite work you may have done by hand.
 iTerm2 picks the file up within a second; no restart.
 
 ## Why an installer instead of a JSON file to copy

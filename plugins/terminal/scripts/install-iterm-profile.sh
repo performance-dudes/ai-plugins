@@ -101,7 +101,13 @@ abspath() {
     *)
       parent="$(cd "$(dirname "$p")" 2>/dev/null && pwd)" || parent=""
       if [ -z "$parent" ]; then
-        echo "error: cannot resolve '$1' — the directory '$(dirname "$p")' does not exist" >&2
+        # Distinguish the two reasons `cd` can fail — "does not exist" would be a
+        # misleading diagnosis for a directory that is merely unreadable.
+        if [ -d "$(dirname "$p")" ]; then
+          echo "error: cannot resolve '$1' — no permission to enter '$(dirname "$p")'" >&2
+        else
+          echo "error: cannot resolve '$1' — the directory '$(dirname "$p")' does not exist" >&2
+        fi
         exit 2
       fi
       printf '%s' "$parent/$(basename "$p")"
@@ -257,7 +263,8 @@ if existed and E("PD_FORCE") != "1":
         print("  Re-run with --force to replace it, or move the file aside first.",
               file=sys.stderr)
         sys.exit(3)
-    print(f"\nUnchanged: {target}")
+    # stderr, so a no-op leaves stdout empty and stays scriptable.
+    print(f"\nUnchanged: {target}", file=sys.stderr)
     sys.exit(0)
 
 with open(target, "w") as fh:
