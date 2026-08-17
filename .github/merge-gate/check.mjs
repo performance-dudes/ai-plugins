@@ -32,9 +32,28 @@ try {
 const v = decidePr(pr);
 console.log(`merge-gate: ${v.allow ? "PASS" : "FAIL"} — ${v.reason}`);
 if (!v.allow) {
+  // Die Meldung muss die VERLETZTE Bedingung nennen, nicht nur den Sollzustand.
+  // Vorher stand hier für jeden Fehlerfall dieselbe Zeile — auch dann, wenn der
+  // Marker sichtbar im PR stand und bloß an der falschen Stelle. Wer das las,
+  // suchte am falschen Ende.
+  if (v.misplaced) {
+    console.error(
+      "→ Der Marker steht im PR, zählt aber nicht: er muss die LETZTE nicht-leere\n" +
+        "  Zeile seines Beitrags sein. Begründung gehört DARÜBER, nicht darunter.\n" +
+        "  Als eigener, kurzer Folgekommentar mit dem Marker am Ende ist es am\n" +
+        "  einfachsten. (Diese Regel verhindert, dass ein zitierter oder in einem\n" +
+        "  Codeblock dokumentierter Marker versehentlich freigibt.)",
+    );
+  } else {
+    console.error(
+      "→ Entweder den Cold-Review mit `[merge-gate: ok]` in den PR schreiben — als\n" +
+        "  letzte nicht-leere Zeile eines Kommentars oder Reviews — oder ein\n" +
+        "  menschliches Approval einholen (überschreibt das Gate).",
+    );
+  }
   console.error(
-    "→ Entweder den Cold-Review mit `[merge-gate: ok]` in den PR schreiben, " +
-      "oder ein menschliches Approval einholen (überschreibt das Gate).",
+    "  Hinweis: ein nachträglich gesetzter Marker löst den Check nur neu aus, wenn\n" +
+      "  der issue_comment-Trigger im Workflow verdrahtet ist; sonst von Hand neu starten.",
   );
 }
 process.exit(v.allow ? 0 : 1);

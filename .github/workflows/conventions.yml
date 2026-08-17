@@ -23,5 +23,15 @@ jobs:
         env:
           BASE_REF: origin/${{ github.base_ref }}
         run: |
-          git fetch origin "${{ github.base_ref }}" --depth=0 || true
+          # actions/checkout holt mit fetch-depth: 0 bereits die volle Historie;
+          # dieser fetch stellt nur sicher, dass origin/<base> als Ref existiert.
+          # "--depth=0" war ungültig ("fatal: depth 0 is not a positive number") und
+          # das "|| true" schluckte den Abbruch — der Check lief danach gegen eine
+          # womöglich unvollständige Historie weiter und konnte grün melden, ohne
+          # den echten Diff gesehen zu haben. Fail-closed statt still weiter.
+          git fetch origin "${{ github.base_ref }}"
+          if ! git rev-parse --verify "origin/${{ github.base_ref }}" >/dev/null 2>&1; then
+            echo "::error::origin/${{ github.base_ref }} ist nicht auflösbar — der Diff wäre unvollständig, Abbruch statt Falschmeldung"
+            exit 1
+          fi
           bash tests/spec-touch-check.sh
