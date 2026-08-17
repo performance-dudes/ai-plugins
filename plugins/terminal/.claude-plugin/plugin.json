@@ -1,0 +1,9 @@
+{
+  "name": "terminal",
+  "description": "Per-project terminal identity for iTerm2 — a Dynamic Profile that switches automatically when you enter the project directory, showing a wallpaper, an accent color shared by tab and cursor, and a translucent badge in the top-right corner that renders the live Claude Code session name. Ships the recipe as a skill, an idempotent installer that resolves machine-specific asset paths and degrades loudly instead of rendering a silently blank background, and a worked template. Command: /iterm-profile",
+  "version": "0.1.0",
+  "author": {
+    "name": "Performance Dudes"
+  },
+  "keywords": ["iterm2", "terminal", "dynamic-profile", "badge", "wallpaper", "theming", "session-name", "workspace"]
+}
