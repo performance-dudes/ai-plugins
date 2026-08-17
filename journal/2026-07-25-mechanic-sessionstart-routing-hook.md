@@ -5,7 +5,7 @@ Routing-Kaskade als `additionalContext`. Version 0.4.0 → 0.5.0.
 
 ## Motivation — die Regel war nie im Context
 
-Beim Vergleich mit einem OpenCode-Harness (`opencode-team-harness`, TeamBank) fiel eine
+Beim Vergleich mit einem OpenCode-Team-Harness aus einem anderen Repository fiel eine
 strukturelle Lücke auf. OpenCode lädt über `instructions: ["…/AGENTS.md"]` bei **jedem**
 Start eine Regeldatei ins Modell. Claude Code hat dafür kein Plugin-Äquivalent: ins
 Modell kommt von einem Agent **nur** das Frontmatter-Feld `description:`.

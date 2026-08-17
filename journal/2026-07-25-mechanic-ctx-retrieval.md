@@ -22,9 +22,9 @@ Die Karte bleibt bewusst frei davon: sie zeigt auf die Agenten, die Agenten kenn
 Tools selbst. Ein Test prüft das jetzt als Gegenprobe (Karte darf `ctx_` nicht
 erwähnen) — sonst wächst sie gegen ihr Zeichenbudget (AC-4-8).
 
-Bedingt formuliert, weil `context-mode` project-scoped installiert sein kann: hier
-z. B. auf `/Users/nante/Developer/performance-dudes` gepinnt, in einer Session
-darüber hinaus gar nicht exponiert. Ohne die Tools muss der Agent normal
+Bedingt formuliert, weil `context-mode` project-scoped installiert sein kann: etwa
+auf ein einzelnes Workspace-Verzeichnis gepinnt, in einer Session darüber hinaus gar
+nicht exponiert. Ohne die Tools muss der Agent normal
 weiterarbeiten.
 
 `errand` gewinnt am meisten: größte Batches (900-Doc-Scans) auf dem kleinsten Fenster

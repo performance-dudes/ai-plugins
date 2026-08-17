@@ -30,10 +30,10 @@ externally published content — text and UI.
   (components, layout, motion, microcopy); the persuasion/PLG substance is *not*
   duplicated here but delegated by cross-link to the `conversion` skill (sales
   plugin, internal). Keeps sales psychology out of the public repo.
-- **No private-home cross-links.** Verified the plugin references no skills from
-  Benny's private `~/.claude/skills/` (benjamin-linnik, semantic-anchors) — those
-  would be dead links for everyone else. semantic-anchors was used only as a
-  build-time compaction tool, never linked in the output.
+- **No private-home cross-links.** Verified the plugin references no skills from a
+  maintainer's private `~/.claude/skills/` — those would be dead links for everyone
+  else. One such skill was used only as a build-time compaction tool, never linked
+  in the output.
 
 ## Review
 
