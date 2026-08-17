@@ -1,0 +1,105 @@
+# Evaluation suite: does the iterm-dynamic-profile skill fire when it should?
+#
+# Regime: DETERMINISTIC. The output under test is STRUCTURED — one label per case
+# ("fires" / "does not fire"), so a judge would only add variance (SPEC-terminal §7,
+# ai-plugins CLAUDE.md "Regime pro Suite wählen").
+#
+# LOCKED. A failing case is a PLUGIN bug — fix the skill description, never the case.
+# Each `note` is the calibration anchor: it states WHY the expectation is what it is,
+# so two reviewers would reach the same pass/fail verdict.
+#
+# Diversity is deliberate: German and English, explicit and implicit phrasing,
+# slash-command style and paraphrase. The near-miss family exists to measure
+# PRECISION — a skill that fires on everything terminal-shaped is useless.
+
+expected_fires:
+  - id: de-explicit-profile
+    prompt: "Ich will ein iTerm-Profil, das automatisch umschaltet, wenn ich ins Projekt wechsle."
+    note: >-
+      Names the mechanism (automatic switch on directory change) — that is Bound Hosts,
+      the core of the skill.
+
+  - id: en-explicit-profile
+    prompt: "Set up a per-project iTerm2 dynamic profile for this repo."
+    note: Names the artefact by its exact term.
+
+  - id: de-badge-session
+    prompt: "Kann mein Terminal oben rechts den Namen der Claude-Session anzeigen?"
+    note: >-
+      The badge with \(session.name) is exactly this. Implicit — the word "badge"
+      never appears, so this measures understanding rather than keyword matching.
+
+  - id: en-badge-session
+    prompt: "I want the session name displayed on the terminal background."
+    note: Same capability, English, different wording.
+
+  - id: de-wallpaper
+    prompt: "Wie kriege ich ein Hintergrundbild ins Terminal, ohne dass der Text unlesbar wird?"
+    note: >-
+      Background image plus the Blend trade-off — both are covered explicitly by the
+      skill ("Choosing a background that does not hurt").
+
+  - id: en-per-project-colour
+    prompt: "Each of my projects should have its own terminal colour so I can tell them apart."
+    note: >-
+      Accent colour per project, tab + badge. Describes the goal, not the mechanism —
+      the skill has to bridge that gap.
+
+  - id: de-troubleshoot-no-switch
+    prompt: "Mein iTerm-Profil wechselt nicht von selbst, wenn ich in den Ordner gehe. Woran liegt das?"
+    note: >-
+      A failure mode listed in the skill's table (Bound Hosts missing / path not
+      absolute / no shell integration).
+
+  - id: en-troubleshoot-literal-badge
+    prompt: 'My iTerm badge literally shows \(session.name) instead of the name.'
+    note: >-
+      The doubled-backslash escaping trap. Highly specific; the skill names it
+      explicitly and nothing else in the marketplace does.
+
+  - id: en-ship-to-team
+    prompt: "How do I share my terminal setup with my team without hardcoding my home directory?"
+    note: >-
+      The "Shipping a profile to other people" section — absolute paths, resolution at
+      install time. Phrased as a distribution problem, not a theming one.
+
+  - id: de-slash-style
+    prompt: "/iterm-profile"
+    note: The command itself must reach the skill.
+
+expected_does_not_fire:
+  - id: near-statusline
+    prompt: "Ich will eine Statuszeile in Claude Code, die das Modell und die Kosten zeigt."
+    note: >-
+      NEAR MISS. Also terminal-adjacent and also about visible session info, but it is
+      the statusLine setting — a different plugin (cockpit ships one). Firing here would
+      send the user down the wrong path.
+
+  - id: near-shell-prompt
+    prompt: "Wie mache ich meinen zsh-Prompt bunt und zeige den Git-Branch an?"
+    note: >-
+      NEAR MISS. Prompt customisation is the shell (PS1/starship), not the terminal
+      emulator's profile. Classic confusion; the skill must not claim it.
+
+  - id: near-other-terminal
+    prompt: "Can you set up a per-project background image in Ghostty?"
+    note: >-
+      NEAR MISS. Same intent, wrong emulator. SPEC-terminal §3 declares other terminals
+      an explicit non-goal — firing would produce confident nonsense about a config
+      format the skill does not know.
+
+  - id: near-editor-theme
+    prompt: "Change the colour scheme in my editor to solarized dark."
+    note: NEAR MISS. Colours, but an editor theme — no overlap with iTerm2 profiles.
+
+  - id: near-tmux
+    prompt: "How do I rename a tmux window automatically per directory?"
+    note: >-
+      NEAR MISS. Auto-naming per directory sounds like Bound Hosts, but tmux is a
+      multiplexer inside the terminal. Sharp precision anchor.
+
+  - id: clean-unrelated
+    prompt: "Write a bash script that renames all .jpeg files to .jpg."
+    note: >-
+      CLEAN CASE (mandatory per repo convention). Fully unrelated; if this fires, the
+      skill description is far too broad.

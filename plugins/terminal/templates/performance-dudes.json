@@ -1,0 +1,97 @@
+{
+  "_meta": {
+    "description": "Performance Dudes — checkered flag badge, brand orange, speed-lines wallpaper.",
+    "assets": {
+      "background": {
+        "field": "Background Image Location",
+        "candidates": [
+          "{{HOME}}/Developer/performance-dudes/brand/backgrounds/teams/teams-bg-speed-lines.jpg",
+          "{{HOME}}/Developer/brand/backgrounds/teams/teams-bg-speed-lines.jpg",
+          "{{HOME}}/Developer/performance-dudes/website/public/og-image.jpg"
+        ],
+        "missing_hint": "Preferred source: the private brand repo. Clone it into the workspace and rerun. The last candidate falls back to the public website repo; without any of them the profile still installs, just without a wallpaper."
+      },
+      "icon": {
+        "field": "Custom Icon Path",
+        "candidates": [
+          "{{HOME}}/Developer/performance-dudes/website/public/icons/icon-192.png",
+          "{{HOME}}/Developer/performance-dudes/website/public/apple-touch-icon.png",
+          "{{HOME}}/Developer/performance-dudes/website/public/icons/icon-512.png"
+        ],
+        "also_remove": ["Icon"],
+        "missing_hint": "Source: performance-dudes/website (PUBLIC) -> public/icons/. Everyone can clone that one, so a missing icon here usually just means the repo is not in the workspace yet."
+      }
+    },
+    "after_install": "Further wallpaper variants live in the private brand repo, documented there. Pick a calm one — a surface under scrolling text has to recede."
+  },
+  "Profiles": [
+    {
+      "Name": "Performance Dudes",
+      "Guid": "PerformanceDudes-Dyn",
+      "Rewritable": true,
+
+      "Bound Hosts": ["{{HOME}}/Developer/performance-dudes"],
+      "Working Directory": "{{HOME}}/Developer/performance-dudes",
+      "Custom Directory": "Yes",
+
+      "Badge Text": "🏁 \\(session.name)",
+      "Badge Color": {
+        "Color Space": "sRGB",
+        "Red Component": 0.9176470588235294,
+        "Green Component": 0.34509803921568627,
+        "Blue Component": 0.047058823529411764,
+        "Alpha Component": 0.5
+      },
+      "Tab Color": {
+        "Color Space": "sRGB",
+        "Red Component": 0.9176470588235294,
+        "Green Component": 0.34509803921568627,
+        "Blue Component": 0.047058823529411764,
+        "Alpha Component": 1
+      },
+      "Use Tab Color": true,
+      "Cursor Color": {
+        "Color Space": "sRGB",
+        "Red Component": 0.9176470588235294,
+        "Green Component": 0.34509803921568627,
+        "Blue Component": 0.047058823529411764,
+        "Alpha Component": 1
+      },
+
+      "Background Image Mode": 2,
+      "Blend": 0.098,
+
+      "Icon": 2,
+
+      "Use Separate Colors for Light and Dark Mode": true,
+      "Foreground Color": {
+        "Color Space": "sRGB",
+        "Red Component": 0.0627451017498970,
+        "Green Component": 0.0627451017498970,
+        "Blue Component": 0.0627451017498970,
+        "Alpha Component": 1
+      },
+      "Foreground Color (Light)": {
+        "Color Space": "sRGB",
+        "Red Component": 0.0627450980392157,
+        "Green Component": 0.0627450980392157,
+        "Blue Component": 0.0627450980392157,
+        "Alpha Component": 1
+      },
+      "Background Color (Light)": {
+        "Color Space": "P3",
+        "Red Component": 1,
+        "Green Component": 1,
+        "Blue Component": 1,
+        "Alpha Component": 1
+      },
+      "Ansi 0 Color": {
+        "Color Space": "sRGB",
+        "Red Component": 0.1019607843137255,
+        "Green Component": 0.1019607843137255,
+        "Blue Component": 0.1803921568627451,
+        "Alpha Component": 1
+      }
+    }
+  ]
+}
