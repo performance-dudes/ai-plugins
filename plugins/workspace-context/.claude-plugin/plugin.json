@@ -1,0 +1,16 @@
+{
+  "name": "workspace-context",
+  "description": "Set up bounded Context Mode indexing for a large repository or a parent workspace containing sibling repositories. Creates explicit project-local AGENTS.md and session-start hook guidance without bundling the external context-mode runtime.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Performance Dudes"
+  },
+  "keywords": [
+    "context-mode",
+    "workspace",
+    "indexing",
+    "session-start",
+    "hooks",
+    "agents"
+  ]
+}

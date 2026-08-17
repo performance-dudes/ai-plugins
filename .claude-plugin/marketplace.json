@@ -18,6 +18,12 @@
       "version": "0.1.1"
     },
     {
+      "name": "workspace-context",
+      "source": "./plugins/workspace-context",
+      "description": "Set up bounded Context Mode indexing for a large repository or a parent workspace containing sibling repositories. Creates explicit project-local AGENTS.md and session-start hook guidance without bundling the external context-mode runtime. Command: /workspace-context:workspace-context",
+      "version": "0.1.0"
+    },
+    {
       "name": "transcribe",
       "source": "./plugins/transcribe",
       "description": "Quality-first multi-speaker transcription on Apple Silicon — an on-device ffmpeg/Whisper/pyannote pipeline plus parallel Opus deliverables (verbatim clean transcript, minutes, quoted facts, personas, todos). Generic: all domain knowledge comes from user-provided context. Command: /transcribe",

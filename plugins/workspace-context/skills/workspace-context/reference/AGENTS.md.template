@@ -1,0 +1,30 @@
+# <project-or-workspace-name> context instructions
+
+## Use the Context Mode index first
+
+This `<project-or-workspace-kind>` contains `<repository-scope>`. Its Context
+Mode project index uses the source label `<project-or-workspace-name> context`
+and is refreshed by `.github/hooks/reindex-workspace.json` on Claude Code
+`sessionStart`. After a successful run, the hook reports the indexed file and
+section counts in the Claude Code session. In the first response, explicitly
+confirm the ready status using those exact counts. If no ready status is
+available or the hook reports a failure, do not claim that the index is fresh.
+
+Start Claude Code from `<project-or-workspace-root>`. Before using `grep`, `rg`,
+`find`, or broad manual directory listings to understand the codebase, search
+the existing index:
+
+```text
+ctx_search(
+  queries: ["your focused question"],
+  source: "<project-or-workspace-name> context"
+)
+```
+
+Use `ctx_execute` or `ctx_execute_file` to count, filter, compare, or summarize
+indexed content without loading raw repository output into the conversation.
+For exact edits, read the target file directly after locating it through the
+index.
+
+The index includes `<indexed-content-scope>`. It excludes
+`<excluded-content-scope>`.

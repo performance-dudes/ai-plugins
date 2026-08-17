@@ -1,0 +1,96 @@
+$ErrorActionPreference = "Stop"
+
+$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+$ContextModeCommand = if ($env:CONTEXT_MODE_BIN) { $env:CONTEXT_MODE_BIN } else { "context-mode" }
+$ContextMode = Get-Command $ContextModeCommand -ErrorAction SilentlyContinue
+$ProjectName = Split-Path $Root -Leaf
+$Source = if ($env:CONTEXT_MODE_SOURCE) { $env:CONTEXT_MODE_SOURCE } else { "$ProjectName context" }
+
+if (-not $ContextMode) {
+  Write-Error "[context-mode] index failed - executable not found"
+  exit 1
+}
+
+$Arguments = @(
+  "index", $Root,
+  "--project", $Root,
+  "--source", $Source,
+  "--max-depth", "20",
+  "--max-files", "10000",
+  "--ext", ".md,.mdx,.rst,.txt,.json,.yaml,.yml,.ts,.tsx,.js,.jsx,.mjs,.py,.pyi,.rs,.go,.sh,.ps1,.java,.scala,.groovy,.hcl,.tf,.tfvars,.tfbackend,.tftpl,.tpl,.toml,.ini,.cfg,.conf,.j2,.mmd,.ipynb,.xml,.properties,.hbs,.css,.scss,.html,.htm,.sql",
+  "--exclude", "**/.git/**",
+  "--exclude", "**/node_modules/**",
+  "--exclude", "**/.terraform/**",
+  "--exclude", "**/.venv/**",
+  "--exclude", "**/__pycache__/**",
+  "--exclude", "**/.pytest_cache/**",
+  "--exclude", "**/.mypy_cache/**",
+  "--exclude", "**/.gradle/**",
+  "--exclude", "**/.idea/**",
+  "--exclude", "**/.next/**",
+  "--exclude", "**/.cache/**",
+  "--exclude", "**/dist/**",
+  "--exclude", "**/build/**",
+  "--exclude", "**/coverage/**",
+  "--exclude", "**/logs/**",
+  "--exclude", "**/.env*",
+  "--exclude", "**/*credentials*",
+  "--exclude", "**/*secrets*",
+  "--exclude", "**/*private*",
+  "--exclude", "**/*.db",
+  "--exclude", "**/*.sqlite*",
+  "--exclude", "**/*.pyc",
+  "--exclude", "**/*.pkl",
+  "--exclude", "**/*.pickle",
+  "--exclude", "**/*.csv",
+  "--exclude", "**/*.jsonl",
+  "--exclude", "**/*.tfplan",
+  "--exclude", "**/*.tfstate*",
+  "--exclude", "**/*.log",
+  "--exclude", "**/*.pem",
+  "--exclude", "**/*.key",
+  "--exclude", "**/*.p12",
+  "--exclude", "**/*.pfx",
+  "--exclude", "**/*.zip",
+  "--exclude", "**/*.jar",
+  "--exclude", "**/*.exe",
+  "--exclude", "**/*.png",
+  "--exclude", "**/*.jpg",
+  "--exclude", "**/*.jpeg",
+  "--exclude", "**/*.gif",
+  "--exclude", "**/*.ico",
+  "--exclude", "**/*.pdf",
+  "--exclude", "**/*.docx",
+  "--exclude", "**/*.pptx",
+  "--exclude", "**/*.xlsx",
+  "--exclude", "**/*.ttf",
+  "--exclude", "**/*.woff*"
+)
+
+$OutputLines = & $ContextMode.Source @Arguments 2>&1
+$ExitCode = $LASTEXITCODE
+$Output = ($OutputLines | Out-String).Trim()
+
+if ($ExitCode -ne 0) {
+  $ErrorDetail = ($Output -split "`r?`n" | Where-Object { $_.Trim() } | Select-Object -Last 1)
+  if (-not $ErrorDetail) {
+    $ErrorDetail = "context-mode exited without a diagnostic"
+  }
+  Write-Error "[context-mode] index failed for $Source (exit $ExitCode): $ErrorDetail"
+  exit $ExitCode
+}
+
+$Match = [regex]::Match($Output, "Indexed\s+([0-9,]+)\s+files\s+\(([0-9,]+)\s+sections\)")
+if (-not $Match.Success) {
+  Write-Error "[context-mode] index failed for $Source`: completion counts were not reported"
+  exit 1
+}
+
+$Message = "[context-mode] index ready - {0}: {1} files / {2} sections indexed." -f `
+  $Source, $Match.Groups[1].Value, $Match.Groups[2].Value
+@{
+  hookSpecificOutput = @{
+    hookEventName = "SessionStart"
+    additionalContext = $Message
+  }
+} | ConvertTo-Json -Compress
