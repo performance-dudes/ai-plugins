@@ -82,11 +82,37 @@ external runtime.
 
    Do not pass the raw `context-mode index` output through as hook output; the
    CLI output is human-readable and may not be valid hook JSON.
-7. Run the index command once and verify a focused `ctx_search` result from at
-   least two sibling repositories when the workspace contains them.
-   Also verify that the hook emits the ready status with file and section
-   counts.
+7. Run the index command once, then verify it as described under **Verifying the
+   index** — not with `ctx_search`, which is invalid from the session that built
+   the index. Also verify that the hook emits the ready status with file and
+   section counts.
 8. Report every created file and the exact source label in the final diff.
+
+## Verifying the index
+
+`ctx_search` from the session that built the index proves nothing — in either
+direction:
+
+- **It fails on a healthy index.** An index created after session start is not
+  reachable over MCP in that session. This is why indexing belongs in the
+  `sessionStart` hook; a manual rebuild needs a new session.
+- **It passes on an absent one.** `ctx_search` also serves auto-captured session
+  memory. Results tagged `[current-session | … | batch:…]` are memory, not the
+  file index.
+
+Verify instead:
+
+1. Pick a term that sits in a file and was **never in this session's context** —
+   a colleague's or subagent's wording, a passage nobody opened.
+2. Run `context-mode search "<term>"` from the project root. The result must carry
+   a `Source:` line with the expected path. That line is the only thing separating
+   a file hit from a memory hit.
+3. Check the hook payload separately (step 6) — it answers a different question.
+
+**Exclusions need the same care.** Searching for a secret and finding nothing
+proves nothing: a broken search returns nothing too. Pick a term that appears in
+an excluded **and** in a legitimate file — an environment-variable name usually
+does. The search must return the legitimate files and not the excluded one.
 
 ## AGENTS.md content contract
 

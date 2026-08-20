@@ -47,3 +47,25 @@ operation, or completion counts are unavailable.
 See the [plugin README](../../plugins/workspace-context/README.md) and
 [skill source](../../plugins/workspace-context/skills/workspace-context/SKILL.md)
 for the complete setup contract.
+
+## Verifying a fresh index — the two traps
+
+Both were measured while setting the plugin up on a real repository, and both make
+the obvious check unreliable rather than merely imprecise.
+
+**A freshly created index is not reachable over MCP from the session that created
+it.** The CLI found the indexed passages immediately, `ctx_search` found nothing
+from that index in the same session. That is why indexing runs as a `sessionStart`
+hook: it happens before the MCP server needs the content. Rebuilding by hand
+requires a new session.
+
+**`ctx_search` blends the file index with auto-captured session memory.** Results
+tagged `[current-session | … | batch:…]` come from memory. A verification that
+lands there proves nothing about the index and reads exactly like a pass — the
+content is right, the source is wrong.
+
+The skill therefore prescribes a **falsifiable** check: search the CLI for a term
+that was never in session context and confirm the `Source:` line. The same logic
+applies to the exclusions — "no results" is also what a broken search returns, so
+the term has to appear in a legitimate file too, and the search must return that
+one and not the excluded one.
