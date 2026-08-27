@@ -53,6 +53,20 @@ head -16 "$PLUGIN_DIR/skills/image-toolkit/SKILL.md" | grep -q '^name:' \
   && head -16 "$PLUGIN_DIR/skills/image-toolkit/SKILL.md" | grep -q '^description:' \
   && ok "SKILL.md (name+description)" || bad "SKILL.md missing name/description"
 
+note "6. Part.from_text is called with a keyword (google-genai is keyword-only)"
+# Part.from_text ist keyword-only (def from_text(cls, *, text: str)); ein
+# positionaler Aufruf bricht nur den --edit-Pfad, weil --prompt Part nie anfasst.
+# Kommentarzeilen vorher rauswerfen: der erklaerende Kommentar ueber dem Aufruf
+# zitiert die falsche Form zwangsläufig und wuerde den Test sonst umdrehen.
+gi="$PLUGIN_DIR/scripts/generate_image.py"
+if grep -E '^[^#]*Part\.from_text\(' "$gi" | grep -qv 'from_text(text='; then
+  bad "Part.from_text called positionally (TypeError im --edit-Pfad)"
+else
+  ok "no positional Part.from_text call"
+fi
+grep -qE '^[^#]*Part\.from_text\(text=' "$gi" \
+  && ok "Part.from_text(text=…) present" || bad "Part.from_text(text=…) missing"
+
 note "Result"
 if [ "$fail" -eq 0 ]; then echo "  ALL CHECKS PASSED"; else echo "  FAILURES ABOVE"; fi
 exit "$fail"
