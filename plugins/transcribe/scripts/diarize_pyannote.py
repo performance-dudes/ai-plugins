@@ -4,7 +4,9 @@
 # dependencies = [
 #   "pyannote.audio>=3.3",
 #   "torch>=2.2",
-#   "torchaudio>=2.2",
+#   # bewusst KEIN torchaudio: dessen load() geht ueber torchcodec, das nur
+#   # FFmpeg 4-7 kennt und unter FFmpeg 8 nicht laedt. pyannote zieht es bei
+#   # Bedarf transitiv nach; hier wird es nicht gebraucht.
 #   "soundfile>=0.12",
 #   "numpy",
 #   "huggingface-hub>=0.24",

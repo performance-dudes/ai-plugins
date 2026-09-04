@@ -110,6 +110,11 @@ if [ -f "$diar" ]; then
   grep -q '^import soundfile as sf' "$diar" && ok "imports soundfile" || bad "soundfile import missing"
   sed -n '1,20p' "$diar" | grep -q 'soundfile' && ok "soundfile in PEP-723 deps" || bad "soundfile missing from PEP-723 deps"
   sed -n '1,20p' "$diar" | grep -q 'numpy' && ok "numpy in PEP-723 deps" || bad "numpy missing from PEP-723 deps"
+  # torchaudio darf nicht zurueck in die Deps: es zieht torchcodec nach, das
+  # unter FFmpeg 8 nicht laedt. Gesucht wird die zitierte Dep-Zeile, nicht der
+  # erklaerende Kommentar daneben (der den Namen absichtlich nennt).
+  grep -q '"torchaudio' "$diar" && bad "torchaudio back in PEP-723 deps (zieht torchcodec nach)" \
+    || ok "torchaudio absent from PEP-723 deps"
 else
   bad "missing scripts/diarize_pyannote.py"
 fi
