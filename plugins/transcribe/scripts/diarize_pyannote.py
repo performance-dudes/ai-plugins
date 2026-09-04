@@ -4,7 +4,11 @@
 # dependencies = [
 #   "pyannote.audio>=3.3",
 #   "torch>=2.2",
-#   "torchaudio>=2.2",
+#   # bewusst KEIN torchaudio: dessen load() geht ueber torchcodec, das nur
+#   # FFmpeg 4-7 kennt und unter FFmpeg 8 nicht laedt. pyannote zieht es bei
+#   # Bedarf transitiv nach; hier wird es nicht gebraucht.
+#   "soundfile>=0.12",
+#   "numpy",
 #   "huggingface-hub>=0.24",
 # ]
 # ///
@@ -37,8 +41,9 @@ import sys
 import time
 from pathlib import Path
 
+import numpy as np
+import soundfile as sf
 import torch
-import torchaudio
 from pyannote.audio import Pipeline
 from pyannote.audio.pipelines.utils.hook import ProgressHook
 
@@ -75,7 +80,11 @@ def main() -> int:
     pipeline.to(device)
 
     print(f"loading audio: {audio}", flush=True)
-    waveform, sr = torchaudio.load(str(audio))
+    # soundfile statt torchaudio.load: torchaudio geht über torchcodec, das nur
+    # FFmpeg 4-7 kennt und unter FFmpeg 8 nicht lädt. pyannote bekommt das
+    # Waveform ohnehin als Tensor-Dict, der Decoder-Pfad ist also entbehrlich.
+    data, sr = sf.read(str(audio), dtype="float32", always_2d=True)
+    waveform = torch.from_numpy(np.ascontiguousarray(data.T))
     print(f"  shape={tuple(waveform.shape)}, sr={sr}", flush=True)
 
     kwargs: dict = {}
