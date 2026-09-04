@@ -16,13 +16,15 @@ Drei Achsen (SPEC-repo-conventions §6). Spec:
 |---|---|---|---|
 | Chunker-Anker korrekt | Syntax (`validate.sh`) | `validate.sh` §7 | — |
 | Speaker-Map angewandt | — | `validate.sh` §7 | — |
+| Diarizer-Decoder FFmpeg-8-fest | `validate.sh` §8 (Regression) | — | — |
 | echte Transkription | — | — | on-device, manuell (extern) |
 
 ## code : tests
 | Komponente | config-valid | unit |
 |---|---|---|
 | `scripts/prepare_chunks.py` | `py_compile` | Chunker-Anker + Map |
-| `scripts/merge.py`, `diarize_pyannote.py`, `transcribe_whisper_mlx.py` | `py_compile` | — |
+| `scripts/diarize_pyannote.py` | `py_compile`, §8 Decoder-Pfad | — |
+| `scripts/merge.py`, `transcribe_whisper_mlx.py` | `py_compile` | — |
 | `scripts/run_pipeline.sh`, `doctor.sh` | `bash -n`, `+x` | — |
 | `workflows/transcribe.js` | `node --check` | — |
 | `commands/*`, `skills/transcription/*` | Frontmatter | — |

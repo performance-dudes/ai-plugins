@@ -97,6 +97,23 @@ else
   bad "manifest.json not produced ($summary)"
 fi
 
+note "8. Diarizer decodes via soundfile, not torchaudio (FFmpeg-8-Regression)"
+# torchaudio.load geht seit 2.9 ueber torchcodec, das nur FFmpeg 4-7 laedt und
+# unter FFmpeg 8 mit einem Ladefehler abbricht. Faellt der Decoder-Pfad zurueck,
+# bricht die Diarisierung auf jedem aktuellen Homebrew-Mac.
+diar="$PLUGIN_DIR/scripts/diarize_pyannote.py"
+if [ -f "$diar" ]; then
+  ok "diarize_pyannote.py present"
+  # nur echter Code, nicht der erklaerende Kommentar darueber
+  grep -qE '^[^#]*torchaudio\.load' "$diar" && bad "diarize_pyannote.py uses torchaudio.load (FFmpeg-8-Bruch)" \
+    || ok "no torchaudio.load call"
+  grep -q '^import soundfile as sf' "$diar" && ok "imports soundfile" || bad "soundfile import missing"
+  sed -n '1,20p' "$diar" | grep -q 'soundfile' && ok "soundfile in PEP-723 deps" || bad "soundfile missing from PEP-723 deps"
+  sed -n '1,20p' "$diar" | grep -q 'numpy' && ok "numpy in PEP-723 deps" || bad "numpy missing from PEP-723 deps"
+else
+  bad "missing scripts/diarize_pyannote.py"
+fi
+
 note "Result"
 if [ "$fail" -eq 0 ]; then echo "  ALL CHECKS PASSED"; else echo "  FAILURES ABOVE"; fi
 exit "$fail"
