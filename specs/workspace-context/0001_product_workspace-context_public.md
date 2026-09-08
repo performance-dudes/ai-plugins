@@ -37,6 +37,7 @@ non-destructive.
 | AC-WC-2-1 | The `workspace-context` skill requires explicit invocation, checks the external Context Mode prerequisite, preserves existing instructions and hooks, and documents the generated `AGENTS.md` and `.github/hooks/` contract. | `tests/workspace-context/validate.sh` |
 | AC-WC-2-2 | The plugin ships the four reference templates from the source plugin; JSON parses and the Bash hook passes `bash -n`. | `tests/workspace-context/validate.sh` |
 | AC-WC-2-3 | The generated hook contract reports a compact success payload and fails clearly when Context Mode or completion counts are unavailable. | `tests/workspace-context/validate.sh` |
+| AC-WC-2-4 | The skill states that a `ctx_search` call from the session that created the index is not a valid check — it can fail on a healthy index and pass on an absent one — and prescribes a falsifiable alternative: a CLI search on a term that was never in session context, confirmed by its `Source:` line, plus an exclusion check on a term present in both an excluded and a legitimate file. | `tests/workspace-context/validate.sh` |
 
 ### US-WC-3 — Keep public documentation truthful
 
