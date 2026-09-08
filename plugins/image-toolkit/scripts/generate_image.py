@@ -97,7 +97,7 @@ def edit(image_path: str, prompt: str, model: str, aspect: str, out: str) -> boo
         model=model,
         contents=[
             types.Part.from_bytes(data=src.read_bytes(), mime_type=mime),
-            types.Part.from_text(prompt),
+            types.Part.from_text(text=prompt),
         ],
         config=types.GenerateContentConfig(
             response_modalities=["TEXT", "IMAGE"],
