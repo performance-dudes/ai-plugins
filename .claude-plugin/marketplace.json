@@ -58,6 +58,12 @@
       "source": "./plugins/terminal",
       "description": "Per-project terminal identity for iTerm2 — a Dynamic Profile that switches automatically when you enter the project directory, showing a wallpaper, an accent color shared by tab and cursor, and a translucent badge in the top-right corner that renders the live Claude Code session name. Ships the recipe as a skill, an idempotent installer that resolves machine-specific asset paths and degrades loudly instead of rendering a silently blank background, and a worked template. Command: /iterm-profile",
       "version": "0.1.0"
+    },
+    {
+      "name": "anti-slop",
+      "source": "./plugins/anti-slop",
+      "description": "Detects and removes LLM slop from business and narrative prose in English and German. 1894 entries (1856 distinct terms) across four grep-checked lists — 517 upstream EQ-Bench, 772 curated English, 496 German, 109 language-neutral (stock names and places, chatbot artifacts, unfilled placeholders) — each curated term carrying a hard/soft severity, plus a flexion-aware checker so German inflected forms are actually found. Lists are never loaded into context.",
+      "version": "0.1.0"
     }
   ]
 }

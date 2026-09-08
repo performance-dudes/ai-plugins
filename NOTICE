@@ -1,0 +1,76 @@
+Performance Dudes — ai-plugins
+Copyright 2026 Performance Dudes
+
+This product includes software developed at Performance Dudes.
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+================================================================================
+Third-party material — plugins/anti-slop
+================================================================================
+
+The anti-slop plugin ships term lists that incorporate material from the
+following sources. Each is credited below with its own licence.
+
+Individual words and short phrases are not protectable on their own. A curated
+collection of them can be — as a compilation, and in the EU also under the sui
+generis database right (Directive 96/9/EC). The two cases below follow
+from that distinction: where a whole collection is carried over, its licence
+travels with it; where only individual terms were drawn from a source, the credit
+records provenance.
+
+Read this together with LICENSE. The repository as a whole is Apache-2.0, and
+that covers plugins/anti-slop/skills/anti-slop/data/ as well.
+
+slop-list.json is an Apache-2.0 collection redistributed unmodified, so its
+licence terms travel with it. Neither Apache-2.0 upstream below ships a NOTICE
+file of its own (checked), so Apache-2.0 section 4(d) adds nothing further to
+carry forward.
+
+From the two CC BY-SA 4.0 Wikipedia pages, only individual terms and a category
+structure were drawn. The terms are not protectable on their own; the structure
+is an idea rather than an expression. Neither yields adapted material in the
+sense of CC BY-SA 4.0 section 1(a), so the ShareAlike condition does not attach
+and no part of data/ is licensed under CC BY-SA. The credit below records where
+the terms came from, not a licence obligation being discharged.
+
+--------------------------------------------------------------------------------
+sam-paech/antislop-sampler — Apache License 2.0
+https://github.com/sam-paech/antislop-sampler
+
+  skills/anti-slop/data/slop-list.json is the EQ-Bench Slop Score term list,
+  redistributed unmodified.
+
+--------------------------------------------------------------------------------
+SicariusSicariiStuff/SLOP_Detector — Apache License 2.0
+https://github.com/SicariusSicariiStuff/SLOP_Detector
+
+  Literal (non-regex) entries of SLOP.yml contributed terms to
+  skills/anti-slop/data/slop-list-en-extra.json and slop-list-universal.json.
+
+--------------------------------------------------------------------------------
+AIStoryHub/AIStoryHub_LLM_Cliche_Corpus — MIT License
+https://github.com/AIStoryHub/AIStoryHub_LLM_Cliche_Corpus
+
+  "The Corpus of AI Cliches" v1.7 contributed the majority of the curated
+  English terms, together with their category and confidence classification.
+
+--------------------------------------------------------------------------------
+michael-borck/document-lens-legacy — MIT License
+https://github.com/michael-borck/document-lens-legacy
+
+  app/data/ai_patterns.json contributed phrase, verb and adjective terms.
+
+--------------------------------------------------------------------------------
+Wikipedia — Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0)
+https://creativecommons.org/licenses/by-sa/4.0/
+
+  "Wikipedia:Signs of AI writing"
+  https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing
+
+  "Wikipedia:Anzeichen für KI-generierte Inhalte"
+  https://de.wikipedia.org/wiki/Wikipedia:Anzeichen_für_KI-generierte_Inhalte
+
+  Terms from the "Words to watch" boxes of the English page, and the category
+  structure of the German page, informed slop-list-en-extra.json and
+  slop-list-de.json. Wikipedia-specific editorial markers were excluded. No page
+  text was copied; see the note above on why ShareAlike does not attach.
