@@ -1,0 +1,177 @@
+# LOCKED ground truth for the anti-slop DETECTOR (SPEC-anti-slop US-slop-3).
+#
+# Regime: STRUCTURED -> deterministic matching, no LLM judge. The observable
+# output is a number (hard hits per 1000 words), so a judge would only add
+# variance to something already objective.
+#
+# TEST THE REAL OBJECT: score_detection.py runs the shipping
+# skills/anti-slop/scripts/check-slop.py against the shipping lists. No copy of
+# the term lists lives in this file.
+#
+# THE CASES ARE FROZEN. A failure is a plugin bug — fix the lists, the overrides
+# or the script. Never loosen a threshold to make a run green.
+#
+# origin: human    -> written by a person, prose that must stay quiet
+# origin: generated -> LLM output of the kind this plugin exists to catch
+#
+# Thresholds come from SPEC-anti-slop:
+#   human     -> at most  1.0 hard hits / 1000 words
+#   generated -> at least 50.0 hard hits / 1000 words
+# The gap between the bounds is the plugin's promise; a case that lands between
+# them is a real finding, not a tolerance to widen.
+
+- name: h01-technical-de
+  origin: human
+  lang: de
+  note: |
+    Knappe deutsche Fachprosa mit Zahlen statt Adjektiven. Enthält bewusst
+    'Import', 'Zeitzone', 'Analyse' — Fachwörter, die in der Nähe von
+    Listeneinträgen liegen, aber keine Floskeln sind.
+  text: |
+    Wir haben 340 Zeilen geprüft und drei Fehler gefunden. Zwei lagen im Import,
+    einer in der Zeitzone. Der Import läuft seit Dienstag wieder, die Zeitzone
+    steht auf Europe/Berlin. Kosten: elf Tage, davon vier für die Analyse.
+    Der Rest ging für das Nachziehen der Testdaten drauf, weil die alten
+    Fixtures noch auf dem Schema von 2024 standen.
+
+- name: h02-technical-en
+  origin: human
+  lang: en
+  note: |
+    English technical prose that deliberately uses vocabulary colliding with the
+    lists — 'key', 'transform', 'harness', 'dynamic', 'manifest'. These are the
+    exact words severity-overrides.json demotes; if the overrides regress, this
+    case goes red first.
+  text: |
+    The test harness reads the plugin manifest and transforms each entry into a
+    key-value pair. Dynamic imports are resolved at load time, so a missing file
+    surfaces as a load error rather than a silent skip. We measured 340 runs:
+    two failed, both on a stale fixture. The fix took an afternoon.
+
+- name: h03-narrative-de
+  origin: human
+  lang: de
+  note: |
+    Deutsche Erzählprosa ohne Klischees — konkrete Handlung statt Körpersprache-
+    Formeln. Prüft, dass die narrative Liste nicht auf jeder Szene anschlägt.
+  text: |
+    Sie stellte den Kaffee ab, ohne ihn angerührt zu haben. Draußen fuhr die
+    Straßenbahn vorbei, die um diese Zeit fast leer war. "Du hast es ihm gesagt",
+    sagte sie. Er nahm die Zeitung und faltete sie einmal in der Mitte.
+    "Gestern", sagte er. Die Straßenbahn bog in die Hauptstraße ein.
+
+- name: g01-business-de
+  origin: generated
+  lang: de
+  note: |
+    Typischer deutscher LLM-Geschäftstext: hohle Eröffnung, Übergangsfloskeln,
+    Hype-Adjektive, vage Autorität, Zusammenfassungsformel. Genau das Muster,
+    für das dieses Plugin existiert.
+  text: |
+    In der heutigen digitalen Welt spielt Künstliche Intelligenz eine
+    entscheidende Rolle. Darüber hinaus ermöglicht sie nahtlose Prozesse und
+    bahnbrechende Innovationen. Es ist wichtig zu beachten, dass zahlreiche
+    Unternehmen vor Herausforderungen stehen. Studien zeigen, dass ganzheitliche
+    Ansätze das volle Potenzial ausschöpfen. Zusammenfassend lässt sich sagen:
+    Es geht nicht um Technik, sondern um Menschen.
+
+- name: g02-business-en
+  origin: generated
+  lang: en
+  note: |
+    The English counterpart — opener, metaphor shell, editorial comment, hype
+    adjective, summary tell, all in six sentences.
+  text: |
+    In today's digital age, organisations must delve into the rich tapestry of
+    challenges that lie ahead. It's important to note that this seamless,
+    cutting-edge solution is a testament to innovation. Moreover, it unlocks the
+    full potential of your team. Studies show that a holistic approach is
+    crucial. In conclusion, the journey has only just begun.
+
+- name: g03-letter-en
+  origin: generated
+  lang: en
+  note: |
+    Unedited assistant output pasted into a letter: greeting formula, unfilled
+    placeholders, vague authority, chatbot residue. Every one of these is a
+    hard tell on its own.
+  text: |
+    I hope this letter finds you well. I am writing to introduce [Company Name],
+    which has served [number] clients since [date]. Studies show that xx% of
+    teams benefit. Please do not hesitate to reach out at your earliest
+    convenience. Certainly! Here's a breakdown of what we offer.
+
+- name: g04-narrative-de
+  origin: generated
+  lang: de
+  note: |
+    Deutsche Erzähl-Slop: Dialog-Tags statt 'sagte', Körpersprache-Klischees,
+    Kapitelend-Kadenz. Gegenstück zu h03 — gleiche Szene, generierte Fassung.
+  text: |
+    "Du hast es ihm gesagt", hauchte sie, kaum mehr als ein Flüstern. Ein
+    Schauer lief ihr über den Rücken. Er nickte, und für einen Moment schien die
+    Zeit stillzustehen. Ihre Augen funkelten mit einer Mischung aus Wut und
+    Erleichterung. Tief in ihrem Inneren wusste sie es einfach. Vielleicht, nur
+    vielleicht, war das erst der Anfang.
+
+- name: h04-long-de
+  origin: human
+  lang: de
+  note: |
+    Langer Fall (268 Wörter) mit dichter Fachsprache — der Case, an dem ein
+    Fehlalarm am wahrscheinlichsten wäre. Ehrlich dazu: auch bei 268 Wörtern
+    toleriert "höchstens 1,0 je 1000" rechnerisch NULL Treffer (ein einzelner
+    ergäbe 3,7). Die Schwelle wird erst ab rund 1000 Wörtern zu einer eigenen
+    Aussage; ein Case dieser Länge in einer YAML wäre unlesbar. Gemessen wurde
+    sie stattdessen am echten Korpus: 17.500 Wörter Repo-Dokumentation liegen bei
+    0,5 je 1000. Dieser Case prüft also Dichte und Länge, nicht die Grenze.
+  text: |
+    Der Aggregator sucht alle Suiten selbst zusammen. Jede Datei, die dem Muster
+    tests/<plugin>/run.sh entspricht, wird eingehängt, alphabetisch, und ihr
+    Rückgabewert eingesammelt. Läuft eine Suite rot, ist der Gesamtlauf rot. Das
+    hat einen praktischen Grund: Wer ein Plugin migriert, muss den Aggregator
+    nicht anfassen, und zwei parallele Plugin-Zweige kollidieren nicht auf
+    derselben Datei.
+
+    Die Struktur-Prüfung läuft immer zuerst. Sie vergleicht die Versionen an
+    beiden Orten, an denen sie stehen: in der plugin.json des Plugins und im
+    Marketplace-Manifest. Laufen die auseinander, zieht ein Nutzer beim Update
+    etwas anderes, als hier getestet wurde. Am 6. Juli 2026 blieb genau das acht
+    Läufe lang unbemerkt, weil die Prüfung nur in der Pipeline lag und nicht in
+    der lokalen Suite. Seitdem liegt sie in tests/lib und wird von beiden Seiten
+    aufgerufen.
+
+    Die Suiten selbst laufen ohne Netz und ohne Pakete. Vorausgesetzt werden bash
+    und python3, sonst nichts. Wer eine Abhängigkeit braucht, legt sie in die
+    Eval, nicht in die Suite — Evals dürfen mehr voraussetzen, weil sie seltener
+    laufen und nicht in der Pipeline hängen.
+
+    Für neue Plugins gilt die Reihenfolge aus der Konventions-Spec: erst die
+    Spezifikation und der Pull Request, dann die Tests für die neuen Kriterien,
+    dann der Plan, dann die Umsetzung. Der Plan wird am Ende gelöscht, der
+    Journal-Eintrag bleibt. Ein Pull Request, der Code ohne Spezifikation
+    mitbringt, wird von der Pipeline zurückgewiesen, sofern kein Marker das
+    begründet.
+
+    Was hier nicht geprüft wird, steht in der jeweiligen README des
+    Test-Verzeichnisses. Die Trennung ist bewusst: Die Suite beantwortet, ob
+    etwas korrekt verdrahtet ist, die Eval beantwortet, ob es das Richtige tut.
+
+- name: g05-narrative-en
+  origin: generated
+  lang: en
+  note: |
+    Generierte englische Erzählprosa — die Lücke, die der Re-Review aufgedeckt
+    hat. g01/g02 sind Business, g03 ein Brief, g04 deutsche Erzählprosa; kein
+    Case deckte englische Fiktion ab, also blieb unbemerkt, dass die
+    Stock-Namen und -Orte kurzzeitig ihren harten Status verloren hatten.
+    Enthält beide Klassen: Personennamen (weich, sie sind auch reale Namen) und
+    erfundene Ortsnamen (hart, sie sind es nicht), dazu die üblichen
+    Dialog-Tags und Körpersprache-Formeln.
+  text: |
+    Elara left Whisperwood at dawn, her heart pounding as she rode toward
+    Eldoria. "You cannot go alone," Kael murmured, his voice barely above a
+    whisper. She chuckled darkly. The road to Ravenswood wound past Oakhaven,
+    and a shiver ran down her spine as the tapestry of stars unfurled above
+    her. Aldric had promised that Lyra would be waiting in Greenhaven. For now,
+    that was enough.

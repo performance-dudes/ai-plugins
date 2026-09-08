@@ -1,0 +1,3862 @@
+[
+    [
+        "i hope this letter finds you well",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "i hope this email finds you well",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "i hope this message finds you well",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "i hope this finds you well",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "i hope you are doing well",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "i hope you're doing well",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "i am writing to",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "i wanted to reach out",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "i am reaching out to",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "thank you for your time and consideration",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "please do not hesitate to",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "please don't hesitate to",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "should you have any questions",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "at your earliest convenience",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "i look forward to hearing from you",
+        "letter-formula",
+        "soft"
+    ],
+    [
+        "thank you in advance",
+        "letter-formula",
+        "soft"
+    ],
+    [
+        "warm regards",
+        "letter-formula",
+        "soft"
+    ],
+    [
+        "[name]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[your name]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[company]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[company name]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[date]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[number]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[topic]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[position]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[link]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[details]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[insert",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[placeholder",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[optional]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[x]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[xx]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "xx%",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "xx percent",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "lorem ipsum",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "your specific",
+        "placeholder",
+        "soft"
+    ],
+    [
+        "relevant example",
+        "placeholder",
+        "soft"
+    ],
+    [
+        "tbd",
+        "placeholder",
+        "soft"
+    ],
+    [
+        "as an ai language model",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "as a large language model",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i hope this helps",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "let me know if",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "would you like me to",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "here's a breakdown",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "a detailed breakdown",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "as of my last knowledge update",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "as of my last update",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "based on the available information",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "based on the provided",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i cannot provide",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "great question",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "certainly!",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "of course!",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "absolutely!",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "in this article, we will",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "by the end of this",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "feel free to",
+        "chatbot-residue",
+        "soft"
+    ],
+    [
+        "is there anything else",
+        "chatbot-residue",
+        "soft"
+    ],
+    [
+        "that being said",
+        "hedge",
+        "hard"
+    ],
+    [
+        "at the end of the day",
+        "hedge",
+        "hard"
+    ],
+    [
+        "it's worth mentioning",
+        "hedge",
+        "hard"
+    ],
+    [
+        "when it comes to",
+        "hedge",
+        "hard"
+    ],
+    [
+        "studies show",
+        "vague-authority",
+        "hard"
+    ],
+    [
+        "research shows",
+        "vague-authority",
+        "hard"
+    ],
+    [
+        "experts agree",
+        "vague-authority",
+        "hard"
+    ],
+    [
+        "it is widely known",
+        "vague-authority",
+        "hard"
+    ],
+    [
+        "many believe",
+        "vague-authority",
+        "soft"
+    ],
+    [
+        "\"is more than just\" elevation",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "\"no x. no y. no z.\" construction",
+        "structure-formula",
+        "hard"
+    ],
+    [
+        "\"not all x are created equal\"",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "\"that's where x comes in\" pivot",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "\"the good news?\" reveal",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "\"x. y. z.\" three-fragment payoff line",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "'a young woman named x' story opener",
+        "structure-formula",
+        "hard"
+    ],
+    [
+        "'one thing was certain:' scene-capper",
+        "structure-formula",
+        "hard"
+    ],
+    [
+        "'the road ahead would not be easy'",
+        "structure-formula",
+        "hard"
+    ],
+    [
+        "a bruising kiss",
+        "narrative",
+        "hard"
+    ],
+    [
+        "a dance as old as time",
+        "narrative",
+        "hard"
+    ],
+    [
+        "a feast for the senses",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "a figure emerged from the shadows",
+        "narrative",
+        "soft"
+    ],
+    [
+        "a flicker of something akin to",
+        "filler",
+        "hard"
+    ],
+    [
+        "a gateway to",
+        "filler",
+        "hard"
+    ],
+    [
+        "a growing body of research",
+        "academic-register",
+        "hard"
+    ],
+    [
+        "a growing sense of unease",
+        "filler",
+        "soft"
+    ],
+    [
+        "a key takeaway is",
+        "transition",
+        "hard"
+    ],
+    [
+        "a mischievous glint",
+        "narrative",
+        "hard"
+    ],
+    [
+        "a moth to a flame",
+        "narrative",
+        "hard"
+    ],
+    [
+        "a nuanced understanding",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "a shiver ran down her spine",
+        "narrative",
+        "soft"
+    ],
+    [
+        "a smile playing on her lips",
+        "narrative",
+        "hard"
+    ],
+    [
+        "a stark reminder",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "a symphony of",
+        "narrative",
+        "hard"
+    ],
+    [
+        "a tapestry of",
+        "filler",
+        "hard"
+    ],
+    [
+        "a testament to",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "a treasure trove of",
+        "filler",
+        "hard"
+    ],
+    [
+        "a wide range of",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "abrupt mid-sentence truncation at the end of a text",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "accentuate",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "actionable insights",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "active social media presence",
+        "filler",
+        "hard"
+    ],
+    [
+        "adam's apple bobbing",
+        "narrative",
+        "hard"
+    ],
+    [
+        "adaptive",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "additionally",
+        "filler",
+        "hard"
+    ],
+    [
+        "admirable",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "advocate",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "aggregate",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "agree?",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "aims to",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "akin",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "align",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "align with",
+        "filler",
+        "hard"
+    ],
+    [
+        "alternatively",
+        "transition",
+        "soft"
+    ],
+    [
+        "always consult a professional",
+        "chatbot-residue",
+        "soft"
+    ],
+    [
+        "ample bosom",
+        "narrative",
+        "hard"
+    ],
+    [
+        "amplify",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "an ethereal beauty",
+        "narrative",
+        "hard"
+    ],
+    [
+        "an unspoken understanding passed between them",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "anchor",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "and honestly? that's okay.",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "another day in your life",
+        "narrative",
+        "hard"
+    ],
+    [
+        "arched spine",
+        "narrative",
+        "hard"
+    ],
+    [
+        "arguably",
+        "hedge",
+        "soft"
+    ],
+    [
+        "as a language model",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "as an ai",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "as businesses navigate the evolving",
+        "opener",
+        "hard"
+    ],
+    [
+        "as per our conversation",
+        "letter-formula",
+        "soft"
+    ],
+    [
+        "as technology continues to evolve",
+        "opener",
+        "soft"
+    ],
+    [
+        "as the world becomes increasingly",
+        "opener",
+        "hard"
+    ],
+    [
+        "as we move forward",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "as we've seen",
+        "transition",
+        "hard"
+    ],
+    [
+        "associated with",
+        "filler",
+        "hard"
+    ],
+    [
+        "at its core",
+        "transition",
+        "hard"
+    ],
+    [
+        "at the forefront of",
+        "filler",
+        "hard"
+    ],
+    [
+        "at the heart of",
+        "filler",
+        "hard"
+    ],
+    [
+        "at the same time",
+        "transition",
+        "soft"
+    ],
+    [
+        "augment",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "based on available information",
+        "filler",
+        "hard"
+    ],
+    [
+        "based on the provided text",
+        "chatbot-residue",
+        "soft"
+    ],
+    [
+        "beacon",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "benchmark",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "bespoke",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "best of both worlds",
+        "filler",
+        "soft"
+    ],
+    [
+        "best practices",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "best-in-class",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "blend",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "boast",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "boasts",
+        "filler",
+        "hard"
+    ],
+    [
+        "boasts a",
+        "filler",
+        "hard"
+    ],
+    [
+        "boil the ocean",
+        "filler",
+        "soft"
+    ],
+    [
+        "bolster",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "bolstered",
+        "filler",
+        "hard"
+    ],
+    [
+        "bosomy breasts",
+        "narrative",
+        "hard"
+    ],
+    [
+        "boundless",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "breathless and eager",
+        "narrative",
+        "hard"
+    ],
+    [
+        "breathtaking",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "bridge",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "bridging the gap between",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "bring to the table",
+        "filler",
+        "hard"
+    ],
+    [
+        "broadly speaking",
+        "hedge",
+        "soft"
+    ],
+    [
+        "brow furrowed in concentration",
+        "narrative",
+        "soft"
+    ],
+    [
+        "buckle up",
+        "opener",
+        "soft"
+    ],
+    [
+        "built for tomorrow",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "burgeoning",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "but here's where it gets interesting",
+        "transition",
+        "soft"
+    ],
+    [
+        "butterflies in",
+        "narrative",
+        "hard"
+    ],
+    [
+        "calibrate",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "cannot be overstated",
+        "filler",
+        "hard"
+    ],
+    [
+        "captivate",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "casting a warm glow",
+        "narrative",
+        "soft"
+    ],
+    [
+        "casting long shadows",
+        "narrative",
+        "hard"
+    ],
+    [
+        "catalyst",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "catalyze",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "catch my drift",
+        "narrative",
+        "hard"
+    ],
+    [
+        "cements its status",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "certainly! here's",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "challenges and legacy",
+        "filler",
+        "hard"
+    ],
+    [
+        "champion",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "charming",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "circle back",
+        "filler",
+        "soft"
+    ],
+    [
+        "cobblestone streets",
+        "narrative",
+        "soft"
+    ],
+    [
+        "cogent",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "commendable",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "commitment to",
+        "filler",
+        "hard"
+    ],
+    [
+        "commits to memory",
+        "narrative",
+        "hard"
+    ],
+    [
+        "compelling",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "comprehend",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "comprehensive",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "confluence",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "consequently",
+        "transition",
+        "soft"
+    ],
+    [
+        "consolidate",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "construct",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "continues to captivate",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "continuum",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "contrastive negation: \"it's not just x, it's y\"",
+        "structure-formula",
+        "hard"
+    ],
+    [
+        "contributes to the broader",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "contributing to",
+        "filler",
+        "hard"
+    ],
+    [
+        "contributing to the",
+        "filler",
+        "hard"
+    ],
+    [
+        "convey",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "cornerstone",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "couldn't help but",
+        "filler",
+        "soft"
+    ],
+    [
+        "couldn't shake the feeling",
+        "filler",
+        "soft"
+    ],
+    [
+        "coverage in local and national media outlets",
+        "filler",
+        "soft"
+    ],
+    [
+        "crafted with precision",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "crucible",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "cultivate",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "cultivating",
+        "filler",
+        "hard"
+    ],
+    [
+        "curate",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "dance of pleasure",
+        "narrative",
+        "hard"
+    ],
+    [
+        "deeply rooted",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "delineate",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "delve into",
+        "filler",
+        "hard"
+    ],
+    [
+        "demystify",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "despite these challenges",
+        "filler",
+        "hard"
+    ],
+    [
+        "differentiate",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "dimly lit",
+        "narrative",
+        "hard"
+    ],
+    [
+        "dimly lit room",
+        "narrative",
+        "soft"
+    ],
+    [
+        "discern",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "disclaimer stacking",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "discourse",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "distill",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "dive deep into",
+        "filler",
+        "hard"
+    ],
+    [
+        "diverse",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "diverse array",
+        "filler",
+        "hard"
+    ],
+    [
+        "does the heavy lifting",
+        "filler",
+        "soft"
+    ],
+    [
+        "domain",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "don't hesitate to",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "don't hesitate to reach out",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "don't stop, don't ever stop",
+        "narrative",
+        "hard"
+    ],
+    [
+        "double down on",
+        "filler",
+        "soft"
+    ],
+    [
+        "drive innovation",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "drive meaningful impact",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "driven by innovation",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "dusky nipples",
+        "narrative",
+        "hard"
+    ],
+    [
+        "dust motes danced in the sunlight",
+        "narrative",
+        "hard"
+    ],
+    [
+        "dynamic",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "ecosystem",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "elaborate",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "elucidate",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "embark on a journey",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "embark on this",
+        "narrative",
+        "hard"
+    ],
+    [
+        "embrace",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "emerge",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "emphasize",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "emphasizing",
+        "filler",
+        "hard"
+    ],
+    [
+        "employ",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "empower",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "empowering the next generation",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "emulate",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "enable",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "encapsulate",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "encompass",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "encompassing",
+        "filler",
+        "hard"
+    ],
+    [
+        "end-to-end",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "enduring",
+        "filler",
+        "hard"
+    ],
+    [
+        "enduring legacy",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "engineered for excellence",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "enhance",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "enhanced",
+        "filler",
+        "hard"
+    ],
+    [
+        "enhancing",
+        "filler",
+        "hard"
+    ],
+    [
+        "enrich",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "enriched",
+        "filler",
+        "hard"
+    ],
+    [
+        "ensured",
+        "filler",
+        "hard"
+    ],
+    [
+        "ensuring",
+        "filler",
+        "hard"
+    ],
+    [
+        "essential",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "essentially",
+        "transition",
+        "soft"
+    ],
+    [
+        "esteemed",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "ethereal glow",
+        "narrative",
+        "soft"
+    ],
+    [
+        "ethos",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "evaluate",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "ever-changing",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "evoke",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "evolve",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "evolving landscape",
+        "filler",
+        "hard"
+    ],
+    [
+        "exemplifies",
+        "filler",
+        "hard"
+    ],
+    [
+        "exemplify",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "exhausted and spent",
+        "narrative",
+        "hard"
+    ],
+    [
+        "expansive",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "experts argue",
+        "filler",
+        "hard"
+    ],
+    [
+        "explore",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "eyes wide with wonder",
+        "narrative",
+        "soft"
+    ],
+    [
+        "eyes widened in surprise",
+        "narrative",
+        "soft"
+    ],
+    [
+        "fabric",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "facet",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "facilitate",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "fast-paced",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "featuring",
+        "filler",
+        "hard"
+    ],
+    [
+        "feel free to reach out",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "felt like an eternity",
+        "filler",
+        "soft"
+    ],
+    [
+        "findings",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "finds solace in",
+        "narrative",
+        "hard"
+    ],
+    [
+        "first and foremost",
+        "transition",
+        "soft"
+    ],
+    [
+        "firstly",
+        "transition",
+        "soft"
+    ],
+    [
+        "focal point",
+        "filler",
+        "hard"
+    ],
+    [
+        "food for thought",
+        "transition",
+        "hard"
+    ],
+    [
+        "for the first time in a long time",
+        "filler",
+        "soft"
+    ],
+    [
+        "for the sake of keeping things",
+        "narrative",
+        "hard"
+    ],
+    [
+        "formulate",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "forward-thinking",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "foster",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "framework",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "from a broader perspective",
+        "transition",
+        "hard"
+    ],
+    [
+        "frontier",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "fueled by passion",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "further research is needed",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "future outlook",
+        "filler",
+        "hard"
+    ],
+    [
+        "future-proof",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "futuristic",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "galvanize",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "game-changing",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "garner",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "generalizability",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "generally speaking",
+        "hedge",
+        "soft"
+    ],
+    [
+        "genuinely",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "grapple",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "great question!",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "grins wickedly",
+        "narrative",
+        "hard"
+    ],
+    [
+        "grips like a vice",
+        "narrative",
+        "hard"
+    ],
+    [
+        "groundbreaking",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "half-lidded eyes",
+        "narrative",
+        "hard"
+    ],
+    [
+        "harmonize",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "harness the power of",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "has garnered significant attention",
+        "academic-register",
+        "hard"
+    ],
+    [
+        "haze of pleasure",
+        "narrative",
+        "hard"
+    ],
+    [
+        "heart hammered against her ribs",
+        "narrative",
+        "soft"
+    ],
+    [
+        "heart pounding in her chest",
+        "narrative",
+        "soft"
+    ],
+    [
+        "heart skipped a beat",
+        "narrative",
+        "soft"
+    ],
+    [
+        "heaving with desire",
+        "narrative",
+        "hard"
+    ],
+    [
+        "hedge-then-assert",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "her breath caught in her throat",
+        "narrative",
+        "soft"
+    ],
+    [
+        "here is",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "here is a",
+        "filler",
+        "hard"
+    ],
+    [
+        "here's",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "here's the kicker",
+        "opener",
+        "soft"
+    ],
+    [
+        "here's the thing",
+        "transition",
+        "hard"
+    ],
+    [
+        "here's the truth:",
+        "opener",
+        "soft"
+    ],
+    [
+        "here's what you need to know",
+        "opener",
+        "soft"
+    ],
+    [
+        "here's why that matters:",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "hidden gem",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "highlight",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "highlighting",
+        "filler",
+        "hard"
+    ],
+    [
+        "highlights the importance of",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "his eyes never leaving hers",
+        "narrative",
+        "soft"
+    ],
+    [
+        "hit the ground running",
+        "filler",
+        "soft"
+    ],
+    [
+        "hoarse with desire",
+        "narrative",
+        "hard"
+    ],
+    [
+        "holds the distinction of",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "holistic",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "holistic approach",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "horizon",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "hot take:",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "hum with delight",
+        "narrative",
+        "hard"
+    ],
+    [
+        "hungry gaze",
+        "narrative",
+        "hard"
+    ],
+    [
+        "husky voice",
+        "narrative",
+        "hard"
+    ],
+    [
+        "husky whispers",
+        "narrative",
+        "hard"
+    ],
+    [
+        "i apologize for",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i can help with",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i cannot",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i cannot fulfill this request",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i cannot offer medical advice, but i can",
+        "filler",
+        "hard"
+    ],
+    [
+        "i do not have access to real-time",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i don't have access to",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i don't have personal opinions",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i don't have the ability to",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i feel like",
+        "hedge",
+        "soft"
+    ],
+    [
+        "i trust this email finds you well",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "i understand that",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i'd be happy to",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i'd be happy to assist you with that",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i'd be happy to help",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i'll assist you",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i'll help you",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i'll say it louder for the people in the back",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "i'm just an ai",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "i'm reaching out because",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "i'm sorry",
+        "filler",
+        "hard"
+    ],
+    [
+        "i'm sorry, but i cannot",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "ignite",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "illuminate",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "imagine a world where",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "immerse",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "immersive",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "impetus",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "importantly",
+        "transition",
+        "soft"
+    ],
+    [
+        "improved",
+        "filler",
+        "hard"
+    ],
+    [
+        "in a nutshell",
+        "filler",
+        "hard"
+    ],
+    [
+        "in addition",
+        "transition",
+        "soft"
+    ],
+    [
+        "in an age of",
+        "opener",
+        "hard"
+    ],
+    [
+        "in an ever-changing landscape",
+        "opener",
+        "hard"
+    ],
+    [
+        "in an ever-evolving world",
+        "opener",
+        "hard"
+    ],
+    [
+        "in association with",
+        "filler",
+        "hard"
+    ],
+    [
+        "in essence",
+        "transition",
+        "hard"
+    ],
+    [
+        "in light of",
+        "transition",
+        "hard"
+    ],
+    [
+        "in many cases",
+        "hedge",
+        "soft"
+    ],
+    [
+        "in other words",
+        "transition",
+        "soft"
+    ],
+    [
+        "in recent years",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "in the annals of",
+        "filler",
+        "hard"
+    ],
+    [
+        "in the era of",
+        "opener",
+        "hard"
+    ],
+    [
+        "in the heart of",
+        "filler",
+        "hard"
+    ],
+    [
+        "in the modern era",
+        "opener",
+        "hard"
+    ],
+    [
+        "in the space between heartbeats",
+        "narrative",
+        "hard"
+    ],
+    [
+        "in this article",
+        "filler",
+        "hard"
+    ],
+    [
+        "in this context",
+        "transition",
+        "hard"
+    ],
+    [
+        "in today's competitive environment",
+        "opener",
+        "hard"
+    ],
+    [
+        "in today's digital age",
+        "opener",
+        "hard"
+    ],
+    [
+        "in today's fast-paced world",
+        "opener",
+        "hard"
+    ],
+    [
+        "in today's rapidly evolving landscape",
+        "opener",
+        "hard"
+    ],
+    [
+        "inclusive",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "indeed",
+        "transition",
+        "soft"
+    ],
+    [
+        "indelible mark",
+        "filler",
+        "hard"
+    ],
+    [
+        "independent coverage",
+        "filler",
+        "soft"
+    ],
+    [
+        "industry reports",
+        "filler",
+        "hard"
+    ],
+    [
+        "inflection point",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "infuse",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "inner walls clenching",
+        "narrative",
+        "hard"
+    ],
+    [
+        "innovative",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "inquiry",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "integral",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "interplay",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "interpret",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "intricately carved",
+        "narrative",
+        "soft"
+    ],
+    [
+        "intrinsic",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "introspective",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "iridescent",
+        "narrative",
+        "hard"
+    ],
+    [
+        "is a testament to",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "it could be argued",
+        "hedge",
+        "soft"
+    ],
+    [
+        "it depends on various factors",
+        "hedge",
+        "hard"
+    ],
+    [
+        "it is important to understand",
+        "transition",
+        "hard"
+    ],
+    [
+        "it is worth mentioning",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "it should be noted",
+        "transition",
+        "hard"
+    ],
+    [
+        "it's important to note that",
+        "filler",
+        "hard"
+    ],
+    [
+        "it's important to remember that",
+        "chatbot-residue",
+        "soft"
+    ],
+    [
+        "it's no secret that",
+        "opener",
+        "soft"
+    ],
+    [
+        "it's worth noting",
+        "transition",
+        "hard"
+    ],
+    [
+        "iteration",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "iterative",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "journey of mutual understanding",
+        "narrative",
+        "hard"
+    ],
+    [
+        "just following up",
+        "letter-formula",
+        "soft"
+    ],
+    [
+        "juxtapose",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "keen",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "key",
+        "filler",
+        "hard"
+    ],
+    [
+        "key turning point",
+        "filler",
+        "hard"
+    ],
+    [
+        "kiss-bruised lips",
+        "narrative",
+        "hard"
+    ],
+    [
+        "knuckles whitened",
+        "narrative",
+        "soft"
+    ],
+    [
+        "last but not least",
+        "transition",
+        "hard"
+    ],
+    [
+        "lasting legacy",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "laudable",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "lavishes attention",
+        "narrative",
+        "hard"
+    ],
+    [
+        "leading the charge",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "leaves a lasting impact",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "leaves a lasting impression",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "leaves little to the imagination",
+        "narrative",
+        "hard"
+    ],
+    [
+        "left an indelible mark",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "let me break this down for you",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "let me help you",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "let me know",
+        "filler",
+        "hard"
+    ],
+    [
+        "let out a breath she didn't know she was holding",
+        "narrative",
+        "soft"
+    ],
+    [
+        "let that sink in",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "let's dive in 🧵",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "let's explore",
+        "filler",
+        "hard"
+    ],
+    [
+        "let's face it",
+        "chatbot-residue",
+        "soft"
+    ],
+    [
+        "let's normalize",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "let's unpack",
+        "transition",
+        "hard"
+    ],
+    [
+        "leverage",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "like a predator stalking its prey",
+        "narrative",
+        "hard"
+    ],
+    [
+        "like an electric shock",
+        "narrative",
+        "hard"
+    ],
+    [
+        "limitless",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "little did she know",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "little mouse",
+        "narrative",
+        "hard"
+    ],
+    [
+        "looking forward to hearing from you",
+        "letter-formula",
+        "soft"
+    ],
+    [
+        "looking like the cat that got the cream",
+        "narrative",
+        "hard"
+    ],
+    [
+        "low-hanging fruit",
+        "filler",
+        "hard"
+    ],
+    [
+        "makes quick work of",
+        "narrative",
+        "hard"
+    ],
+    [
+        "manifest",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "markedly",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "marks a significant shift",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "marks a turning point",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "matrix",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "may vary",
+        "filler",
+        "hard"
+    ],
+    [
+        "mechanism",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "mediate",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "mind racing with possibilities",
+        "filler",
+        "soft"
+    ],
+    [
+        "minx",
+        "narrative",
+        "hard"
+    ],
+    [
+        "mitigate",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "modality",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "monumental",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "more detailed breakdown",
+        "filler",
+        "hard"
+    ],
+    [
+        "more importantly",
+        "transition",
+        "soft"
+    ],
+    [
+        "more than ever before",
+        "opener",
+        "hard"
+    ],
+    [
+        "mosaic",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "move the needle",
+        "filler",
+        "hard"
+    ],
+    [
+        "moving forward",
+        "transition",
+        "soft"
+    ],
+    [
+        "multifaceted",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "must-see",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "must-visit",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "myriad",
+        "filler",
+        "soft"
+    ],
+    [
+        "narrative",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "natural beauty",
+        "filler",
+        "hard"
+    ],
+    [
+        "naughty boy",
+        "narrative",
+        "hard"
+    ],
+    [
+        "navigate",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "navigate the complexities",
+        "filler",
+        "hard"
+    ],
+    [
+        "necessitate",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "needless to say",
+        "transition",
+        "hard"
+    ],
+    [
+        "negative parallelism: \"not only x but also y\"",
+        "structure-formula",
+        "hard"
+    ],
+    [
+        "next-generation",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "next-level",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "nexus",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "nonetheless",
+        "transition",
+        "soft"
+    ],
+    [
+        "notable figures",
+        "filler",
+        "soft"
+    ],
+    [
+        "notably",
+        "transition",
+        "soft"
+    ],
+    [
+        "noteworthy",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "now more than ever",
+        "opener",
+        "hard"
+    ],
+    [
+        "nuanced",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "numbered key-takeaways wrap",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "observers have cited",
+        "filler",
+        "hard"
+    ],
+    [
+        "on a larger scale",
+        "transition",
+        "soft"
+    ],
+    [
+        "on the same page",
+        "filler",
+        "soft"
+    ],
+    [
+        "only time will tell",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "open new avenues",
+        "academic-register",
+        "hard"
+    ],
+    [
+        "optimize",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "orchestrate",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "overall",
+        "filler",
+        "hard"
+    ],
+    [
+        "overwhelmed by the sheer",
+        "narrative",
+        "hard"
+    ],
+    [
+        "paint a picture of",
+        "filler",
+        "hard"
+    ],
+    [
+        "painting the sky in hues of",
+        "narrative",
+        "hard"
+    ],
+    [
+        "paradigm",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "paradigm shift",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "paramount",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "pave the way",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "paving the way for",
+        "academic-register",
+        "hard"
+    ],
+    [
+        "penetrated to the hilt",
+        "narrative",
+        "hard"
+    ],
+    [
+        "per my last email",
+        "letter-formula",
+        "soft"
+    ],
+    [
+        "personalize",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "picture this:",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "picturesque",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "piercing blue eyes",
+        "narrative",
+        "soft"
+    ],
+    [
+        "pinpoint",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "pioneering",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "pivotal",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "playbook",
+        "filler",
+        "soft"
+    ],
+    [
+        "plays a crucial role",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "plays a pivotal role",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "plays a significant role",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "plays a vital role",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "please note that",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "please note that i am an ai",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "pleasure and pain",
+        "narrative",
+        "hard"
+    ],
+    [
+        "plethora",
+        "filler",
+        "soft"
+    ],
+    [
+        "plot twist:",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "plumbing the depths of",
+        "narrative",
+        "hard"
+    ],
+    [
+        "poised",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "ponder",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "potential",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "prevalent",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "proactive",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "profound",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "profound heritage",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "propagate",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "propriety be damned",
+        "narrative",
+        "hard"
+    ],
+    [
+        "puckered hole",
+        "narrative",
+        "hard"
+    ],
+    [
+        "pupils blown wide with pleasure",
+        "narrative",
+        "hard"
+    ],
+    [
+        "pushing the boundaries of",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "quintessential",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "quivering with need",
+        "narrative",
+        "hard"
+    ],
+    [
+        "racing with anticipation",
+        "narrative",
+        "hard"
+    ],
+    [
+        "rapidly",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "read that again",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "real talk",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "reconcile",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "redefining what's possible",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "refers to",
+        "filler",
+        "hard"
+    ],
+    [
+        "reflects a broader",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "reflects broader",
+        "filler",
+        "hard"
+    ],
+    [
+        "reframe",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "regenerate response",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "reimagine",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "reinforce",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "relentless second person",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "reliance",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "remains to be seen",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "renewed sense of purpose",
+        "filler",
+        "hard"
+    ],
+    [
+        "renowned",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "represents a paradigm shift",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "resilient",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "resonate",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "rest assured",
+        "letter-formula",
+        "soft"
+    ],
+    [
+        "restating the prompt as the opening line",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "results may vary",
+        "hedge",
+        "soft"
+    ],
+    [
+        "reveling in the satisfaction",
+        "narrative",
+        "hard"
+    ],
+    [
+        "revitalize",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "revolutionary",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "revolutionizing the way we",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "rhetorical-question opener",
+        "opener",
+        "soft"
+    ],
+    [
+        "rich",
+        "filler",
+        "hard"
+    ],
+    [
+        "rich cultural heritage",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "rich history",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "rich tapestry",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "said gently",
+        "filler",
+        "soft"
+    ],
+    [
+        "said more than words ever could",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "said quietly",
+        "filler",
+        "soft"
+    ],
+    [
+        "scaffold",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "scalable",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "scalable solution",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "scent that's distinctly",
+        "narrative",
+        "hard"
+    ],
+    [
+        "schema",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "scrutinize",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "seamless",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "seamlessly integrated",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "seductive purrs",
+        "narrative",
+        "hard"
+    ],
+    [
+        "sent shockwaves",
+        "narrative",
+        "hard"
+    ],
+    [
+        "serves as a reminder",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "serves as a testament",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "sets the stage for",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "setting the stage for",
+        "filler",
+        "hard"
+    ],
+    [
+        "shaping the future",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "shed light on",
+        "filler",
+        "hard"
+    ],
+    [
+        "sheds light on",
+        "academic-register",
+        "hard"
+    ],
+    [
+        "shivers running up",
+        "narrative",
+        "hard"
+    ],
+    [
+        "showcase",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "signal vs noise",
+        "filler",
+        "soft"
+    ],
+    [
+        "significantly enhance",
+        "filler",
+        "hard"
+    ],
+    [
+        "silent invitation",
+        "narrative",
+        "hard"
+    ],
+    [
+        "silken folds",
+        "narrative",
+        "hard"
+    ],
+    [
+        "similarly",
+        "transition",
+        "soft"
+    ],
+    [
+        "simply put",
+        "transition",
+        "soft"
+    ],
+    [
+        "slick folds",
+        "narrative",
+        "hard"
+    ],
+    [
+        "smell of ozone",
+        "narrative",
+        "soft"
+    ],
+    [
+        "smiled predatory",
+        "narrative",
+        "hard"
+    ],
+    [
+        "softly but firmly",
+        "narrative",
+        "hard"
+    ],
+    [
+        "solidifies its position as",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "some critics argue",
+        "filler",
+        "hard"
+    ],
+    [
+        "something shifted between them",
+        "filler",
+        "soft"
+    ],
+    [
+        "speaks volumes",
+        "transition",
+        "hard"
+    ],
+    [
+        "spearhead",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "spectrum",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "spread like wildfire",
+        "narrative",
+        "soft"
+    ],
+    [
+        "stands as a testament to",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "state-of-the-art",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "stay ahead of the curve",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "steadfast dedication",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "steeling herself",
+        "narrative",
+        "soft"
+    ],
+    [
+        "streamline",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "streamlined",
+        "filler",
+        "hard"
+    ],
+    [
+        "stunning natural beauty",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "such as",
+        "filler",
+        "hard"
+    ],
+    [
+        "sudden register shift mid-document",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "supercharge",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "surpass",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "swiftly",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "swollen bud",
+        "narrative",
+        "hard"
+    ],
+    [
+        "symbolizing",
+        "filler",
+        "hard"
+    ],
+    [
+        "synergistic",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "synergistically",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "synergy",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "synthesize",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "tacked-on call to action",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "take a deep dive into",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "take it to the next level",
+        "filler",
+        "hard"
+    ],
+    [
+        "take your pleasure",
+        "narrative",
+        "hard"
+    ],
+    [
+        "taken aback",
+        "narrative",
+        "soft"
+    ],
+    [
+        "tantalizing promise",
+        "narrative",
+        "hard"
+    ],
+    [
+        "tends to",
+        "hedge",
+        "soft"
+    ],
+    [
+        "tension is palpable",
+        "narrative",
+        "hard"
+    ],
+    [
+        "testament",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "thank you for reaching out",
+        "letter-formula",
+        "soft"
+    ],
+    [
+        "that's a really interesting point.",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "that's only half the story",
+        "transition",
+        "soft"
+    ],
+    [
+        "the air was thick with",
+        "narrative",
+        "hard"
+    ],
+    [
+        "the ball is in your court",
+        "narrative",
+        "hard"
+    ],
+    [
+        "the bottom line is",
+        "filler",
+        "soft"
+    ],
+    [
+        "the din of the crowd",
+        "narrative",
+        "hard"
+    ],
+    [
+        "the door creaked open",
+        "narrative",
+        "soft"
+    ],
+    [
+        "the game is on",
+        "narrative",
+        "hard"
+    ],
+    [
+        "the intersection of",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "the key takeaway here is",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "the night is still young",
+        "narrative",
+        "hard"
+    ],
+    [
+        "the possibilities are endless",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "the present study",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "the reality is",
+        "transition",
+        "soft"
+    ],
+    [
+        "the result?",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "the room fell silent",
+        "narrative",
+        "soft"
+    ],
+    [
+        "the sun dipped below the horizon",
+        "narrative",
+        "hard"
+    ],
+    [
+        "the words hung in the air",
+        "narrative",
+        "soft"
+    ],
+    [
+        "the world narrows",
+        "narrative",
+        "hard"
+    ],
+    [
+        "there are several considerations",
+        "hedge",
+        "hard"
+    ],
+    [
+        "there you have it",
+        "chatbot-residue",
+        "soft"
+    ],
+    [
+        "think outside the box",
+        "filler",
+        "hard"
+    ],
+    [
+        "this highlights the fact that",
+        "transition",
+        "hard"
+    ],
+    [
+        "this is a complex topic with no single answer",
+        "hedge",
+        "hard"
+    ],
+    [
+        "this is everything",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "this underscores the importance of",
+        "transition",
+        "hard"
+    ],
+    [
+        "thought leader",
+        "filler",
+        "hard"
+    ],
+    [
+        "thoughts?",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "thrilled to announce",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "throbbing member",
+        "narrative",
+        "hard"
+    ],
+    [
+        "timeless",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "to some extent",
+        "hedge",
+        "soft"
+    ],
+    [
+        "to sum up",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "to the best of our knowledge",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "tongue darts out",
+        "narrative",
+        "hard"
+    ],
+    [
+        "took a deep breath",
+        "narrative",
+        "soft"
+    ],
+    [
+        "torn between propriety and desire",
+        "narrative",
+        "hard"
+    ],
+    [
+        "touch base",
+        "filler",
+        "soft"
+    ],
+    [
+        "touchpoint",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "towers over",
+        "narrative",
+        "hard"
+    ],
+    [
+        "trajectory",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "transcend",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "transform",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "treasure trove",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "ultimately the choice is yours",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "unbeknownst to",
+        "narrative",
+        "soft"
+    ],
+    [
+        "unbeknownst to them",
+        "narrative",
+        "hard"
+    ],
+    [
+        "uncharted",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "underpin",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "underscore",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "underscores its importance",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "underscores the need for",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "underscoring",
+        "filler",
+        "hard"
+    ],
+    [
+        "unleash your potential",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "unlock",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "unlock the power of",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "unpack the",
+        "filler",
+        "hard"
+    ],
+    [
+        "unparalleled",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "unpopular opinion:",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "unprecedented",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "unravel",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "unshed tears",
+        "narrative",
+        "soft"
+    ],
+    [
+        "unveil",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "unwavering commitment",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "up to my last training update",
+        "filler",
+        "hard"
+    ],
+    [
+        "utilize",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "valuable",
+        "filler",
+        "hard"
+    ],
+    [
+        "valuable insights",
+        "transition",
+        "hard"
+    ],
+    [
+        "vibrant culture",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "visionary",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "voice barely above a whisper",
+        "narrative",
+        "hard"
+    ],
+    [
+        "voice husky with desire",
+        "narrative",
+        "hard"
+    ],
+    [
+        "voice trembling slightly",
+        "narrative",
+        "hard"
+    ],
+    [
+        "waggles her eyebrows",
+        "narrative",
+        "hard"
+    ],
+    [
+        "wanton",
+        "narrative",
+        "hard"
+    ],
+    [
+        "warring with",
+        "narrative",
+        "hard"
+    ],
+    [
+        "was taken aback",
+        "narrative",
+        "hard"
+    ],
+    [
+        "watershed moment",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "waves of pleasure",
+        "narrative",
+        "hard"
+    ],
+    [
+        "weeping slit",
+        "narrative",
+        "hard"
+    ],
+    [
+        "well, well, well",
+        "narrative",
+        "hard"
+    ],
+    [
+        "wet pop",
+        "narrative",
+        "hard"
+    ],
+    [
+        "what does this mean for you?",
+        "transition",
+        "soft"
+    ],
+    [
+        "when all is said and done",
+        "filler",
+        "hard"
+    ],
+    [
+        "when you zoom out",
+        "transition",
+        "soft"
+    ],
+    [
+        "where innovation meets",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "whether you like it or not",
+        "narrative",
+        "hard"
+    ],
+    [
+        "while this may vary",
+        "hedge",
+        "soft"
+    ],
+    [
+        "whilst",
+        "hedge",
+        "soft"
+    ],
+    [
+        "whimsical",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "whispering words of passion",
+        "narrative",
+        "hard"
+    ],
+    [
+        "wild abandon",
+        "narrative",
+        "hard"
+    ],
+    [
+        "win-win",
+        "filler",
+        "soft"
+    ],
+    [
+        "with bated breath",
+        "narrative",
+        "soft"
+    ],
+    [
+        "with each slow, deliberate movement",
+        "narrative",
+        "hard"
+    ],
+    [
+        "with reckless abandon",
+        "narrative",
+        "hard"
+    ],
+    [
+        "with that in mind",
+        "transition",
+        "hard"
+    ],
+    [
+        "with the rise of",
+        "opener",
+        "hard"
+    ],
+    [
+        "without further ado",
+        "chatbot-residue",
+        "soft"
+    ],
+    [
+        "without waiting for a response",
+        "narrative",
+        "hard"
+    ],
+    [
+        "words left unsaid between them",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "world-class",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "worth noting",
+        "filler",
+        "hard"
+    ],
+    [
+        "would you like",
+        "filler",
+        "hard"
+    ],
+    [
+        "written by a leading expert",
+        "filler",
+        "hard"
+    ],
+    [
+        "you raise a valid concern.",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "you really know how to treat a lady!",
+        "narrative",
+        "hard"
+    ],
+    [
+        "you're a bold one",
+        "narrative",
+        "hard"
+    ],
+    [
+        "you're absolutely right!",
+        "filler",
+        "hard"
+    ]
+]
