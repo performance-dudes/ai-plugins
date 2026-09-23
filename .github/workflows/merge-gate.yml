@@ -50,6 +50,13 @@ jobs:
     # läuft im richtigen Kontext und aktualisiert den sichtbaren Check.
     if: github.event_name == 'issue_comment' && github.event.issue.pull_request
     runs-on: ubuntu-latest
+    # Ohne actions: write scheitert der Rerun mit HTTP 403 ("Resource not accessible
+    # by integration") — der Marker wird dann nie ausgewertet. Stand wie die Vorlage
+    # in ai-plugins-internal (plugins/merge-gate/ci/workflow.template.yml).
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: write
     steps:
       - name: Re-run merge-gate for this PR
         env:
