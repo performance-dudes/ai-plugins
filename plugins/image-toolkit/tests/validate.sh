@@ -53,6 +53,70 @@ head -16 "$PLUGIN_DIR/skills/image-toolkit/SKILL.md" | grep -q '^name:' \
   && head -16 "$PLUGIN_DIR/skills/image-toolkit/SKILL.md" | grep -q '^description:' \
   && ok "SKILL.md (name+description)" || bad "SKILL.md missing name/description"
 
+note "6. Gemini models: GA only, no shut-down IDs"
+# Shut down per ai.google.dev/gemini-api/docs/deprecations. They may appear ONLY in the
+# successor table of the reference ("## Abgeschaltete Modelle" section) and on lines of the
+# script's successor map tagged `# dead-id-ok` — anywhere else they send users to a dead
+# endpoint. New shut-downs from the deprecations page go into DEAD.
+DEAD='gemini-2\.[05]-flash[-a-z]*image|image-preview|imagen-[34]\.0-'
+REF="$PLUGIN_DIR/skills/image-toolkit/references/gemini-image-api.md"
+SCRIPT="$PLUGIN_DIR/scripts/generate_image.py"
+hits="$(grep -rnE --exclude-dir=__pycache__ "$DEAD" "$PLUGIN_DIR/scripts" "$PLUGIN_DIR/commands" \
+  "$PLUGIN_DIR/README.md" "$PLUGIN_DIR/skills/image-toolkit/SKILL.md" 2>/dev/null | grep -v '# dead-id-ok' || true)"
+[ -z "$hits" ] && ok "no shut-down model IDs in scripts/commands/README/SKILL.md" || bad "shut-down model IDs found: $hits"
+outside="$(awk '/^## /{inside=($0 ~ /^## Abgeschaltete Modelle/)} !inside' "$REF" | grep -nE "$DEAD" || true)"
+[ -z "$outside" ] && ok "reference: shut-down IDs only in the successor table" || bad "reference uses shut-down IDs outside the successor table: $outside"
+grep -qE '^DEFAULT_MODEL = "gemini-3\.1-flash-image"' "$SCRIPT" \
+  && ok "default model is gemini-3.1-flash-image (GA)" || bad "default model is not gemini-3.1-flash-image"
+grep -q '"google-genai>=2\.' "$SCRIPT" \
+  && ok "google-genai pinned to 2.x (Interactions API)" || bad "google-genai pin below 2.x — client.interactions missing"
+grep -qE '^[^#]*client\.interactions\.create\(' "$SCRIPT" \
+  && ok "script calls client.interactions.create" || bad "script does not call client.interactions.create"
+grep -rqE --exclude-dir=__pycache__ 'generate_content|generateContent' "$PLUGIN_DIR/scripts" \
+  && bad "scripts still use the legacy generateContent route" || ok "no legacy generateContent in scripts"
+
+note "7. Unit: guards reject bad combinations before any paid call"
+# The guards only use the stdlib at import time, so plain python3 can test them
+# without uv, google-genai, Pillow or an API key.
+if python3 - "$SCRIPT" <<'PY'
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("gi", sys.argv[1])
+gi = importlib.util.module_from_spec(spec); spec.loader.exec_module(gi)
+M_LITE, M_FLASH, M_PRO = "gemini-3.1-flash-lite-image", "gemini-3.1-flash-image", "gemini-3-pro-image"
+reject = [  # (label, callable)
+    ("lite + 2K",           lambda: gi._check(M_LITE, size="2K")),
+    ("flash lite + 512",    lambda: gi._check(M_LITE, size="512")),
+    ("pro + 512",           lambda: gi._check(M_PRO, size="512")),
+    ("pro + thinking",      lambda: gi._check(M_PRO, thinking="high")),
+    ("lite + web_search",   lambda: gi._check(M_LITE, search=["web_search"])),
+    ("pro + image_search",  lambda: gi._check(M_PRO, search=["image_search"])),
+    ("pro + 8:1",           lambda: gi._check(M_PRO, aspect="8:1")),
+    ("lite + 1:4",          lambda: gi._check(M_LITE, aspect="1:4")),
+    ("shut-down id",        lambda: gi._check(next(iter(gi.SHUT_DOWN)))),
+    ("out .xyz",            lambda: gi._check_out("/tmp/out.xyz")),
+    ("out missing dir",     lambda: gi._check_out("/nonexistent-dir-7f3a/out.png")),
+]
+accept = [
+    ("flash + 512 + 8:1 + image_search", lambda: gi._check(M_FLASH, "512", "high", ["image_search"], "8:1")),
+    ("pro + 4K + web_search",            lambda: gi._check(M_PRO, "4K", None, ["web_search"], "21:9")),
+    ("lite + 1K + minimal",              lambda: gi._check(M_LITE, "1K", "minimal", None, "16:9")),
+    ("out /tmp/x.png",                   lambda: gi._check_out("/tmp/x.png")),
+]
+failed = 0
+for label, fn in reject:
+    try:
+        fn(); print(f"  x    not rejected: {label}"); failed = 1
+    except SystemExit:
+        print(f"  ok   rejects {label}")
+for label, fn in accept:
+    try:
+        fn(); print(f"  ok   accepts {label}")
+    except SystemExit as e:
+        print(f"  x    wrongly rejected {label}: {e}"); failed = 1
+sys.exit(failed)
+PY
+then :; else bad "guard unit tests"; fi
+
 note "Result"
 if [ "$fail" -eq 0 ]; then echo "  ALL CHECKS PASSED"; else echo "  FAILURES ABOVE"; fi
 exit "$fail"

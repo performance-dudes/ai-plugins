@@ -19,8 +19,12 @@ bash tests/run-all.sh             # gesamtes Repo
 | Skripte | `generate_image.py` kompiliert, hat PEP-723-Header |
 | Frontmatter | `commands/image.md`, `commands/image-doctor.md` (`description`), `SKILL.md` (`name`+`description`) |
 | Version | via `tests/lib/check-version-sync.sh` im repo-weiten `structure`-Lauf |
+| Modelle | keine abgeschalteten Gemini/Imagen-IDs außerhalb der Nachfolger-Tabelle; Default GA; SDK-Pin 2.x; Interactions API |
 
 Rein statisch und offline — es wird **kein** Bild generiert und kein API-Key
-gebraucht. Die Gemini-Aufrufe selbst sind damit nicht abgedeckt: ob
-`person_generation` in der Developer API akzeptiert wird, zeigt sich erst gegen die
-echte API (siehe `journal/2026-07-25-image-toolkit-person-generation.md`).
+gebraucht. Die Gemini-Aufrufe selbst sind damit nicht abgedeckt; was live geprüft
+wurde, steht im jeweiligen Journal-Eintrag
+(`journal/2026-09-23-image-toolkit-gemini-ga-interactions.md`).
+
+Neue abgeschaltete IDs (Deprecations-Seite der Gemini API) in `DEAD` in
+`plugins/image-toolkit/tests/validate.sh` §6 nachtragen.

@@ -1,830 +1,319 @@
-# 🤖 Gemini Image Generation API — Vollständige Referenz
+# 🤖 Gemini Image API — Referenz (Interactions API)
 
 ## Inhaltsverzeichnis
-1. [Verfügbare Modelle](#verfügbare-modelle)
-2. [API Endpoints](#api-endpoints)
-3. [Konfigurationsoptionen](#konfigurationsoptionen)
-4. [Python SDK (mit uv)](#python-sdk-mit-uv)
-5. [Bash/curl API](#bashcurl-api)
-6. [Bildbearbeitung](#bildbearbeitung)
-7. [Streaming](#streaming)
-8. [ThinkingConfig](#thinkingconfig)
-9. [Google Search Tool](#google-search-tool)
+
+1. [Modelle](#modelle)
+2. [Abgeschaltete Modelle — nicht mehr verwenden](#abgeschaltete-modelle--nicht-mehr-verwenden)
+3. [API-Route: Interactions statt generateContent](#api-route-interactions-statt-generatecontent)
+4. [Konfiguration](#konfiguration)
+5. [Python SDK (mit uv)](#python-sdk-mit-uv)
+6. [Bildbearbeitung & Multi-Turn](#bildbearbeitung--multi-turn)
+7. [Grounding mit Google Search](#grounding-mit-google-search)
+8. [curl](#curl)
+9. [Preise](#preise)
 10. [Best Practices](#best-practices)
 
 ---
 
-## Verfügbare Modelle
+## Modelle
 
-### Gemini Native Image Models (generateContent endpoint)
+Alle drei sind **GA** (keine Preview). Der Plugin-Default ist `gemini-3.1-flash-image`.
 
-| Model ID | Status | Notes |
-|----------|--------|-------|
-| `gemini-2.5-flash-image` | **GA (Stable)** | Recommended for production |
-| `gemini-3.1-flash-image-preview` | Preview | Fast, up to 4K, thinkingLevel support |
-| `gemini-3-pro-image-preview` | Preview | Studio quality, 4K, complex layouts |
+| Modell-ID | Name | Stärke | Auflösung | Thinking | Search |
+|---|---|---|---|---|---|
+| `gemini-3.1-flash-lite-image` | Nano Banana 2 Lite | billigste, niedrigste Latenz, Masse | **nur 1K** | `minimal`/`high` | ❌ |
+| `gemini-3.1-flash-image` | Nano Banana 2 | **Allrounder (Default)**, Pro-Features bei Flash-Tempo | 512, 1K, 2K, 4K | `minimal`/`high` | Web + Bild |
+| `gemini-3-pro-image` | Nano Banana Pro | Profi-Assets, komplexe Layouts, bester Text im Bild | 1K, 2K, 4K | immer an, nicht steuerbar | Web |
 
-### Imagen Models (predict endpoint)
+### Modellwahl
 
-| Model ID | Status | Notes |
-|----------|--------|-------|
-| `imagen-4.0-generate-001` | GA | Standard, up to 2K |
-| `imagen-4.0-ultra-generate-001` | GA | Highest quality |
-| `imagen-4.0-fast-generate-001` | GA | Lowest latency |
+| Aufgabe | Modell |
+|---|---|
+| Standard (Illustration, Foto, Edit) | `gemini-3.1-flash-image` |
+| Viele Bilder, Entwürfe, Thumbnails | `gemini-3.1-flash-lite-image` |
+| Infografik, Menü, Diagramm, viel Text im Bild | `gemini-3-pro-image` |
+| Bild braucht aktuelle Fakten (Wetter, Kurse, Ereignisse) | `gemini-3.1-flash-image` + `--search web_search` |
+| Stil/Motiv an Web-Bildern ausrichten | `gemini-3.1-flash-image` + `--search image_search` |
+| 4K-Druckvorlage | `gemini-3.1-flash-image` oder `gemini-3-pro-image` mit `--size 4K` |
 
-### Model selection guide
+### Referenzbilder (Edit/Komposition)
 
-| Use case | Recommended model |
-|----------|-------------------|
-| Standard production | `gemini-2.5-flash-image` |
-| Interactive editing (multi-turn) | `gemini-2.5-flash-image` |
-| Best text-in-image quality | `gemini-3-pro-image-preview` |
-| Lowest latency | `imagen-4.0-fast-generate-001` |
-| Highest image quality | `imagen-4.0-ultra-generate-001` |
-| High volume, fast | `gemini-3.1-flash-image-preview` |
-
----
-
-## API Endpoints
-
-```
-# Gemini models
-POST https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent
-POST https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:streamGenerateContent
-
-# Imagen models
-POST https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:predict
-```
-
-Auth: `x-goog-api-key: $GEMINI_API_KEY` header
+- Bis zu **14** Eingabebilder je Aufruf.
+- `gemini-3-pro-image`: 5 Bilder in hoher Treue, 14 insgesamt.
+- `gemini-3.1-flash-image`: Ähnlichkeit für bis zu 4 Figuren, Treue für bis zu 10 Objekte.
+- `gemini-3.1-flash-lite-image` ist laut Google **nicht** für mehrere Referenzbilder oder
+  Multi-Turn-Editing optimiert — dafür Flash oder Pro.
+- Eingabeformate: PNG, JPEG, WebP, HEIC/HEIF (iPhone-Fotos).
+- Jedes erzeugte Bild trägt ein **SynthID**-Wasserzeichen.
 
 ---
 
-## Konfigurationsoptionen
+## Abgeschaltete Modelle — nicht mehr verwenden
 
-### imageConfig
+| Alte ID | Abschaltung | Nachfolger |
+|---|---|---|
+| `gemini-2.5-flash-image` | 2. Oktober 2026 | `gemini-3.1-flash-image` |
+| `gemini-3.1-flash-image-preview` | 25. Juni 2026 | `gemini-3.1-flash-image` |
+| `gemini-3-pro-image-preview` | 25. Juni 2026 | `gemini-3-pro-image` |
+| `imagen-4.0-generate-001` | 17. August 2026 | `gemini-3.1-flash-image` |
+| `imagen-4.0-ultra-generate-001` | 17. August 2026 | `gemini-3.1-flash-image` |
+| `imagen-4.0-fast-generate-001` | 17. August 2026 | `gemini-3.1-flash-image` |
 
-#### REST API (camelCase)
+Aktueller Stand: <https://ai.google.dev/gemini-api/docs/deprecations>. Taucht eine
+dieser IDs in altem Code auf, auf den Nachfolger umstellen — der Imagen-`predict`-Endpoint
+existiert für Bilder nicht mehr.
 
-| Parameter | Values | Default |
-|-----------|--------|---------|
-| `aspectRatio` | `"1:1"`, `"2:3"`, `"3:2"`, `"3:4"`, `"4:3"`, `"4:5"`, `"5:4"`, `"9:16"`, `"16:9"`, `"21:9"`, `"1:4"`, `"4:1"`, `"1:8"`, `"8:1"` | `"1:1"` |
-| `imageSize` | `"512"` (3.1-flash only), `"1K"`, `"2K"`, `"4K"` | `"1K"` |
-| `personGeneration` | `"dont_allow"`, `"allow_adult"`, `"allow_all"` | `"allow_adult"` |
-| `imageOutputOptions.mimeType` | `"image/jpeg"`, `"image/png"`, `"image/webp"` | `"image/png"` |
-| `imageOutputOptions.compressionQuality` | 1-100 | — |
+---
 
-#### Python SDK (snake_case) — types.ImageConfig()
+## API-Route: Interactions statt generateContent
 
-> **SDK >= 1.65.0 erforderlich.** Immer `--python 3.13` und `--with "google-genai>=1.68.0"` bei `uv run` verwenden, sonst werden alte cached Pakete genutzt, die `image_size` und `thinking_level` nicht kennen.
+Google führt Bildgenerierung über die **Interactions API** (`POST /v1beta/interactions`,
+im SDK `client.interactions.create`). `generateContent` gilt als **Legacy** und wird
+nicht mehr für neue Arbeit verwendet.
 
-| Parameter (Python) | Values | Unterstützt |
-|---------------------|--------|-------------|
-| `aspect_ratio` | `"1:1"`, `"16:9"`, `"9:16"`, etc. | ✅ Alle Modelle |
-| `image_size` | `"512"`, `"1K"`, `"2K"`, `"4K"` | ✅ Ab SDK 1.65.0 |
-| `person_generation` | `"ALLOW_ALL"`, `"ALLOW_ADULT"`, `"ALLOW_NONE"` | ✅ Alle Modelle |
-| `output_mime_type` | — | ❌ Nur Vertex AI, nicht Gemini API |
-| `output_compression_quality` | — | ❌ Nur Vertex AI, nicht Gemini API |
+| | Interactions (verwenden) | generateContent (Legacy) |
+|---|---|---|
+| SDK-Aufruf | `client.interactions.create(model=…, input=…)` | `client.models.generate_content(…)` |
+| Bild-Optionen | `response_format={"type": "image", …}` | `config.image_config` |
+| Thinking | `generation_config={"thinking_level": …}` | `config.thinking_config` |
+| Multi-Turn | serverseitig über `previous_interaction_id` | Verlauf selbst mitschicken |
+| Ergebnisbild | `interaction.output_image.data` (Base64, **JPEG**) | `part.inline_data.data` (Bytes) |
 
-### ThinkingConfig — types.ThinkingConfig()
+⚠️ **Interactions liefert Bilder nur als `image/jpeg`.** Für PNG/WebP lokal umkodieren
+(Pillow `Image.save("out.png")` oder `magick out.jpg out.png`). Transparenz erzeugt das
+Modell nicht — dafür ImageMagick.
 
-> Nur für Gemini 3.x Modelle. Nicht mit `gemini-2.5-flash-image` verwenden!
-> `thinking_level` und `thinking_budget` **nie gleichzeitig** setzen.
+---
 
-| Parameter (Python) | Values | Modelle |
-|---------------------|--------|---------|
-| `thinking_level` | `"minimal"`, `"low"`, `"medium"`, `"high"` | gemini-3.1-flash-image: nur `"minimal"` (Default), `"high"` / gemini-3-pro-image: nur `"low"`, `"high"` / Gemini 3 Flash (Text): alle 4 |
-| `thinking_budget` | `0`–`32768` (int) | Nur Gemini 2.5 Modelle |
-| `include_thoughts` | `True` / `False` | Gemini 3.x (Tokens werden immer abgerechnet) |
+## Konfiguration
 
-### Imagen aspect ratios (more limited)
-`"1:1"`, `"3:4"`, `"4:3"`, `"9:16"`, `"16:9"`
+### `response_format` (Bildausgabe)
 
-### Common aspect ratio uses
+```python
+response_format={
+    "type": "image",          # Pflicht
+    "aspect_ratio": "16:9",   # optional, Default 1:1 bzw. Seitenverhältnis des Eingabebilds
+    "image_size": "2K",       # optional, Default 1K — "512" | "1K" | "2K" | "4K" (großes K)
+}
+```
 
-| Ratio | Use case |
-|-------|----------|
-| `1:1` | Social media posts, profile pics |
-| `16:9` | YouTube thumbnails, desktop wallpapers |
-| `9:16` | Instagram/TikTok stories, reels |
-| `4:3` | Classic photos, presentations |
-| `3:4` | Portrait photos |
-| `21:9` | Ultra-wide cinematic |
+**Aspect Ratios (alle Modelle):** `1:1` `2:3` `3:2` `3:4` `4:3` `4:5` `5:4` `9:16` `16:9` `21:9`
+**Nur `gemini-3.1-flash-image`:** `1:4` `4:1` `1:8` `8:1`
+
+Ohne `aspect_ratio` übernimmt ein Edit das Seitenverhältnis des Eingabebilds. Das Skript
+setzt 16:9 deshalb nur bei neuen Bildern, nicht bei `--edit`/`--continue`.
+
+| Ratio | Einsatz |
+|---|---|
+| `1:1` | Social-Post, Profilbild |
+| `16:9` | YouTube-Thumbnail, Hero, Wallpaper |
+| `9:16` | Story, Reel |
+| `4:5` | Instagram-Feed hochkant |
+| `4:3` / `3:4` | klassisches Foto, Folie |
+| `21:9` | Kino-Breitbild, Banner |
+| `4:1` / `8:1` | Web-Banner, Header |
+| `1:4` / `1:8` | Skyscraper, Seitenleiste |
+
+**Auflösung je Modell:** `512` nur Flash · Lite nur `1K` · Pro `1K`/`2K`/`4K`.
+Beispiel 16:9 @ 1K = 1376×768 px.
+
+### `generation_config.thinking_level`
+
+- Flash und Flash Lite: `minimal` (Default) oder `high`.
+- Pro: denkt immer, nicht abschaltbar — **kein** `thinking_level` setzen.
+- Thinking-Tokens werden immer berechnet (Output-Text-Preis). Das Modell erzeugt bis zu
+  zwei Zwischenbilder („thought images", nicht berechnet); das letzte ist das Endbild.
+
+| Aspekt | `minimal` | `high` |
+|---|---|---|
+| Einfaches Motiv | ✅ | kaum besser |
+| Komplexe Szene, Raumbeziehungen | ⚠️ okay | ✅ deutlich besser |
+| Text im Bild | ⚠️ | ✅ besser |
+| Latenz (Flash, 1K) | ~12 s | 2–3× länger |
+
+`high` nur für komplexe Szenen oder Text im Bild; sonst `minimal`.
 
 ---
 
 ## Python SDK (mit uv)
 
-> **Wichtig:** Niemals `pip install` in die System-Python-Umgebung. Immer `uv` verwenden.
-> **Wichtig:** Immer `--python 3.13` angeben, da das System-Python (3.9) zu alt ist und alte SDK-Versionen cached werden, die `image_size` und `thinking_level` nicht unterstützen. SDK >= 1.65.0 ist erforderlich.
-
-### Einmalig ausführen (kein Projekt nötig)
+Nie `pip install` ins System-Python. Immer `uv`, Python 3.13, SDK **≥ 2.25.0**
+(`client.interactions` gibt es erst im 2.x-SDK).
 
 ```bash
-uv run --python 3.13 --with "google-genai>=1.68.0" --with Pillow python script.py
+# Gebündeltes Skript (empfohlen)
+uv run ${CLAUDE_PLUGIN_ROOT}/scripts/generate_image.py --prompt "…" --out /tmp/out.png
+
+# Eigenes Skript ad hoc
+uv run --python 3.13 --with "google-genai>=2.25.0" --with Pillow python script.py
 ```
-
-### Als Projekt
-
-```bash
-uv init image-gen && cd image-gen
-uv add "google-genai>=1.68.0" Pillow
-uv run python script.py
-```
-
-### Text-to-Image (non-streaming)
-
-```python
-import os
-from io import BytesIO
-from pathlib import Path
-from PIL import Image
-from google import genai
-from google.genai import types
-
-client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-
-
-def generate_image(
-    prompt: str,
-    model: str = "gemini-2.5-flash-image",
-    aspect_ratio: str = "16:9",
-    image_size: str = "2K",
-    output_path: str = "output.png",
-) -> None:
-    response = client.models.generate_content(
-        model=model,
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            response_modalities=["TEXT", "IMAGE"],
-            image_config=types.ImageConfig(
-                aspect_ratio=aspect_ratio,
-                image_size=image_size,
-                person_generation="allow_adult",
-            ),
-        ),
-    )
-
-    for part in response.candidates[0].content.parts:
-        if part.text:
-            print(f"Description: {part.text.strip()}")
-        elif part.inline_data:
-            img = Image.open(BytesIO(part.inline_data.data))
-            img.save(output_path)
-            print(f"Image saved: {output_path}")
-
-
-generate_image(
-    prompt="A photorealistic fox in a snowy forest at golden hour",
-    output_path="/tmp/fox.png",
-)
-```
-
-### Imagen 4
-
-```python
-def generate_imagen(
-    prompt: str,
-    model: str = "imagen-4.0-generate-001",
-    num_images: int = 1,
-    aspect_ratio: str = "1:1",
-    image_size: str = "1K",
-    output_dir: str = "/tmp",
-) -> list[str]:
-    response = client.models.generate_images(
-        model=model,
-        prompt=prompt,
-        config=types.GenerateImagesConfig(
-            number_of_images=num_images,
-            aspect_ratio=aspect_ratio,
-            image_size=image_size,
-            person_generation="allow_adult",
-            output_mime_type="image/jpeg",
-        ),
-    )
-
-    paths = []
-    for i, img in enumerate(response.generated_images):
-        path = f"{output_dir}/imagen_{i}.jpg"
-        img.image.save(path)
-        paths.append(path)
-        print(f"Saved: {path}")
-    return paths
-```
-
----
-
-## Bildbearbeitung
-
-### Edit existing image with prompt
-
-```python
-def edit_image(
-    image_path: str,
-    edit_prompt: str,
-    model: str = "gemini-2.5-flash-image",
-    output_path: str = "/tmp/edited.png",
-) -> None:
-    with open(image_path, "rb") as f:
-        image_bytes = f.read()
-
-    ext = Path(image_path).suffix.lower()
-    mime_map = {
-        ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
-        ".png": "image/png", ".webp": "image/webp",
-    }
-    mime_type = mime_map.get(ext, "image/jpeg")
-
-    response = client.models.generate_content(
-        model=model,
-        contents=[
-            types.Part.from_bytes(data=image_bytes, mime_type=mime_type),
-            types.Part.from_text(edit_prompt),
-        ],
-        config=types.GenerateContentConfig(
-            response_modalities=["TEXT", "IMAGE"],
-            image_config=types.ImageConfig(aspect_ratio="1:1"),
-        ),
-    )
-
-    for part in response.candidates[0].content.parts:
-        if part.text:
-            print(f"Response: {part.text}")
-        elif part.inline_data:
-            img = Image.open(BytesIO(part.inline_data.data))
-            img.save(output_path)
-            print(f"Edited image: {output_path}")
-```
-
-### Multi-turn editing (conversation)
-
-```python
-def multi_turn_edit(image_path: str) -> None:
-    with open(image_path, "rb") as f:
-        image_bytes = f.read()
-
-    contents = [
-        types.Content(
-            role="user",
-            parts=[
-                types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"),
-                types.Part.from_text("Add sunflowers to this vase"),
-            ],
-        )
-    ]
-
-    # Round 1
-    r1 = client.models.generate_content(
-        model="gemini-2.5-flash-image",
-        contents=contents,
-        config=types.GenerateContentConfig(
-            response_modalities=["TEXT", "IMAGE"]
-        ),
-    )
-    contents.append(r1.candidates[0].content)
-
-    # Round 2 — builds on previous result
-    contents.append(
-        types.Content(
-            role="user",
-            parts=[types.Part.from_text("Replace sunflowers with tulips")],
-        )
-    )
-
-    r2 = client.models.generate_content(
-        model="gemini-2.5-flash-image",
-        contents=contents,
-        config=types.GenerateContentConfig(
-            response_modalities=["TEXT", "IMAGE"]
-        ),
-    )
-
-    for part in r2.candidates[0].content.parts:
-        if part.inline_data:
-            img = Image.open(BytesIO(part.inline_data.data))
-            img.save("/tmp/multi_turn_result.png")
-```
-
----
-
-## Bash/curl API
 
 ### Text-to-Image
 
-```bash
-#!/usr/bin/env bash
-GEMINI_API_KEY="${GEMINI_API_KEY:?GEMINI_API_KEY not set}"
-MODEL="gemini-2.5-flash-image"
-OUTPUT="/tmp/generated.png"
-
-RESPONSE=$(curl -s -X POST \
-  "https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent" \
-  -H "x-goog-api-key: ${GEMINI_API_KEY}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "contents": [{"parts": [{"text": "A fox in a snowy forest"}]}],
-    "generationConfig": {
-      "responseModalities": ["TEXT", "IMAGE"],
-      "imageConfig": {
-        "aspectRatio": "16:9",
-        "imageSize": "2K",
-        "personGeneration": "allow_adult"
-      }
-    }
-  }')
-
-# Extract and save image
-echo "$RESPONSE" | python3 -c "
-import sys, json, base64
-data = json.load(sys.stdin)
-for part in data['candidates'][0]['content']['parts']:
-    if 'text' in part:
-        print(part['text'])
-    elif 'inlineData' in part:
-        with open('${OUTPUT}', 'wb') as f:
-            f.write(base64.b64decode(part['inlineData']['data']))
-        print('Saved: ${OUTPUT}')
-"
-```
-
-### Edit image (curl)
-
-```bash
-#!/usr/bin/env bash
-GEMINI_API_KEY="${GEMINI_API_KEY:?GEMINI_API_KEY not set}"
-INPUT_IMAGE="$1"
-EDIT_PROMPT="${2:-Add snow to this scene}"
-OUTPUT="/tmp/edited.png"
-MODEL="gemini-2.5-flash-image"
-
-# Base64 encode (macOS)
-IMAGE_B64=$(base64 -i "$INPUT_IMAGE")
-
-# Determine MIME type
-case "${INPUT_IMAGE##*.}" in
-    jpg|jpeg) MIME="image/jpeg" ;;
-    png)      MIME="image/png" ;;
-    webp)     MIME="image/webp" ;;
-    *)        MIME="image/jpeg" ;;
-esac
-
-cat > /tmp/edit_request.json << EOF
-{
-  "contents": [{"parts": [
-    {"inline_data": {"mime_type": "${MIME}", "data": "${IMAGE_B64}"}},
-    {"text": "${EDIT_PROMPT}"}
-  ]}],
-  "generationConfig": {
-    "responseModalities": ["TEXT", "IMAGE"],
-    "imageConfig": {"aspectRatio": "1:1", "imageSize": "1K"}
-  }
-}
-EOF
-
-RESPONSE=$(curl -s -X POST \
-  "https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent" \
-  -H "x-goog-api-key: ${GEMINI_API_KEY}" \
-  -H "Content-Type: application/json" \
-  -d @/tmp/edit_request.json)
-
-echo "$RESPONSE" | python3 -c "
-import sys, json, base64
-data = json.load(sys.stdin)
-for part in data['candidates'][0]['content']['parts']:
-    if 'text' in part:
-        print(part['text'])
-    elif 'inlineData' in part:
-        with open('${OUTPUT}', 'wb') as f:
-            f.write(base64.b64decode(part['inlineData']['data']))
-        print('Saved: ${OUTPUT}')
-"
-```
-
-### Imagen 4 (predict endpoint)
-
-```bash
-#!/usr/bin/env bash
-GEMINI_API_KEY="${GEMINI_API_KEY:?GEMINI_API_KEY not set}"
-MODEL="imagen-4.0-generate-001"
-
-RESPONSE=$(curl -s -X POST \
-  "https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:predict" \
-  -H "x-goog-api-key: ${GEMINI_API_KEY}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "instances": [{"prompt": "Product photo of vintage leather briefcase"}],
-    "parameters": {
-      "sampleCount": 4,
-      "aspectRatio": "4:3",
-      "imageSize": "2K",
-      "personGeneration": "allow_adult"
-    }
-  }')
-
-echo "$RESPONSE" | python3 -c "
-import sys, json, base64
-data = json.load(sys.stdin)
-for i, pred in enumerate(data.get('predictions', [])):
-    if 'bytesBase64Encoded' in pred:
-        with open(f'/tmp/imagen_{i}.png', 'wb') as f:
-            f.write(base64.b64decode(pred['bytesBase64Encoded']))
-        print(f'Saved: /tmp/imagen_{i}.png')
-    elif 'raiFilteredReason' in pred:
-        print(f'Image {i} filtered: {pred[\"raiFilteredReason\"]}')
-"
-```
-
----
-
-## Streaming
-
-### Python
-
 ```python
-def generate_streaming(prompt: str, output_path: str = "/tmp/streamed.png"):
-    image_data = b""
-
-    for chunk in client.models.generate_content_stream(
-        model="gemini-2.5-flash-image",
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            response_modalities=["TEXT", "IMAGE"],
-            image_config=types.ImageConfig(aspect_ratio="16:9"),
-        ),
-    ):
-        for part in chunk.candidates[0].content.parts:
-            if part.text:
-                print(part.text, end="", flush=True)
-            elif part.inline_data:
-                image_data += part.inline_data.data
-
-    if image_data:
-        img = Image.open(BytesIO(image_data))
-        img.save(output_path)
-        print(f"\nSaved: {output_path}")
-```
-
-### Bash (SSE)
-
-```bash
-curl -s -X POST \
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:streamGenerateContent?alt=sse" \
-  -H "x-goog-api-key: ${GEMINI_API_KEY}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "contents": [{"parts": [{"text": "Cyberpunk city at night"}]}],
-    "generationConfig": {
-      "responseModalities": ["TEXT", "IMAGE"],
-      "imageConfig": {"aspectRatio": "16:9", "imageSize": "2K"}
-    }
-  }' | python3 -c "
-import sys, json, base64
-chunks = []
-for line in sys.stdin:
-    line = line.strip()
-    if line.startswith('data: ') and line[6:] != '[DONE]':
-        try:
-            chunk = json.loads(line[6:])
-            for part in chunk.get('candidates', [{}])[0].get('content', {}).get('parts', []):
-                if 'text' in part:
-                    print(part['text'], end='', flush=True)
-                elif 'inlineData' in part:
-                    chunks.append(part['inlineData']['data'])
-        except json.JSONDecodeError:
-            pass
-print()
-if chunks:
-    with open('/tmp/streamed.png', 'wb') as f:
-        f.write(base64.b64decode(''.join(chunks)))
-    print('Saved: /tmp/streamed.png')
-"
-```
-
----
-
-## ThinkingConfig
-
-Only for Gemini 3.x models (`gemini-3.1-flash-image-preview`, `gemini-3-pro-image-preview`).
-
-| Parameter | Values | Description |
-|-----------|--------|-------------|
-| `thinkingLevel` | `"minimal"`, `"low"`, `"medium"`, `"high"` | Reasoning depth |
-| `includeThoughts` | `true` / `false` | Show thinking in response |
-
-> Thinking tokens are always billed regardless of `includeThoughts`.
-
-```python
-config=types.GenerateContentConfig(
-    response_modalities=["TEXT", "IMAGE"],
-    thinking_config=types.ThinkingConfig(
-        thinking_level="high",
-        include_thoughts=True,
-    ),
-)
-```
-
-```json
-"generationConfig": {
-  "responseModalities": ["TEXT", "IMAGE"],
-  "thinkingConfig": {
-    "thinkingLevel": "high",
-    "includeThoughts": false
-  }
-}
-```
-
----
-
-## Google Search Tool
-
-Enables grounding with current web information.
-
-### Python
-
-```python
-config=types.GenerateContentConfig(
-    response_modalities=["TEXT", "IMAGE"],
-    tools=[types.Tool(google_search=types.GoogleSearch())],
-)
-```
-
-### JSON (curl)
-
-```json
-"tools": [{"googleSearch": {}}]
-```
-
-Grounding metadata in response:
-```python
-metadata = response.candidates[0].grounding_metadata
-if metadata:
-    print("Queries:", metadata.web_search_queries)
-    for chunk in metadata.grounding_chunks or []:
-        print(f"Source: {chunk.web.title} - {chunk.web.uri}")
-```
-
----
-
-## Gemini 3.1 Flash Image Preview — Vollständige Beispiele
-
-Das neueste Modell `gemini-3.1-flash-image-preview` unterstützt ThinkingConfig, Google Search Grounding und Streaming. Hier die vollständigen Beispiele:
-
-### Bash/curl (streamGenerateContent)
-
-```bash
-#!/bin/bash
-set -e -E
-
-GEMINI_API_KEY="${GEMINI_API_KEY:?GEMINI_API_KEY not set}"
-MODEL_ID="gemini-3.1-flash-image-preview"
-GENERATE_CONTENT_API="streamGenerateContent"
-
-cat << EOF > /tmp/request.json
-{
-    "contents": [
-      {
-        "role": "user",
-        "parts": [
-          {
-            "text": "INSERT_INPUT_HERE"
-          }
-        ]
-      }
-    ],
-    "generationConfig": {
-      "responseModalities": ["IMAGE", "TEXT"],
-      "thinkingConfig": {
-        "thinkingLevel": "MINIMAL"
-      },
-      "imageConfig": {
-        "aspectRatio": "",
-        "imageSize": "1K",
-        "personGeneration": ""
-      }
-    },
-    "tools": [
-      {
-        "googleSearch": {
-          "searchTypes": {
-            "webSearch": {}
-          }
-        }
-      }
-    ]
-}
-EOF
-
-curl \
-  -X POST \
-  -H "Content-Type: application/json" \
-  "https://generativelanguage.googleapis.com/v1beta/models/${MODEL_ID}:${GENERATE_CONTENT_API}?key=${GEMINI_API_KEY}" \
-  -d '@/tmp/request.json'
-```
-
-**imageConfig parameters for this model:**
-
-| Parameter | Values | Notes |
-|-----------|--------|-------|
-| `aspectRatio` | `""` (auto), `"1:1"`, `"16:9"`, `"9:16"`, `"4:3"`, `"3:4"`, `"21:9"`, etc. | Empty string = auto |
-| `imageSize` | `"512"`, `"1K"`, `"2K"`, `"4K"` | 512 is exclusive to this model |
-| `personGeneration` | `""` (default), `"dont_allow"`, `"allow_adult"`, `"allow_all"` | Empty = default |
-| `thinkingLevel` | `"MINIMAL"`, `"LOW"`, `"MEDIUM"`, `"HIGH"` | Controls reasoning depth |
-
-### Python (mit uv, streaming)
-
-```bash
-uv run --with google-genai --with Pillow python gemini_image.py
-```
-
-```python
-import mimetypes
-import os
+import base64, os
+from io import BytesIO
 from google import genai
-from google.genai import types
+from PIL import Image
 
-
-def save_binary_file(file_name, data):
-    with open(file_name, "wb") as f:
-        f.write(data)
-    print(f"File saved to: {file_name}")
-
-
-def generate():
-    client = genai.Client(
-        api_key=os.environ.get("GEMINI_API_KEY"),
-    )
-
-    model = "gemini-3.1-flash-image-preview"
-    contents = [
-        types.Content(
-            role="user",
-            parts=[
-                types.Part.from_text(text="""INSERT_INPUT_HERE"""),
-            ],
-        ),
-    ]
-    tools = [
-        types.Tool(googleSearch=types.GoogleSearch(
-            search_types=types.SearchTypes(
-                web_search=types.WebSearch(),
-            ),
-        )),
-    ]
-    generate_content_config = types.GenerateContentConfig(
-        thinking_config=types.ThinkingConfig(
-            thinking_level="MINIMAL",
-        ),
-        image_config=types.ImageConfig(
-            aspect_ratio="",
-            image_size="1K",
-            person_generation="",
-        ),
-        response_modalities=[
-            "IMAGE",
-            "TEXT",
-        ],
-        tools=tools,
-    )
-
-    file_index = 0
-    for chunk in client.models.generate_content_stream(
-        model=model,
-        contents=contents,
-        config=generate_content_config,
-    ):
-        if chunk.parts is None:
-            continue
-        if chunk.parts[0].inline_data and chunk.parts[0].inline_data.data:
-            file_name = f"generated_image_{file_index}"
-            file_index += 1
-            inline_data = chunk.parts[0].inline_data
-            data_buffer = inline_data.data
-            file_extension = mimetypes.guess_extension(inline_data.mime_type)
-            save_binary_file(f"{file_name}{file_extension}", data_buffer)
-        else:
-            print(chunk.text)
-
-
-if __name__ == "__main__":
-    generate()
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])  # Referenz halten, s. u.
+interaction = client.interactions.create(
+    model="gemini-3.1-flash-image",
+    input="A photorealistic fox in a snowy forest at golden hour",
+    response_format={"type": "image", "aspect_ratio": "16:9", "image_size": "2K"},
+    generation_config={"thinking_level": "minimal"},
+)
+if interaction.output_text:
+    print(interaction.output_text)
+Image.open(BytesIO(base64.b64decode(interaction.output_image.data))).save("fox.png")
+print(interaction.id)  # für Folge-Edits
 ```
 
-### Image editing with gemini-3.1-flash (Python)
+⚠️ **`genai.Client` in einer Variable halten.** Das 2.x-SDK schließt den HTTP-Transport,
+sobald der Client vom Garbage Collector eingesammelt wird. `genai.Client().interactions.create(…)`
+als Einzeiler scheitert deshalb mit `RuntimeError: Cannot send a request, as the client
+has been closed.`
+
+### Alle Ausgaben einer Runde durchgehen
+
+`output_image` / `output_text` sind Komfort-Felder (jeweils der **letzte** Block). Für alle
+Blöcke:
 
 ```python
-def edit_with_flash31(image_path: str, prompt: str, output_prefix: str = "edited"):
-    """Edit an existing image using gemini-3.1-flash-image-preview."""
-    client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
-
-    with open(image_path, "rb") as f:
-        image_bytes = f.read()
-
-    mime_type = mimetypes.guess_type(image_path)[0] or "image/jpeg"
-
-    contents = [
-        types.Content(
-            role="user",
-            parts=[
-                types.Part.from_bytes(data=image_bytes, mime_type=mime_type),
-                types.Part.from_text(text=prompt),
-            ],
-        ),
-    ]
-
-    config = types.GenerateContentConfig(
-        thinking_config=types.ThinkingConfig(thinking_level="MINIMAL"),
-        image_config=types.ImageConfig(image_size="2K"),
-        response_modalities=["IMAGE", "TEXT"],
-    )
-
-    file_index = 0
-    for chunk in client.models.generate_content_stream(
-        model="gemini-3.1-flash-image-preview",
-        contents=contents,
-        config=config,
-    ):
-        if chunk.parts is None:
-            continue
-        if chunk.parts[0].inline_data and chunk.parts[0].inline_data.data:
-            inline_data = chunk.parts[0].inline_data
-            ext = mimetypes.guess_extension(inline_data.mime_type)
-            save_binary_file(f"{output_prefix}_{file_index}{ext}", inline_data.data)
-            file_index += 1
-        else:
-            print(chunk.text)
+for step in interaction.steps:
+    if step.type == "model_output":
+        for block in step.content:
+            if block.type == "text":
+                print(block.text)
+            elif block.type == "image":
+                data = base64.b64decode(block.data)
 ```
 
 ---
 
-## Preise & Kosten (Stand März 2026)
+## Bildbearbeitung & Multi-Turn
 
-### gemini-3.1-flash-image-preview
+### Bild + Anweisung (Edit, Stiltransfer, Inpainting)
 
-| Typ | Standard | Batch/Flex |
-|-----|----------|------------|
-| Input (Text/Bild) | $0.50 / 1M Tokens | $0.25 / 1M |
-| Output Text (inkl. Thinking) | $3.00 / 1M Tokens | $1.50 / 1M |
-| **Output Bild** | **$60.00 / 1M Tokens** | $30.00 / 1M |
+```python
+def image_block(path: str, mime: str = "image/png") -> dict:
+    with open(path, "rb") as f:
+        return {"type": "image", "mime_type": mime, "data": base64.b64encode(f.read()).decode()}
 
-**Bild-Kosten nach Auflösung:**
+interaction = client.interactions.create(
+    model="gemini-3.1-flash-image",
+    input=[
+        image_block("living_room.png"),
+        {"type": "text", "text": "Change only the blue sofa to a brown leather chesterfield. "
+                                 "Keep everything else unchanged."},
+    ],
+)
+```
 
-| Auflösung | Tokens | Kosten/Bild |
-|-----------|--------|-------------|
-| 512px | 747 | ~$0.045 |
-| 1K | 1.120 | ~$0.067 |
-| 2K | 1.680 | ~$0.101 |
-| 4K | 2.520 | ~$0.151 |
+Mehrere Bilder kombinieren (Kleid aus Bild 1 an Person aus Bild 2): mehrere `image`-Blöcke
+vor den Text-Block setzen, im Prompt per „first image"/„second image" referenzieren.
 
-### gemini-3-pro-image-preview
+### Multi-Turn (von Google empfohlen für iteratives Editieren)
 
-| Typ | Standard | Batch/Flex |
-|-----|----------|------------|
-| Input (Text/Bild) | $2.00 / 1M Tokens | $1.00 / 1M |
-| Output Text (inkl. Thinking) | $12.00 / 1M Tokens | $6.00 / 1M |
-| **Output Bild** | **$120.00 / 1M Tokens** | $60.00 / 1M |
+Der Verlauf liegt serverseitig; nur die ID der Vorrunde mitgeben:
 
-### Thinking-Kosten
+```python
+follow_up = client.interactions.create(
+    model="gemini-3.1-flash-image",
+    input="Update this infographic to be in German. Do not change any other elements.",
+    previous_interaction_id=interaction.id,
+    response_format={"type": "image", "aspect_ratio": "16:9", "image_size": "2K"},
+)
+```
 
-- **Thinking-Tokens = Output-Text-Preis** (kein Aufschlag, kein Rabatt)
-- **Immer berechnet**, auch bei `include_thoughts: false`
-- `minimal`: ~0–100 Thinking-Tokens → vernachlässigbare Zusatzkosten
-- `high`: ~5.000–20.000 Thinking-Tokens → ca. 30–45% Mehrkosten pro Bild
+Gebündeltes Skript: `--continue <interaction-id>` (die ID gibt jeder Lauf aus).
 
-### Thinking-Level Einfluss auf Qualität
+---
 
-| Aspekt | `minimal` | `high` |
-|--------|-----------|--------|
-| Einfache Motive (1 Objekt) | ✅ Gut | ✅ Kaum besser |
-| Komplexe Szenen (mehrere Objekte, Raumbeziehungen) | ⚠️ Okay | ✅ Deutlich besser |
-| Text im Bild | ⚠️ Standard | ✅ Leicht besser |
-| Prompt-Treue | ⚠️ Standard | ✅ Besser (interne Kompositions-Prüfung) |
-| Latenz | 4–6 Sek. | 2–3x länger |
+## Grounding mit Google Search
 
-**Empfehlung:** `minimal` für einfache Motive, `high` nur bei komplexen Szenen mit mehreren Elementen oder Text im Bild.
+```python
+interaction = client.interactions.create(
+    model="gemini-3.1-flash-image",
+    input="Weather forecast infographic for Berlin for the next 5 days",
+    tools=[{"type": "google_search", "search_types": ["web_search"]}],
+    response_format={"type": "image", "aspect_ratio": "16:9"},
+)
+```
+
+- `web_search`: Flash und Pro. `image_search` (Web-Bilder als visueller Kontext): **nur Flash**.
+- Flash Lite unterstützt kein Grounding.
+- Web-Suche liefert keine Bilder an das Modell; dafür ist `image_search` da.
+- Flash + `image_search` nutzt keine realen Personenbilder aus der Suche.
+- Kosten: 5.000 Suchanfragen/Monat frei (über alle Gemini-3.x-Modelle), danach 14 $ je 1.000.
+
+---
+
+## curl
+
+```bash
+curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/interactions" \
+  -H "x-goog-api-key: ${GEMINI_API_KEY}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gemini-3.1-flash-image",
+    "input": "Your prompt here",
+    "response_format": {"type": "image", "aspect_ratio": "16:9", "image_size": "2K"},
+    "generation_config": {"thinking_level": "minimal"}
+  }' > /tmp/resp.json
+```
+
+Das Bild steckt in `steps[].content[]` mit `type: "image"`:
+
+```bash
+jq -r '[.steps[] | select(.type=="model_output") | .content[] | select(.type=="image")][-1].data' \
+  /tmp/resp.json | base64 -d > /tmp/out.jpg
+```
+
+Edit per curl: `input` als Array aus `{"type":"image","mime_type":"image/png","data":"<BASE64>"}`
+und `{"type":"text","text":"…"}`. Base64 unter macOS: `base64 -i in.png`.
+
+---
+
+## Preise
+
+Stand September 2026, Paid Tier, je Bild (Standard; **Batch = halber Preis**). Kein Free Tier
+für Bildmodelle über die API.
+
+| Modell | 512 | 1K | 2K | 4K |
+|---|---|---|---|---|
+| `gemini-3.1-flash-lite-image` | — | 0,034 $ | — | — |
+| `gemini-3.1-flash-image` | 0,045 $ | 0,067 $ | 0,101 $ | 0,151 $ |
+| `gemini-3-pro-image` | — | 0,134 $ | 0,134 $ | 0,24 $ |
+
+Dazu Thinking-Tokens zum Text-Output-Preis (Flash 3 $, Lite 1,50 $, Pro 12 $ je 1 Mio. Tokens)
+und Eingabebilder (vernachlässigbar). Aktuell: <https://ai.google.dev/gemini-api/docs/pricing>.
 
 ---
 
 ## Best Practices
 
 ### Prompting
-- Describe complete scenes, not just keywords
-- Specify style explicitly: `"photorealistic"`, `"oil painting"`, `"vector illustration"`
-- Use camera terminology for photo-realistic: `"shallow depth of field"`, `"golden hour"`
-- Keep text-in-image under 25 characters
 
-### Model selection
-- Fast + cheap: `imagen-4.0-fast-generate-001`
-- Best text rendering: `gemini-3-pro-image-preview`
-- Standard production: `gemini-2.5-flash-image`
-- Interactive editing: `gemini-2.5-flash-image` (supports multi-turn)
+- Ganze Szenen beschreiben, keine Stichwortlisten.
+- Stil explizit: „photorealistic", „oil painting", „flat vector illustration".
+- Fotorealismus mit Kamera-Vokabular: „shallow depth of field", „golden hour", „35mm".
+- Text im Bild kurz halten; bei viel Text erst den Text festlegen, dann das Bild verlangen.
+  Für Text-lastige Motive `gemini-3-pro-image`.
+- Beste Sprachen für Prompts: u. a. EN, de-DE, fr-FR, es-MX, ja-JP, zh-CN.
+- Die gewünschte Anzahl Bilder hält das Modell nicht zuverlässig ein — je Bild ein Aufruf.
 
-### Error handling
-- Always check for both `inlineData` and `text` in response parts
-- Handle `raiFilteredReason` in Imagen responses
-- Implement exponential backoff for 429 errors
+### Kosten
 
-### Cost optimization
-- Use `thinkingLevel: "minimal"` for high-volume workloads and simple prompts
-- Use `thinkingLevel: "high"` only for complex scenes with spatial relationships or text-in-image
-- Use streaming for better UX (perceived latency)
-- Batch API for mass generation (no rate limit issues, 50% cost reduction)
+- Default `1K`; `2K`/`4K` nur, wenn das Ziel es braucht.
+- Entwürfe mit `gemini-3.1-flash-lite-image`, Endfassung mit Flash oder Pro.
+- `thinking_level: "high"` nur bei komplexen Szenen.
+- Massenläufe über die Batch API (halber Preis).
+- Exakte Zielgröße danach mit ImageMagick schneiden statt teure Auflösung anzufordern.
+
+### Fehler
+
+- Kein Bild in der Antwort (`output_image` ist `None`): Prompt wurde gefiltert oder das Modell
+  hat nur Text geliefert — `output_text` lesen, Prompt umformulieren.
+- 429: exponentielles Backoff.
+- 404 / „model not found": abgeschaltete ID, siehe Tabelle oben.
