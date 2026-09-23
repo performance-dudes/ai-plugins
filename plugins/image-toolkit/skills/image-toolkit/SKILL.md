@@ -116,6 +116,18 @@ curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/interactions" 
 complex layouts). The 2.5 Flash image model, every preview image ID and all Imagen models are
 shut down or shutting down — never use them; the successor table is in the reference.
 
+**Resolution and quality — always pass `--size` for a deliverable.** Without it the API
+renders 1K, which is only right for drafts, tests and previews.
+
+| Target | `--size` | Model |
+|---|---|---|
+| Draft, test, preview, many variants | `1K` (default) | Flash, or Flash Lite for volume |
+| Final web/social asset (hero, header, post, slide) | `2K` | Flash |
+| Print, poster, large display, "highest resolution" | `4K` | Flash, or Pro |
+| "Highest quality", text-heavy, complex layout, infographic | `2K`, or `4K` for print | **Pro** (`gemini-3-pro-image`) |
+
+For hard compositions on Flash also pass `--thinking high`; Pro always thinks.
+
 ## 🔧 Important conventions
 
 1. **ImageMagick 7**: Always use `magick` command (not legacy `convert`)

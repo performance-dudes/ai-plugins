@@ -1,0 +1,234 @@
+# Evaluation suite: does the image-toolkit SKILL (SKILL.md + references/) carry the
+# knowledge a cold agent needs to pick model, size, engine and valid parameters?
+#
+# Regime: DETERMINISTIC. Every task is a closed question; the answer is exactly one of
+# its `options`, matched programmatically — no judge variance.
+#
+# Certification bar (plugin-eval, cold-agent loop): a cold, cheap agent on the
+# production tier (claude-sonnet-4-6), with NOTHING but the skill files, answers 100 %
+# of these tasks, stable over N trials (pass^k). A baseline run WITHOUT the skill must
+# fail clearly — otherwise the suite measures model priors, not the skill.
+#
+# `not-specified` is an option on every task. The `decline` axis asks for facts the
+# skill does not contain; inventing a value there is the hallucination failure.
+#
+# LOCKED. A failing task is a SKILL bug: sharpen SKILL.md / references, never soften
+# the task. Each `note` is the calibration anchor — why the expectation is what it is.
+
+cases:
+  # --- model: which GA model fits the request --------------------------------
+  - id: model-default
+    axis: model
+    question: >-
+      A user asks for "an illustration of a lighthouse at dusk" and states no other
+      requirement. Which model does the bundled generate_image.py use when no --model
+      is passed?
+    options: [gemini-3.1-flash-image, gemini-3.1-flash-lite-image, gemini-3-pro-image, gemini-2.5-flash-image, not-specified]
+    expect: gemini-3.1-flash-image
+    note: DEFAULT_MODEL in the script; SKILL.md names it the default. The old default is the tempting prior.
+
+  - id: model-infographic
+    axis: model
+    question: >-
+      Es soll eine Infografik mit vielen Beschriftungen und einer kleinen Tabelle
+      entstehen. Welches Modell?
+    options: [gemini-3.1-flash-image, gemini-3.1-flash-lite-image, gemini-3-pro-image, not-specified]
+    expect: gemini-3-pro-image
+    note: Text-heavy / infographic → Pro, stated in SKILL.md and in the reference's model-choice table.
+
+  - id: model-volume
+    axis: model
+    question: >-
+      Für ein Moodboard sollen 300 schnelle, möglichst billige Entwurfsbilder
+      entstehen. Welches Modell?
+    options: [gemini-3.1-flash-image, gemini-3.1-flash-lite-image, gemini-3-pro-image, not-specified]
+    expect: gemini-3.1-flash-lite-image
+    note: Cheapest, volume, drafts → Flash Lite.
+
+  - id: model-highest-quality
+    axis: model
+    question: >-
+      User: "I need the highest possible quality for a product visual with a complex
+      layout." Which model?
+    options: [gemini-3.1-flash-image, gemini-3.1-flash-lite-image, gemini-3-pro-image, not-specified]
+    expect: gemini-3-pro-image
+    note: The quality table in SKILL.md — "highest quality", complex layout → Pro.
+
+  - id: model-image-search
+    axis: model
+    question: >-
+      An image must be grounded on Google Search AND use web images found by Google
+      Image Search as visual reference. Which model supports that?
+    options: [gemini-3.1-flash-image, gemini-3.1-flash-lite-image, gemini-3-pro-image, not-specified]
+    expect: gemini-3.1-flash-image
+    note: image_search is Flash only; Pro has web_search only, Lite no grounding at all.
+
+  # --- successor: shut-down IDs → GA successor --------------------------------
+  - id: succ-25-flash
+    axis: successor
+    question: >-
+      Ein älteres Skript ruft gemini-2.5-flash-image auf. Auf welches Modell soll es
+      umgestellt werden?
+    options: [gemini-3.1-flash-image, gemini-3.1-flash-lite-image, gemini-3-pro-image, gemini-2.5-flash-image, not-specified]
+    expect: gemini-3.1-flash-image
+    note: Successor table in the reference. Keeping the old ID is the failure (shutdown 2 Oct 2026).
+
+  - id: succ-pro-preview
+    axis: successor
+    question: >-
+      Legacy code uses gemini-3-pro-image-preview. What is the replacement?
+    options: [gemini-3.1-flash-image, gemini-3-pro-image, gemini-3-pro-image-preview, not-specified]
+    expect: gemini-3-pro-image
+    note: Preview shut down 25 Jun 2026; GA successor drops the -preview suffix.
+
+  - id: succ-imagen-ultra
+    axis: successor
+    question: >-
+      Ein Projekt nutzt imagen-4.0-ultra-generate-001. Welches Modell ersetzt es?
+    options: [gemini-3.1-flash-image, gemini-3-pro-image, imagen-4.0-ultra-generate-001, not-specified]
+    expect: gemini-3.1-flash-image
+    note: Google names Flash (not Pro) as successor for all Imagen 4 variants — the "ultra → pro" guess is the trap.
+
+  # --- size: which --size for the target -------------------------------------
+  - id: size-hero
+    axis: size
+    question: >-
+      Hero-Bild für die Startseite, finale Version, die online geht. Welches --size?
+    options: ["512", 1K, 2K, 4K, not-specified]
+    expect: 2K
+    note: Quality table — final web/social asset → 2K. The API default 1K is only for drafts.
+
+  - id: size-poster
+    axis: size
+    question: >-
+      A poster that will be printed at A2. Which --size?
+    options: ["512", 1K, 2K, 4K, not-specified]
+    expect: 4K
+    note: Print / poster → 4K.
+
+  - id: size-draft
+    axis: size
+    question: >-
+      Nur ein schneller Test, ob der Prompt grundsätzlich funktioniert. Welches --size?
+    options: ["512", 1K, 2K, 4K, not-specified]
+    expect: 1K
+    note: Draft/test → 1K (default). 512 would also be cheap but the table names 1K for drafts.
+
+  - id: size-flash-min
+    axis: size
+    question: >-
+      What is the smallest --size value gemini-3.1-flash-image accepts?
+    options: ["512", 1K, 2K, 4K, not-specified]
+    expect: "512"
+    note: 512 exists only on Flash.
+
+  # --- param: model capabilities (yes/no, with yes-cases against an always-no bias)
+  - id: p-lite-2k
+    axis: param
+    question: >-
+      Kann gemini-3.1-flash-lite-image ein Bild in 2K liefern?
+    options: [yes, no, not-specified]
+    expect: "no"
+    note: Lite is 1K only.
+
+  - id: p-pro-thinking
+    axis: param
+    question: >-
+      Can thinking_level be set to high on gemini-3-pro-image?
+    options: [yes, no, not-specified]
+    expect: "no"
+    note: Pro always thinks; the level is not configurable. Setting it is the error.
+
+  - id: p-pro-banner
+    axis: param
+    question: >-
+      Ein 8:1-Webbanner mit gemini-3-pro-image — ist das Seitenverhältnis möglich?
+    options: [yes, no, not-specified]
+    expect: "no"
+    note: 1:4, 4:1, 1:8, 8:1 are Flash only.
+
+  - id: p-flash-banner
+    axis: param
+    question: >-
+      An 8:1 web banner with gemini-3.1-flash-image — is that aspect ratio supported?
+    options: [yes, no, not-specified]
+    expect: "yes"
+    note: Near-miss partner of p-pro-banner; guards against answering "no" to every capability question.
+
+  - id: p-pro-4k
+    axis: param
+    question: >-
+      Kann gemini-3-pro-image in 4K rendern?
+    options: [yes, no, not-specified]
+    expect: "yes"
+    note: Pro supports 1K/2K/4K. Second yes-case.
+
+  - id: p-transparency
+    axis: param
+    question: >-
+      Does the Gemini image API return images with a transparent background (alpha
+      channel)?
+    options: [yes, no, not-specified]
+    expect: "no"
+    note: Interactions returns JPEG only; transparency comes from ImageMagick.
+
+  # --- engine: Gemini vs. ImageMagick vs. both -------------------------------
+  - id: eng-transparent
+    axis: engine
+    question: >-
+      Aus logo.png (weißer Hintergrund) soll eine Version mit transparentem
+      Hintergrund werden. Welche Engine?
+    options: [gemini, imagemagick, both, not-specified]
+    expect: imagemagick
+    note: Solid-colour background removal is deterministic local work.
+
+  - id: eng-batch-resize
+    axis: engine
+    question: >-
+      Resize all 400 JPGs in a folder to 800 px width. Which engine?
+    options: [gemini, imagemagick, both, not-specified]
+    expect: imagemagick
+    note: Batch resize → mogrify, no API cost.
+
+  - id: eng-generate
+    axis: engine
+    question: >-
+      Erzeuge ein Bild von einem Fuchs im verschneiten Wald. Welche Engine?
+    options: [gemini, imagemagick, both, not-specified]
+    expect: gemini
+    note: Text-to-image is the Gemini half.
+
+  - id: eng-generate-exact
+    axis: engine
+    question: >-
+      Generate a product photo, then deliver it as an exactly 1200x630 px, optimized
+      JPG for Open Graph. Which engine(s)?
+    options: [gemini, imagemagick, both, not-specified]
+    expect: both
+    note: The documented generate + post-process workflow.
+
+  # --- decline: facts the skill does NOT contain (anti-hallucination) ---------
+  - id: tn-rate-limit
+    axis: decline
+    question: >-
+      How many requests per minute does gemini-3-pro-image allow on the paid tier?
+    options: ["10", "20", "60", not-specified]
+    expect: not-specified
+    note: Rate limits are nowhere in the skill. Any number is invented.
+
+  - id: tn-video-length
+    axis: decline
+    question: >-
+      Wie lang darf ein Video maximal sein, das gemini-3.1-flash-image als Eingabe
+      akzeptiert?
+    options: [10 s, 60 s, 5 min, not-specified]
+    expect: not-specified
+    note: Video input is not covered by the skill at all.
+
+  - id: tn-prompt-length
+    axis: decline
+    question: >-
+      What is the maximum prompt length in characters for gemini-3.1-flash-image?
+    options: ["1000", "4000", "32000", not-specified]
+    expect: not-specified
+    note: Not in the skill.

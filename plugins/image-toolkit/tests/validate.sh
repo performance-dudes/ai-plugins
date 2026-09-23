@@ -117,6 +117,14 @@ sys.exit(failed)
 PY
 then :; else bad "guard unit tests"; fi
 
+note "8. Eval harness is sound (runs the scorer, not the model)"
+if python3 "$PLUGIN_DIR/evals/scripts/score_knowledge.py" --self-test; then
+  ok "knowledge eval self-test passed"
+else
+  bad "knowledge eval self-test failed"
+fi
+bash -n "$PLUGIN_DIR/evals/run.sh" 2>/dev/null && ok "evals/run.sh syntax" || bad "evals/run.sh syntax"
+
 note "Result"
 if [ "$fail" -eq 0 ]; then echo "  ALL CHECKS PASSED"; else echo "  FAILURES ABOVE"; fi
 exit "$fail"
