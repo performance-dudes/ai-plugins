@@ -23,3 +23,14 @@ grün.
 Nach dem Merge greift der Fix beim nächsten Marker-Kommentar auf einem PR: `issue_comment`-Läufe
 nutzen die Workflow-Datei des Default-Branch. Innerhalb dieses PRs lässt er sich daher nicht
 belegen.
+
+## Zweiter Fehler: nur der neueste Lauf wurde neu gestartet
+
+Bei #65 lag der Marker korrekt vor, der Merge blieb trotzdem `BLOCKED`. Auf dem PR-Commit
+gab es zwei merge-gate-Läufe: einen vom Push (`synchronize`), einen vom bearbeiteten PR-Text
+(`edited`). Der Rerun-Job holte per `per_page=1` nur den neuesten; der andere blieb rot und
+blockierte den Required-Check.
+
+Fix: alle roten Läufe des Commits neu starten (`event != issue_comment`,
+`conclusion == failure`). Gegen echte Historie geprüft: `3d15fb5` liefert den einen roten Lauf,
+`e96de1b` (inzwischen grün) keinen. Die Vorlage in `ai-plugins-internal` hat denselben Fehler.
