@@ -70,3 +70,5 @@ Runs on Google's **Interactions API** (`generateContent` is legacy). All models 
 
 - Deps: `brew install imagemagick uv` · export `GEMINI_API_KEY` in `~/.zshrc`
 - Smoke test: `bash image-toolkit/tests/validate.sh`
+- Knowledge eval (does a cold agent choose model, size and flags correctly from the skill
+  alone?): `bash evals/run.sh` — method and numbers in `evals/README.md`

@@ -48,6 +48,10 @@ default 16:9, edits keep the input's ratio), `--size` (`512`/`1K`/`2K`/`4K`, def
 Gemini returns JPEG, the script re-encodes). Invalid model/flag combinations stop
 before the paid call.
 
+**Pass `--size` for anything the user keeps** — 1K is only for drafts and tests:
+final web/social asset → `2K`; print, poster, "highest resolution" → `4K`; "highest
+quality", text-heavy or complex layout → `--model gemini-3-pro-image`.
+
 ## Local processing (ImageMagick)
 
 Use `magick` directly — common recipes:

@@ -305,11 +305,11 @@ und Eingabebilder (vernachlässigbar). Aktuell: <https://ai.google.dev/gemini-ap
 
 ### Kosten
 
-- Default `1K`; `2K`/`4K` nur, wenn das Ziel es braucht.
+- `1K` für Entwürfe und Tests; Endprodukte nach der Tabelle in SKILL.md (Web 2K, Druck 4K).
 - Entwürfe mit `gemini-3.1-flash-lite-image`, Endfassung mit Flash oder Pro.
 - `thinking_level: "high"` nur bei komplexen Szenen.
 - Massenläufe über die Batch API (halber Preis).
-- Exakte Zielgröße danach mit ImageMagick schneiden statt teure Auflösung anzufordern.
+- Exakte Pixelmaße danach mit ImageMagick zuschneiden, statt eine höhere Stufe als nötig anzufordern.
 
 ### Fehler
 

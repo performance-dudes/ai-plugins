@@ -20,6 +20,8 @@ bash tests/run-all.sh             # gesamtes Repo
 | Frontmatter | `commands/image.md`, `commands/image-doctor.md` (`description`), `SKILL.md` (`name`+`description`) |
 | Version | via `tests/lib/check-version-sync.sh` im repo-weiten `structure`-Lauf |
 | Modelle | keine abgeschalteten Gemini/Imagen-IDs außerhalb der Nachfolger-Tabelle; Default GA; SDK-Pin 2.x; Interactions API |
+| Guards (Unit) | `_check`/`_check_out` lehnen ungültige Kombinationen vor dem bezahlten Aufruf ab (§7) |
+| Eval-Harness | Selbsttest des Knowledge-Scorers (§8) — die Suite selbst: `plugins/image-toolkit/evals/README.md` |
 
 Rein statisch und offline — es wird **kein** Bild generiert und kein API-Key
 gebraucht. Die Gemini-Aufrufe selbst sind damit nicht abgedeckt; was live geprüft
