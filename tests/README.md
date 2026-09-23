@@ -63,3 +63,15 @@ Was genau pro Plugin läuft vs. übersprungen wird, steht in
 
 Traceability je Plugin in `tests/<plugin>/coverage.md` (spec:code · spec:test/Typ ·
 code:tests/Typ). Lücken sind Merge-Gate-relevant — geschlossen oder als Issue.
+
+## Beide Ablagen kommen vor
+
+SPEC-repo-conventions §5 lässt für einteilige Plugins die Wahl, und beide Formen
+sind hier im Einsatz:
+
+| Form | Beispiel | Wann |
+|---|---|---|
+| Suite beim Plugin, Wrapper hier | `example`, `context-aware` | wenn das Plugin ohnehin eigene Test-Artefakte trägt |
+| Suite vollständig hier | `anti-slop` | wenn der Plugin-Ordner reiner Runtime-Vertrag bleiben soll |
+
+Maßgeblich ist die Begründung in `tests/<plugin>/README.md`, nicht diese Tabelle.

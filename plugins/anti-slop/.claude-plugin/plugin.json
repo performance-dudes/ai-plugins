@@ -1,0 +1,26 @@
+{
+  "name": "anti-slop",
+  "description": "Detects and removes LLM slop from business and narrative prose in English and German. 1843 entries (1836 distinct terms) across three grep-checked lists — 1190 English, 496 German, 157 language-neutral (stock names and places, chatbot artifacts, unfilled placeholders) — every term carrying a hard/soft severity, plus a flexion-aware checker so German inflected forms are actually found. Lists are never loaded into context.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Performance Dudes"
+  },
+  "keywords": [
+    "slop",
+    "anti-slop",
+    "gpt-ism",
+    "ki-fluff",
+    "prosa",
+    "prose",
+    "wording",
+    "stil",
+    "style",
+    "lektorat",
+    "editing",
+    "purple-prose",
+    "deutsch",
+    "mehrsprachig",
+    "ki-floskeln",
+    "lektorat-deutsch"
+  ]
+}
