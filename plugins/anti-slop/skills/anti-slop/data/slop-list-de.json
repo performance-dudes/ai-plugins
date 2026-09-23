@@ -1,0 +1,2482 @@
+[
+    [
+        "in der heutigen digitalen welt",
+        "opener",
+        "hard"
+    ],
+    [
+        "in der heutigen digitalen landschaft",
+        "opener",
+        "hard"
+    ],
+    [
+        "in der heutigen zeit",
+        "opener",
+        "hard"
+    ],
+    [
+        "in der heutigen schnelllebigen",
+        "opener",
+        "hard"
+    ],
+    [
+        "im digitalen zeitalter",
+        "opener",
+        "hard"
+    ],
+    [
+        "in einer welt, in der",
+        "opener",
+        "hard"
+    ],
+    [
+        "in einer zeit, in der",
+        "opener",
+        "hard"
+    ],
+    [
+        "wichtiger denn je",
+        "opener",
+        "hard"
+    ],
+    [
+        "lassen sie uns eintauchen",
+        "opener",
+        "hard"
+    ],
+    [
+        "tauchen wir ein",
+        "opener",
+        "hard"
+    ],
+    [
+        "tauchen sie ein",
+        "opener",
+        "hard"
+    ],
+    [
+        "werfen wir einen blick",
+        "opener",
+        "hard"
+    ],
+    [
+        "grundsätzlich lässt sich sagen",
+        "opener",
+        "hard"
+    ],
+    [
+        "im wesentlichen lässt sich",
+        "opener",
+        "hard"
+    ],
+    [
+        "im wesentlichen",
+        "opener",
+        "soft"
+    ],
+    [
+        "immer mehr menschen",
+        "opener",
+        "soft"
+    ],
+    [
+        "stellen sie sich vor",
+        "opener",
+        "soft"
+    ],
+    [
+        "wenn es darum geht",
+        "opener",
+        "soft"
+    ],
+    [
+        "darüber hinaus",
+        "transition",
+        "hard"
+    ],
+    [
+        "des weiteren",
+        "transition",
+        "hard"
+    ],
+    [
+        "überdies",
+        "transition",
+        "hard"
+    ],
+    [
+        "in diesem zusammenhang",
+        "transition",
+        "hard"
+    ],
+    [
+        "dabei gilt es zu",
+        "transition",
+        "hard"
+    ],
+    [
+        "ferner",
+        "transition",
+        "soft"
+    ],
+    [
+        "zudem",
+        "transition",
+        "soft"
+    ],
+    [
+        "infolgedessen",
+        "transition",
+        "soft"
+    ],
+    [
+        "demzufolge",
+        "transition",
+        "soft"
+    ],
+    [
+        "somit",
+        "transition",
+        "soft"
+    ],
+    [
+        "gleichwohl",
+        "transition",
+        "soft"
+    ],
+    [
+        "indes",
+        "transition",
+        "soft"
+    ],
+    [
+        "nichtsdestotrotz",
+        "transition",
+        "soft"
+    ],
+    [
+        "nicht zuletzt",
+        "transition",
+        "soft"
+    ],
+    [
+        "vor diesem hintergrund",
+        "transition",
+        "soft"
+    ],
+    [
+        "an dieser stelle",
+        "transition",
+        "soft"
+    ],
+    [
+        "zusammenfassend lässt sich sagen",
+        "summary",
+        "hard"
+    ],
+    [
+        "zusammenfassend lässt sich festhalten",
+        "summary",
+        "hard"
+    ],
+    [
+        "zusammenfassend lässt sich konstatieren",
+        "summary",
+        "hard"
+    ],
+    [
+        "abschließend lässt sich sagen",
+        "summary",
+        "hard"
+    ],
+    [
+        "abschließend ist festzuhalten",
+        "summary",
+        "hard"
+    ],
+    [
+        "abschließend bleibt festzuhalten",
+        "summary",
+        "hard"
+    ],
+    [
+        "insgesamt lässt sich sagen",
+        "summary",
+        "hard"
+    ],
+    [
+        "alles in allem",
+        "summary",
+        "hard"
+    ],
+    [
+        "letzten endes",
+        "summary",
+        "hard"
+    ],
+    [
+        "eines ist klar",
+        "summary",
+        "hard"
+    ],
+    [
+        "zusammenfassend",
+        "summary",
+        "soft"
+    ],
+    [
+        "abschließend",
+        "summary",
+        "soft"
+    ],
+    [
+        "unterm strich",
+        "summary",
+        "soft"
+    ],
+    [
+        "kurz gesagt",
+        "summary",
+        "soft"
+    ],
+    [
+        "um es auf den punkt zu bringen",
+        "summary",
+        "soft"
+    ],
+    [
+        "es ist wichtig zu beachten",
+        "editorial",
+        "hard"
+    ],
+    [
+        "es ist wichtig zu betonen",
+        "editorial",
+        "hard"
+    ],
+    [
+        "es ist wichtig zu verstehen",
+        "editorial",
+        "hard"
+    ],
+    [
+        "es ist wichtig zu erwähnen",
+        "editorial",
+        "hard"
+    ],
+    [
+        "es ist erwähnenswert",
+        "editorial",
+        "hard"
+    ],
+    [
+        "es sei darauf hingewiesen",
+        "editorial",
+        "hard"
+    ],
+    [
+        "an dieser stelle sei darauf hingewiesen",
+        "editorial",
+        "hard"
+    ],
+    [
+        "hierbei ist hervorzuheben",
+        "editorial",
+        "hard"
+    ],
+    [
+        "es gilt zu betonen",
+        "editorial",
+        "hard"
+    ],
+    [
+        "es bleibt festzuhalten",
+        "editorial",
+        "hard"
+    ],
+    [
+        "wie bereits erwähnt",
+        "editorial",
+        "hard"
+    ],
+    [
+        "wie eingangs erwähnt",
+        "editorial",
+        "hard"
+    ],
+    [
+        "es lohnt sich, einen blick",
+        "editorial",
+        "hard"
+    ],
+    [
+        "nicht zu vergessen",
+        "editorial",
+        "soft"
+    ],
+    [
+        "beachten sie, dass",
+        "editorial",
+        "soft"
+    ],
+    [
+        "revolutionär*",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "bahnbrechend*",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "wegweisend*",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "zukunftsweisend*",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "nahtlos*",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "transformativ*",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "ganzheitlich*",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "tiefgreifend*",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "maßgeschneidert*",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "atemberaubend*",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "hochmodern*",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "ultimativ*",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "state of the art",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "cutting edge",
+        "hype-adjective",
+        "hard"
+    ],
+    [
+        "umfassend*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "innovativ*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "einzigartig*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "beeindruckend*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "leistungsstark*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "robust*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "skalierbar*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "unverzichtbar*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "fundiert*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "nachhaltig*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "substanziell*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "substantiell*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "signifikant*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "vielversprechend*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "spannend*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "präzise*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "strukturell*",
+        "hype-adjective",
+        "soft"
+    ],
+    [
+        "entscheidend*",
+        "filler",
+        "hard"
+    ],
+    [
+        "essenziell*",
+        "filler",
+        "hard"
+    ],
+    [
+        "essentiell*",
+        "filler",
+        "hard"
+    ],
+    [
+        "zahlreich*",
+        "filler",
+        "hard"
+    ],
+    [
+        "vielfältig*",
+        "filler",
+        "hard"
+    ],
+    [
+        "mannigfaltig*",
+        "filler",
+        "hard"
+    ],
+    [
+        "unzählig*",
+        "filler",
+        "hard"
+    ],
+    [
+        "akribisch*",
+        "filler",
+        "hard"
+    ],
+    [
+        "äußerst",
+        "filler",
+        "hard"
+    ],
+    [
+        "eine vielzahl an",
+        "filler",
+        "hard"
+    ],
+    [
+        "eine vielzahl von",
+        "filler",
+        "hard"
+    ],
+    [
+        "eine breite palette",
+        "filler",
+        "hard"
+    ],
+    [
+        "eine fülle von",
+        "filler",
+        "hard"
+    ],
+    [
+        "ein breites spektrum",
+        "filler",
+        "hard"
+    ],
+    [
+        "elementar*",
+        "filler",
+        "soft"
+    ],
+    [
+        "divers*",
+        "filler",
+        "soft"
+    ],
+    [
+        "höchst",
+        "filler",
+        "soft"
+    ],
+    [
+        "durchaus",
+        "filler",
+        "soft"
+    ],
+    [
+        "beträchtlich*",
+        "filler",
+        "soft"
+    ],
+    [
+        "immens*",
+        "filler",
+        "soft"
+    ],
+    [
+        "enorm*",
+        "filler",
+        "soft"
+    ],
+    [
+        "sorgfältig*",
+        "filler",
+        "soft"
+    ],
+    [
+        "detailliert*",
+        "filler",
+        "soft"
+    ],
+    [
+        "eingehend*",
+        "filler",
+        "soft"
+    ],
+    [
+        "regelrecht",
+        "filler",
+        "soft"
+    ],
+    [
+        "geradezu",
+        "filler",
+        "soft"
+    ],
+    [
+        "in vielerlei hinsicht",
+        "filler",
+        "soft"
+    ],
+    [
+        "nutzbar machen",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "entfesseln",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "revolutionier*",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "auf das nächste level heben",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "auf ein neues level",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "das volle potenzial",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "das potenzial ausschöpfen",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "eine schlüsselrolle spielen",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "spielt eine entscheidende rolle",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "spielt eine wichtige rolle",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "spielt eine zentrale rolle",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "steht sinnbildlich für",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "dient als zeugnis",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "unterstreicht die bedeutung",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "hinterlässt einen bleibenden eindruck",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "freisetzen",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "erschließen",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "ermöglich*",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "gewährleist*",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "implementier*",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "optimier*",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "realisier*",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "etablier*",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "generier*",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "fokussier*",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "adressier*",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "den grundstein legen",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "die weichen stellen",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "einen beitrag leisten",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "welt der",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "mehrwert",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "synergie*",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "ganzheitlichkeit",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "innovationskraft",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "schlüsselmoment",
+        "abstraction-noun",
+        "hard"
+    ],
+    [
+        "landschaft",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "ökosystem",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "reise",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "herausforderung*",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "erkenntnis*",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "einblick*",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "resilienz",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "agilität",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "anpassungsfähigkeit",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "zukunftsfähigkeit",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "wendepunkt",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "meilenstein",
+        "abstraction-noun",
+        "soft"
+    ],
+    [
+        "im herzen von",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "reiches kulturelles erbe",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "reicher kultureller teppich",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "reiche geschichte",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "bleibendes vermächtnis",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "tief verwurzelt",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "unerschütterlich*",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "ein wahres feuerwerk",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "sinfonie",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "symphonie",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "kaleidoskop",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "ein tanz aus",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "ein mosaik aus",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "die spitze des eisbergs",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "zwei seiten derselben medaille",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "der schlüssel zum erfolg",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "gamechanger",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "game changer",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "quantensprung",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "roter faden",
+        "metaphor",
+        "soft"
+    ],
+    [
+        "das herzstück",
+        "metaphor",
+        "soft"
+    ],
+    [
+        "eingebettet in",
+        "metaphor",
+        "soft"
+    ],
+    [
+        "labyrinth",
+        "metaphor",
+        "soft"
+    ],
+    [
+        "das zünglein an der waage",
+        "metaphor",
+        "soft"
+    ],
+    [
+        "gordischer knoten",
+        "metaphor",
+        "soft"
+    ],
+    [
+        "eierlegende wollmilchsau",
+        "metaphor",
+        "soft"
+    ],
+    [
+        "der richtige mittelweg",
+        "structure-formula",
+        "hard"
+    ],
+    [
+        "eine ausgewogene betrachtung",
+        "structure-formula",
+        "hard"
+    ],
+    [
+        "die goldene mitte",
+        "structure-formula",
+        "hard"
+    ],
+    [
+        "nicht nur",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "sondern auch",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "es geht nicht um",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "sondern um",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "sowohl als auch",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "auf der einen seite",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "auf der anderen seite",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "andererseits",
+        "structure-formula",
+        "soft"
+    ],
+    [
+        "studien zeigen",
+        "vague-authority",
+        "hard"
+    ],
+    [
+        "untersuchungen belegen",
+        "vague-authority",
+        "hard"
+    ],
+    [
+        "experten sind sich einig",
+        "vague-authority",
+        "hard"
+    ],
+    [
+        "es ist allgemein bekannt",
+        "vague-authority",
+        "hard"
+    ],
+    [
+        "viele fachleute",
+        "vague-authority",
+        "hard"
+    ],
+    [
+        "branchenberichte",
+        "vague-authority",
+        "hard"
+    ],
+    [
+        "kritiker argumentieren",
+        "vague-authority",
+        "hard"
+    ],
+    [
+        "einige kritiker",
+        "vague-authority",
+        "hard"
+    ],
+    [
+        "experten empfehlen",
+        "vague-authority",
+        "soft"
+    ],
+    [
+        "beobachter",
+        "vague-authority",
+        "soft"
+    ],
+    [
+        "als ki-sprachmodell",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "als großes sprachmodell",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "ich hoffe, das hilft",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "lassen sie mich wissen",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "gibt es noch etwas",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "möchten sie, dass ich",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "stand meines letzten",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "bis zu meinem letzten update",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "basierend auf den verfügbaren informationen",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "ich kann ihnen leider keine auskunft",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "ich hoffe, diese nachricht erreicht sie",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "detailliertere aufschlüsselung",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "eine detaillierte aufschlüsselung",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "selbstverständlich!",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "natürlich!",
+        "chatbot-residue",
+        "hard"
+    ],
+    [
+        "vielen dank für ihre zeit",
+        "chatbot-residue",
+        "soft"
+    ],
+    [
+        "unbedingt besuchen",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "ein muss für",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "nicht mehr wegzudenken",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "in aller munde",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "das nächste level",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "umfassender leitfaden",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "alles, was sie wissen müssen",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "profitieren sie von",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "überzeugen sie sich selbst",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "jetzt durchstarten",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "erfahren sie, wie",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "gemeinsam schaffen wir",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "gewährleistend",
+        "participle",
+        "hard"
+    ],
+    [
+        "hervorhebend",
+        "participle",
+        "hard"
+    ],
+    [
+        "betonend",
+        "participle",
+        "hard"
+    ],
+    [
+        "widerspiegelnd",
+        "participle",
+        "hard"
+    ],
+    [
+        "unterstreichend",
+        "participle",
+        "hard"
+    ],
+    [
+        "verdeutlichend",
+        "participle",
+        "hard"
+    ],
+    [
+        "vorgenannt*",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "dergleichen",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "ebenjen*",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "mithin",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "seitens",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "hinsichtlich",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "bezüglich",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "diesbezüglich",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "im rahmen von",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "im kontext von",
+        "academic-register",
+        "soft"
+    ],
+    [
+        "deep dive",
+        "anglicism",
+        "hard"
+    ],
+    [
+        "learnings",
+        "anglicism",
+        "soft"
+    ],
+    [
+        "low hanging fruits",
+        "anglicism",
+        "hard"
+    ],
+    [
+        "next level",
+        "anglicism",
+        "hard"
+    ],
+    [
+        "mindset",
+        "anglicism",
+        "soft"
+    ],
+    [
+        "insights",
+        "anglicism",
+        "soft"
+    ],
+    [
+        "commitment",
+        "anglicism",
+        "soft"
+    ],
+    [
+        "alignment",
+        "anglicism",
+        "soft"
+    ],
+    [
+        "impact",
+        "anglicism",
+        "soft"
+    ],
+    [
+        "purpose",
+        "anglicism",
+        "soft"
+    ],
+    [
+        "hands-on",
+        "anglicism",
+        "soft"
+    ],
+    [
+        "auf augenhöhe",
+        "anglicism",
+        "soft"
+    ],
+    [
+        "murmelte",
+        "narrative",
+        "hard"
+    ],
+    [
+        "hauchte",
+        "narrative",
+        "hard"
+    ],
+    [
+        "raunte",
+        "narrative",
+        "hard"
+    ],
+    [
+        "stammelte",
+        "narrative",
+        "hard"
+    ],
+    [
+        "kicherte",
+        "narrative",
+        "hard"
+    ],
+    [
+        "gluckste",
+        "narrative",
+        "hard"
+    ],
+    [
+        "rief aus",
+        "narrative",
+        "hard"
+    ],
+    [
+        "presste sie hervor",
+        "narrative",
+        "hard"
+    ],
+    [
+        "lachte er dunkel",
+        "narrative",
+        "hard"
+    ],
+    [
+        "flüsterte",
+        "narrative",
+        "soft"
+    ],
+    [
+        "schmunzelte",
+        "narrative",
+        "soft"
+    ],
+    [
+        "entgegnete",
+        "narrative",
+        "soft"
+    ],
+    [
+        "erwiderte",
+        "narrative",
+        "soft"
+    ],
+    [
+        "verschwörerisch",
+        "narrative",
+        "hard"
+    ],
+    [
+        "vielsagend",
+        "narrative",
+        "hard"
+    ],
+    [
+        "beschwichtigend",
+        "narrative",
+        "hard"
+    ],
+    [
+        "beinahe entschuldigend",
+        "narrative",
+        "hard"
+    ],
+    [
+        "wissend",
+        "narrative",
+        "soft"
+    ],
+    [
+        "nachdenklich",
+        "narrative",
+        "soft"
+    ],
+    [
+        "zögerlich",
+        "narrative",
+        "soft"
+    ],
+    [
+        "kaum mehr als ein flüstern",
+        "narrative",
+        "hard"
+    ],
+    [
+        "kaum hörbar",
+        "narrative",
+        "hard"
+    ],
+    [
+        "ein schauer lief ihr über den rücken",
+        "narrative",
+        "hard"
+    ],
+    [
+        "ein schauer lief ihm über den rücken",
+        "narrative",
+        "hard"
+    ],
+    [
+        "lief ihr kalt den rücken herunter",
+        "narrative",
+        "hard"
+    ],
+    [
+        "die luft knisterte",
+        "narrative",
+        "hard"
+    ],
+    [
+        "die luft war zum schneiden",
+        "narrative",
+        "hard"
+    ],
+    [
+        "ihre augen funkelten",
+        "narrative",
+        "hard"
+    ],
+    [
+        "seine augen funkelten",
+        "narrative",
+        "hard"
+    ],
+    [
+        "augen blitzten",
+        "narrative",
+        "hard"
+    ],
+    [
+        "mit einer mischung aus",
+        "narrative",
+        "hard"
+    ],
+    [
+        "hin- und hergerissen",
+        "narrative",
+        "hard"
+    ],
+    [
+        "wider willen",
+        "narrative",
+        "hard"
+    ],
+    [
+        "eine gefühlte ewigkeit",
+        "narrative",
+        "hard"
+    ],
+    [
+        "die zeit schien stillzustehen",
+        "narrative",
+        "hard"
+    ],
+    [
+        "runzelte die stirn",
+        "narrative",
+        "soft"
+    ],
+    [
+        "zog die augenbrauen hoch",
+        "narrative",
+        "soft"
+    ],
+    [
+        "atmete tief durch",
+        "narrative",
+        "soft"
+    ],
+    [
+        "schluckte schwer",
+        "narrative",
+        "soft"
+    ],
+    [
+        "biss sich auf die lippe",
+        "narrative",
+        "soft"
+    ],
+    [
+        "unausgesprochen*",
+        "narrative",
+        "soft"
+    ],
+    [
+        "vielleicht, nur vielleicht",
+        "narrative",
+        "hard"
+    ],
+    [
+        "für den moment war das genug",
+        "narrative",
+        "hard"
+    ],
+    [
+        "und das war genug",
+        "narrative",
+        "hard"
+    ],
+    [
+        "das leben würde nie wieder dasselbe sein",
+        "narrative",
+        "hard"
+    ],
+    [
+        "nichts würde je wieder so sein wie zuvor",
+        "narrative",
+        "hard"
+    ],
+    [
+        "das war erst der anfang",
+        "narrative",
+        "hard"
+    ],
+    [
+        "doch das ist eine andere geschichte",
+        "narrative",
+        "hard"
+    ],
+    [
+        "was sie nicht wusste",
+        "narrative",
+        "hard"
+    ],
+    [
+        "was er nicht ahnte",
+        "narrative",
+        "hard"
+    ],
+    [
+        "sie ahnte nicht, dass",
+        "narrative",
+        "hard"
+    ],
+    [
+        "in diesem moment wurde ihr klar",
+        "narrative",
+        "hard"
+    ],
+    [
+        "es war der beginn von etwas",
+        "narrative",
+        "hard"
+    ],
+    [
+        "gemeinsam würden sie es schaffen",
+        "narrative",
+        "hard"
+    ],
+    [
+        "die entscheidung lag bei ihr",
+        "narrative",
+        "hard"
+    ],
+    [
+        "es lag nun an ihm",
+        "narrative",
+        "hard"
+    ],
+    [
+        "ich hoffe, es geht ihnen gut",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "ich hoffe, sie sind wohlauf",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "ich schreibe ihnen, um",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "ich melde mich bei ihnen, weil",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "zögern sie nicht",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "bei fragen stehe ich ihnen jederzeit gerne zur verfügung",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "für rückfragen stehe ich ihnen gerne zur verfügung",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "vielen dank für ihre zeit und mühe",
+        "letter-formula",
+        "hard"
+    ],
+    [
+        "ich freue mich auf ihre rückmeldung",
+        "letter-formula",
+        "soft"
+    ],
+    [
+        "ich freue mich auf ihre antwort",
+        "letter-formula",
+        "soft"
+    ],
+    [
+        "[name]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[ihr name]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[unternehmen]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[firma]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[datum]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[zahl]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[betrag]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[thema]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[hier einfügen",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[bitte ergänzen",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[platzhalter",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "[x]",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "xx prozent",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "konkrete zahl einsetzen",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "hier die zahl",
+        "placeholder",
+        "hard"
+    ],
+    [
+        "ihre konkrete",
+        "placeholder",
+        "soft"
+    ],
+    [
+        "entsprechendes beispiel",
+        "placeholder",
+        "soft"
+    ],
+    [
+        "in gewisser weise",
+        "hedge",
+        "hard"
+    ],
+    [
+        "im großen und ganzen",
+        "hedge",
+        "hard"
+    ],
+    [
+        "je nach kontext",
+        "hedge",
+        "hard"
+    ],
+    [
+        "in vielen fällen",
+        "hedge",
+        "hard"
+    ],
+    [
+        "nicht selten",
+        "hedge",
+        "hard"
+    ],
+    [
+        "durchaus denkbar",
+        "hedge",
+        "hard"
+    ],
+    [
+        "es empfiehlt sich",
+        "hedge",
+        "hard"
+    ],
+    [
+        "es bietet sich an",
+        "hedge",
+        "hard"
+    ],
+    [
+        "in der regel",
+        "hedge",
+        "soft"
+    ],
+    [
+        "unter umständen",
+        "hedge",
+        "soft"
+    ],
+    [
+        "möglicherweise",
+        "hedge",
+        "soft"
+    ],
+    [
+        "tendenziell",
+        "hedge",
+        "soft"
+    ],
+    [
+        "im idealfall",
+        "hedge",
+        "soft"
+    ],
+    [
+        "es kommt darauf an",
+        "hedge",
+        "soft"
+    ],
+    [
+        "grundsätzlich",
+        "hedge",
+        "soft"
+    ],
+    [
+        "letztlich",
+        "hedge",
+        "soft"
+    ],
+    [
+        "ihr partner für",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "aus einer hand",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "rund um das thema",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "individuell auf sie zugeschnitten",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "wir begleiten sie",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "auf ihre bedürfnisse",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "erstklassig*",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "marktführend*",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "vertrauen sie auf",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "mit langjähriger erfahrung",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "kompetent und zuverlässig",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "schnell und unkompliziert",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "einfach und effektiv",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "ihre vorteile auf einen blick",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "jetzt kostenlos",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "maximale flexibilität",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "höchste qualität",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "perfekt abgestimmt",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "erfolgreich am markt",
+        "ad-speak",
+        "hard"
+    ],
+    [
+        "hochwertig*",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "unverbindlich*",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "setzen sie auf",
+        "ad-speak",
+        "soft"
+    ],
+    [
+        "untermauer*",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "unterstreich*",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "widerspiegel*",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "vorantreib*",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "ankurbeln",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "den weg ebnen",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "ebnen den weg",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "brücken bauen",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "in den fokus rücken",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "an bedeutung gewinnen",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "zum tragen kommen",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "erweist sich als",
+        "verb-inflation",
+        "hard"
+    ],
+    [
+        "beleucht*",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "aufzeig*",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "verdeutlich*",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "hervorheb*",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "die basis schaffen",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "im mittelpunkt stehen",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "auf den prüfstand stellen",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "gilt als",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "zählt zu den",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "eine rolle spielen",
+        "verb-inflation",
+        "soft"
+    ],
+    [
+        "nicht unerheblich*",
+        "filler",
+        "hard"
+    ],
+    [
+        "in der tat",
+        "filler",
+        "hard"
+    ],
+    [
+        "letztendlich",
+        "filler",
+        "hard"
+    ],
+    [
+        "schlichtweg",
+        "filler",
+        "hard"
+    ],
+    [
+        "schlicht und ergreifend",
+        "filler",
+        "hard"
+    ],
+    [
+        "ohne zweifel",
+        "filler",
+        "hard"
+    ],
+    [
+        "zweifellos",
+        "filler",
+        "hard"
+    ],
+    [
+        "selbstredend",
+        "filler",
+        "hard"
+    ],
+    [
+        "bekanntermaßen",
+        "filler",
+        "hard"
+    ],
+    [
+        "insbesondere",
+        "filler",
+        "soft"
+    ],
+    [
+        "vor allem",
+        "filler",
+        "soft"
+    ],
+    [
+        "nach wie vor",
+        "filler",
+        "soft"
+    ],
+    [
+        "tatsächlich",
+        "filler",
+        "soft"
+    ],
+    [
+        "erfahrungsgemäß",
+        "filler",
+        "soft"
+    ],
+    [
+        "naturgemäß",
+        "filler",
+        "soft"
+    ],
+    [
+        "gewissermaßen",
+        "filler",
+        "soft"
+    ],
+    [
+        "im prinzip",
+        "filler",
+        "soft"
+    ],
+    [
+        "streng genommen",
+        "filler",
+        "soft"
+    ],
+    [
+        "durchweg",
+        "filler",
+        "soft"
+    ],
+    [
+        "wohlgemerkt",
+        "filler",
+        "soft"
+    ],
+    [
+        "zunächst einmal",
+        "transition",
+        "hard"
+    ],
+    [
+        "im folgenden",
+        "transition",
+        "hard"
+    ],
+    [
+        "hierbei ist",
+        "transition",
+        "hard"
+    ],
+    [
+        "darüber hinausgehend",
+        "transition",
+        "hard"
+    ],
+    [
+        "ergänzend dazu",
+        "transition",
+        "hard"
+    ],
+    [
+        "dementsprechend",
+        "transition",
+        "soft"
+    ],
+    [
+        "folglich",
+        "transition",
+        "soft"
+    ],
+    [
+        "zum einen",
+        "transition",
+        "soft"
+    ],
+    [
+        "zum anderen",
+        "transition",
+        "soft"
+    ],
+    [
+        "abgesehen davon",
+        "transition",
+        "soft"
+    ],
+    [
+        "im gegensatz dazu",
+        "transition",
+        "soft"
+    ],
+    [
+        "im vergleich dazu",
+        "transition",
+        "soft"
+    ],
+    [
+        "hierzu",
+        "transition",
+        "soft"
+    ],
+    [
+        "wie folgt",
+        "transition",
+        "soft"
+    ],
+    [
+        "seit jeher fasziniert",
+        "opener",
+        "hard"
+    ],
+    [
+        "kaum ein thema",
+        "opener",
+        "hard"
+    ],
+    [
+        "wer kennt das nicht",
+        "opener",
+        "hard"
+    ],
+    [
+        "stellen wir uns vor",
+        "opener",
+        "hard"
+    ],
+    [
+        "eines steht fest",
+        "opener",
+        "hard"
+    ],
+    [
+        "zunächst ein blick",
+        "opener",
+        "hard"
+    ],
+    [
+        "die frage ist berechtigt",
+        "opener",
+        "hard"
+    ],
+    [
+        "eines vorweg",
+        "opener",
+        "soft"
+    ],
+    [
+        "beginnen wir mit",
+        "opener",
+        "soft"
+    ],
+    [
+        "im spannungsfeld",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "die kehrseite der medaille",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "ein blick über den tellerrand",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "das große ganze",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "am puls der zeit",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "der heilige gral",
+        "metaphor",
+        "hard"
+    ],
+    [
+        "auf herz und nieren",
+        "metaphor",
+        "soft"
+    ],
+    [
+        "hand in hand",
+        "metaphor",
+        "soft"
+    ],
+    [
+        "die achillesferse",
+        "metaphor",
+        "soft"
+    ],
+    [
+        "im rampenlicht",
+        "metaphor",
+        "soft"
+    ],
+    [
+        "ihr herz schlug schneller",
+        "narrative",
+        "hard"
+    ],
+    [
+        "sein herz raste",
+        "narrative",
+        "hard"
+    ],
+    [
+        "ein kloß im hals",
+        "narrative",
+        "hard"
+    ],
+    [
+        "der atem stockte",
+        "narrative",
+        "hard"
+    ],
+    [
+        "sie hielt den atem an",
+        "narrative",
+        "hard"
+    ],
+    [
+        "die stille war ohrenbetäubend",
+        "narrative",
+        "hard"
+    ],
+    [
+        "ein lächeln umspielte",
+        "narrative",
+        "hard"
+    ],
+    [
+        "ein schatten legte sich",
+        "narrative",
+        "hard"
+    ],
+    [
+        "die worte hingen in der luft",
+        "narrative",
+        "hard"
+    ],
+    [
+        "etwas in ihr zerbrach",
+        "narrative",
+        "hard"
+    ],
+    [
+        "eine träne rollte",
+        "narrative",
+        "hard"
+    ],
+    [
+        "das blut gefror ihr",
+        "narrative",
+        "hard"
+    ],
+    [
+        "wie vom donner gerührt",
+        "narrative",
+        "hard"
+    ],
+    [
+        "mit zitternden händen",
+        "narrative",
+        "hard"
+    ],
+    [
+        "der boden schien zu schwanken",
+        "narrative",
+        "hard"
+    ],
+    [
+        "alles andere verblasste",
+        "narrative",
+        "hard"
+    ],
+    [
+        "ein funken hoffnung",
+        "narrative",
+        "hard"
+    ],
+    [
+        "ihre stimme brach",
+        "narrative",
+        "hard"
+    ],
+    [
+        "tief in ihrem inneren",
+        "narrative",
+        "hard"
+    ],
+    [
+        "sie wusste es einfach",
+        "narrative",
+        "hard"
+    ],
+    [
+        "die welt um sie herum",
+        "narrative",
+        "hard"
+    ],
+    [
+        "in ihren augen lag",
+        "narrative",
+        "hard"
+    ],
+    [
+        "sie spürte, wie",
+        "narrative",
+        "soft"
+    ],
+    [
+        "er spürte, wie",
+        "narrative",
+        "soft"
+    ],
+    [
+        "es fühlte sich an, als ob",
+        "narrative",
+        "soft"
+    ],
+    [
+        "sie schloss die augen",
+        "narrative",
+        "soft"
+    ],
+    [
+        "seit jeher",
+        "narrative",
+        "soft"
+    ],
+    [
+        "wie so oft",
+        "narrative",
+        "soft"
+    ]
+]

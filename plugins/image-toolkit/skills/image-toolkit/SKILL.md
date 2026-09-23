@@ -52,7 +52,8 @@ This skill has two detailed reference files. Read the one you need:
 
 - **`references/gemini-image-api.md`** — Gemini image generation API reference
   - Read when: user wants AI-generated images or AI-powered image editing
-  - Covers: models, REST API (curl), Python SDK (with `uv`), image editing, streaming, config options
+  - Covers: GA models + model choice, shut-down model IDs and their successors, Interactions API
+    (Python SDK with `uv`, curl), editing, multi-turn, Search grounding, config options, pricing
 
 ## ⚡ Quick reference (common tasks)
 
@@ -93,33 +94,55 @@ uv run ${CLAUDE_PLUGIN_ROOT}/scripts/generate_image.py \
   --prompt "A photorealistic fox in a snowy forest at golden hour" --out /tmp/fox.png
 uv run ${CLAUDE_PLUGIN_ROOT}/scripts/generate_image.py \
   --edit photo.jpg --prompt "Add snow to this scene" --out /tmp/edited.png
+uv run ${CLAUDE_PLUGIN_ROOT}/scripts/generate_image.py \
+  --continue <interaction-id> --prompt "Now make it night" --out /tmp/night.png
 
-# Ad-hoc Python (IMMER --python 3.13 und SDK-Version >= 1.68.0 angeben!)
-uv run --python 3.13 --with "google-genai>=1.68.0" --with Pillow python script.py
+# Ad-hoc Python (IMMER --python 3.13 und SDK-Version >= 2.25.0 angeben!)
+uv run --python 3.13 --with "google-genai>=2.25.0" --with Pillow python script.py
 
-# curl
-curl -s -X POST \
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent" \
+# curl (Interactions API)
+curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/interactions" \
   -H "x-goog-api-key: ${GEMINI_API_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
-    "contents": [{"parts": [{"text": "Your prompt here"}]}],
-    "generationConfig": {
-      "responseModalities": ["TEXT", "IMAGE"],
-      "imageConfig": {"aspectRatio": "16:9", "imageSize": "2K"}
-    }
+    "model": "gemini-3.1-flash-image",
+    "input": "Your prompt here",
+    "response_format": {"type": "image", "aspect_ratio": "16:9", "image_size": "2K"}
   }'
 ```
+
+**Models (all GA):** `gemini-3.1-flash-image` (default, Nano Banana 2) ·
+`gemini-3.1-flash-lite-image` (cheapest, 1K only) · `gemini-3-pro-image` (best text-in-image,
+complex layouts). The 2.5 Flash image model, every preview image ID and all Imagen models are
+shut down or shutting down — never use them; the successor table is in the reference.
+
+**Resolution and quality — always pass `--size` for a deliverable.** Without it the API
+renders 1K, which is only right for drafts, tests and previews.
+
+| Target | `--size` | Model |
+|---|---|---|
+| Draft, test, preview, many variants | `1K` (default) | Flash, or Flash Lite for volume |
+| Final web/social asset (hero, header, post, slide) | `2K` | Flash |
+| Print, poster, large display, "highest resolution" | `4K` | Flash, or Pro |
+| "Highest quality", text-heavy, complex layout, infographic | `2K`, or `4K` for print | **Pro** (`gemini-3-pro-image`) |
+
+Why 2K for web: retina screens render at 2× and cropping to an exact size eats pixels — a
+1K frame (1376 px wide at 16:9) looks soft as a full-width hero. Crop to the exact target
+size afterwards with ImageMagick.
+
+For hard compositions on Flash also pass `--thinking high`; Pro always thinks.
 
 ## 🔧 Important conventions
 
 1. **ImageMagick 7**: Always use `magick` command (not legacy `convert`)
 2. **Python**: Always use `uv` with `--python 3.13` — never use system Python (3.9 is EOL, causes old SDK caching)
-   - `uv run --python 3.13 --with "google-genai>=1.68.0" --with Pillow python script.py`
-   - Or create a project: `uv init && uv add "google-genai>=1.68.0" Pillow`
+   - `uv run --python 3.13 --with "google-genai>=2.25.0" --with Pillow python script.py`
+   - Or create a project: `uv init && uv add "google-genai>=2.25.0" Pillow`
 3. **API Key**: Stored as `GEMINI_API_KEY` environment variable (in `~/.zshrc`)
 4. **Combine tools**: Generate with Gemini, then post-process with ImageMagick for best results
-5. **SDK-Version**: `image_size` und `thinking_level` benötigen SDK >= 1.65.0. Immer `"google-genai>=1.68.0"` pinnen!
+5. **Interactions API, not `generateContent`**: Google marks `generateContent` as legacy; image
+   work goes through `client.interactions.create` (SDK >= 2.25.0). Output is always JPEG —
+   re-encode locally for PNG/WebP; transparency comes from ImageMagick, not from Gemini.
 
 ## 🎯 Workflow: Generate + Post-process
 
@@ -131,14 +154,11 @@ For complex image tasks, combine both tools:
 Example: Create a product hero image
 ```bash
 # Step 1: Generate with Gemini
-uv run --python 3.13 --with "google-genai>=1.68.0" --with Pillow python generate.py \
+uv run ${CLAUDE_PLUGIN_ROOT}/scripts/generate_image.py \
   --prompt "Professional product photo of sneakers on white background" \
-  --output raw_hero.png
+  --aspect 16:9 --size 2K --out raw_hero.png
 
 # Step 2: Post-process with ImageMagick
-magick raw_hero.png \
-  -resize 1200x630 \            # Social media size
-  -strip \                       # Remove metadata
-  -quality 85 \                  # Optimize
-  hero_final.jpg
+# social media size, strip metadata, optimize
+magick raw_hero.png -resize 1200x630 -strip -quality 85 hero_final.jpg
 ```
