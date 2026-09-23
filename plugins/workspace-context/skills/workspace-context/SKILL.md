@@ -83,36 +83,44 @@ external runtime.
    Do not pass the raw `context-mode index` output through as hook output; the
    CLI output is human-readable and may not be valid hook JSON.
 7. Run the index command once, then verify it as described under **Verifying the
-   index** — not with `ctx_search`, which is invalid from the session that built
-   the index. Also verify that the hook emits the ready status with file and
-   section counts.
+   index**. When the workspace contains sibling repositories, verify a hit from at
+   least two of them. Also verify that the hook emits the ready status with file
+   and section counts.
 8. Report every created file and the exact source label in the final diff.
 
 ## Verifying the index
 
-`ctx_search` from the session that built the index proves nothing — in either
-direction:
+An unfiltered `ctx_search` is not a valid check, in either direction:
 
-- **It fails on a healthy index.** An index created after session start is not
-  reachable over MCP in that session. This is why indexing belongs in the
-  `sessionStart` hook; a manual rebuild needs a new session.
-- **It passes on an absent one.** `ctx_search` also serves auto-captured session
-  memory. Results tagged `[current-session | … | batch:…]` are memory, not the
-  file index.
+- **A miss does not prove a broken index.** Context Mode keeps one store per
+  project directory. If `context-mode search` finds a term and `ctx_search` does
+  not, the session runs in a different project directory than the one the hook
+  indexes — start the session at that root.
+- **A hit does not prove the file index.** `ctx_search` also serves auto-captured
+  session memory. Every hit is tagged `[current-session | … | <source>]`; only the
+  source part tells them apart — `batch:…` is memory, the hook's source label is
+  the file index. Always filter by the source label.
 
 Verify instead:
 
-1. Pick a term that sits in a file and was **never in this session's context** —
-   a colleague's or subagent's wording, a passage nobody opened.
-2. Run `context-mode search "<term>"` from the project root. The result must carry
-   a `Source:` line with the expected path. That line is the only thing separating
-   a file hit from a memory hit.
+1. From the project root, run `context-mode search "<term>" --source "<source label>"`.
+   Every result must carry a `Source:` line with the expected file path — the path
+   decides, not the content.
+2. In a workspace, repeat with one term from each of at least two sibling
+   repositories; each needs its own expected `Source:` path.
 3. Check the hook payload separately (step 6) — it answers a different question.
 
 **Exclusions need the same care.** Searching for a secret and finding nothing
-proves nothing: a broken search returns nothing too. Pick a term that appears in
-an excluded **and** in a legitimate file — an environment-variable name usually
-does. The search must return the legitimate files and not the excluded one.
+proves nothing: a broken search returns nothing too, and `context-mode search`
+returns 3 results unless `--limit` is set, so a leaked file can fall off the list.
+Pick a term that appears in an excluded **and** in legitimate files — an
+environment-variable name usually does:
+
+1. Count the legitimate files first: `rg -l "<term>"` over the hook's allowlisted
+   extensions.
+2. Search with `context-mode search "<term>" --source "<source label>" --limit 100`.
+3. Pass only if every legitimate file appears, the result count stays below the
+   limit, and no excluded path appears.
 
 ## AGENTS.md content contract
 

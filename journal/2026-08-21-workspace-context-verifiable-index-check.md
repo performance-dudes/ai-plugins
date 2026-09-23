@@ -1,8 +1,7 @@
 # workspace-context — die Prüfung des Index war nicht falsifizierbar
 
 **Datum:** 21. August 2026
-**Auslöser:** Einrichtung des Plugins auf einem echten Repository (`closer`,
-rund 7.000 Zeilen Prosa in Specs, Plänen, Review und Katalog).
+**Auslöser:** Einrichtung des Plugins auf einem privaten Produkt-Repository.
 
 ## Was passiert ist
 
@@ -22,15 +21,19 @@ und stammten damit aus dem **Sitzungsgedächtnis**, nicht aus dem Dateiindex.
 Inhalt richtig, Quelle falsch. Ohne den Blick auf die Herkunftszeile wäre das als
 bestandene Prüfung durchgegangen.
 
-## Warum das kein Anwendungsfehler ist
+## Ursachen
 
-Beides sind Eigenschaften der Laufzeit:
-
-- Ein Index, der **nach** dem Sitzungsstart entsteht, ist in dieser Sitzung über
-  MCP nicht erreichbar. Genau deshalb existiert der `sessionStart`-Hook — er läuft,
-  bevor der MCP-Server den Inhalt braucht.
-- `ctx_search` bedient zwei Speicher. Beide sind nützlich, aber nur der Dateiindex
-  ist vollständig und aktuell.
+- **Falsch negativ.** Die erste Deutung — „ein Index, der nach dem Sitzungsstart
+  entsteht, ist über MCP nicht erreichbar" — hielt dem Cold-Review nicht stand:
+  CLI und `ctx_search` rufen dieselbe Suche auf derselben Datenbank auf, gewählt
+  über das Projektverzeichnis. Ein CLI-Treffer ohne MCP-Treffer spricht für eine
+  Sitzung in einem anderen Projektverzeichnis als dem indexierten. Nachgemessen
+  ist das nicht; der Skill schreibt deshalb vor, die Sitzung an der indexierten
+  Wurzel zu starten, statt einen Sitzungseffekt zu behaupten.
+- **Falsch positiv.** `ctx_search` bedient Dateiindex und Sitzungsgedächtnis. Beide
+  Treffer tragen `[current-session | … | <source>]`; unterscheiden lässt sie nur der
+  Source-Teil (`batch:…` ist Gedächtnis). Mit Filter auf das Quell-Etikett fällt
+  der Gedächtnistreffer weg.
 
 Ein Prüfschritt, der auf einem gesunden Index scheitern und auf einem fehlenden
 bestehen kann, ist kein Prüfschritt. Er ist schlimmer als keiner, weil er
@@ -41,21 +44,27 @@ Sicherheit vortäuscht.
 Schritt 7 verweist jetzt auf einen eigenen Abschnitt **„Verifying the index"**, der
 beide Effekte benennt und eine **falsifizierbare** Prüfung vorschreibt:
 
-1. Ein Begriff, der in einer Datei steht und **nie im Sitzungskontext war** —
-   etwas, das ein Kollege oder ein Subagent geschrieben hat. Wer mit einem Begriff
-   prüft, über den er gerade geredet hat, prüft sein eigenes Gedächtnis.
-2. Suche über die **CLI**, und die `Source:`-Zeile bestätigen. Diese Zeile ist das
-   einzige, was einen Datei- von einem Gedächtnistreffer unterscheidet.
+1. `context-mode search` mit dem Quell-Etikett; jeder Treffer muss die erwartete
+   `Source:`-Zeile tragen — der Pfad entscheidet, nicht der Inhalt.
+2. Im Workspace je ein Begriff aus mindestens zwei Geschwister-Repos.
 3. Die Hook-Nutzlast getrennt prüfen — sie beantwortet eine andere Frage.
 
 Dazu ein zweiter Abschnitt zur **Prüfung der Ausschlüsse**. Nachzuweisen, dass ein
 Geheimnis nicht im Index steht, indem man danach sucht und nichts findet, ist
 keine Prüfung: „kein Treffer" ist auch das Ergebnis einer kaputten Suche.
 Falsifizierbar wird es erst mit einem Begriff, der in einer ausgeschlossenen
-**und** in einer erlaubten Datei vorkommt — die Suche muss die erlaubten liefern
-und die ausgeschlossene nicht. Beim Einrichten fand die Suche nach einem
-Schlüsselnamen drei Quelldateien und nicht `.env.local`; erst diese Fassung sagt
-etwas aus.
+**und** in erlaubten Dateien vorkommt — die Suche muss die erlaubten liefern und
+die ausgeschlossene nicht.
+
+Der Cold-Review fand, dass auch diese Prüfung zunächst nicht falsifizierbar war:
+`context-mode search` liefert ohne `--limit` 3 Treffer. Die „drei Quelldateien"
+beim Einrichten waren genau dieses Limit; eine durchgerutschte Datei an Position
+vier wäre unsichtbar geblieben (nachgestellt mit fünf erlaubten Dateien und einer
+durchgerutschten). Jetzt: erlaubte Dateien vorab mit `rg -l` zählen, mit
+`--limit 100` suchen, bestehen nur, wenn alle erlaubten erscheinen, die
+Trefferzahl unter dem Limit bleibt und kein ausgeschlossener Pfad auftaucht.
+`validate.sh` prüft die Bestandteile der Anweisung (AC-WC-2-4); das
+Laufzeitverhalten von Context Mode selbst ist nicht live getestet.
 
 ## Nicht geändert
 

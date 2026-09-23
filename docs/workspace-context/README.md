@@ -48,24 +48,27 @@ See the [plugin README](../../plugins/workspace-context/README.md) and
 [skill source](../../plugins/workspace-context/skills/workspace-context/SKILL.md)
 for the complete setup contract.
 
-## Verifying a fresh index — the two traps
+## Verifying a fresh index — three traps
 
-Both were measured while setting the plugin up on a real repository, and both make
-the obvious check unreliable rather than merely imprecise.
+Each makes the obvious check unreliable rather than merely imprecise.
 
-**A freshly created index is not reachable over MCP from the session that created
-it.** The CLI found the indexed passages immediately, `ctx_search` found nothing
-from that index in the same session. That is why indexing runs as a `sessionStart`
-hook: it happens before the MCP server needs the content. Rebuilding by hand
-requires a new session.
+**`ctx_search` and the CLI can look at different stores.** Context Mode keeps one
+store per project directory. When `context-mode search` finds indexed passages and
+`ctx_search` does not, the session runs in another project directory than the one
+the hook indexed — the fix is to start the session at that root, not to rebuild.
 
-**`ctx_search` blends the file index with auto-captured session memory.** Results
-tagged `[current-session | … | batch:…]` come from memory. A verification that
-lands there proves nothing about the index and reads exactly like a pass — the
-content is right, the source is wrong.
+**`ctx_search` blends the file index with auto-captured session memory.** Every hit
+is tagged `[current-session | … | <source>]`; only the source part separates them.
+`batch:…` is memory, the hook's source label is the file index. A verification
+that lands on a `batch:` hit reads exactly like a pass — the content is right, the
+source is wrong. Filtering by the source label removes those rows.
 
-The skill therefore prescribes a **falsifiable** check: search the CLI for a term
-that was never in session context and confirm the `Source:` line. The same logic
-applies to the exclusions — "no results" is also what a broken search returns, so
-the term has to appear in a legitimate file too, and the search must return that
-one and not the excluded one.
+**`context-mode search` returns 3 results by default.** An exclusion check that
+searches for a term and sees only legitimate files proves nothing when the list
+was cut off: a leaked file can sit at position four.
+
+The skill therefore prescribes a **falsifiable** check: search with the source
+label and confirm each `Source:` path; in a workspace, do it for at least two
+sibling repositories. For exclusions, count the legitimate files with `rg -l`
+first, search with `--limit 100`, and pass only if every legitimate file appears,
+the result count stays below the limit and no excluded path shows up.

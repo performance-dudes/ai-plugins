@@ -63,6 +63,18 @@ grep -q 'additionalContext' \
   && ok "hook success and failure contracts are documented in code" \
   || bad "hook contract is incomplete"
 
+# AC-WC-2-4: the index check must stay falsifiable. Each marker is one condition
+# the section needs; losing any of them brings back a check that can pass on a
+# broken index or a leaked exclusion.
+SKILL_MD="$PLUGIN_DIR/skills/workspace-context/SKILL.md"
+missing=""
+for marker in '## Verifying the index' 'context-mode search' '--source' 'Source:' \
+              'batch:' '--limit' 'rg -l' 'two sibling' 'two of them'; do
+  grep -qF -- "$marker" "$SKILL_MD" || missing="$missing [$marker]"
+done
+[ -z "$missing" ] && ok "index verification is falsifiable (AC-WC-2-4)" \
+  || bad "index verification incomplete, missing:$missing"
+
 note "4. Public hygiene"
 # Hygiene: no client names or internal identifiers in the public plugin.
 #
