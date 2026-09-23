@@ -31,11 +31,22 @@ Bundled script directly:
 ```bash
 uv run scripts/generate_image.py --prompt "..." --aspect 16:9 --size 2K --out /tmp/out.png
 uv run scripts/generate_image.py --edit in.jpg --prompt "..." --out /tmp/edited.png
+uv run scripts/generate_image.py --continue <interaction-id> --prompt "..." --out /tmp/v2.png
 ```
 
 `uv` provisions `google-genai` + Pillow from the script's PEP-723 header — no
 manual install. Needs `GEMINI_API_KEY` in the environment (key from
 aistudio.google.com). **ImageMagick-only work needs no key.**
+
+## Gemini models
+
+Runs on Google's **Interactions API** (`generateContent` is legacy). All models GA:
+
+| Model | Use | Resolution | ≈ $/image |
+|-------|-----|------------|-----------|
+| `gemini-3.1-flash-image` (default, Nano Banana 2) | general purpose | 512 · 1K · 2K · 4K | 0.067 @ 1K |
+| `gemini-3.1-flash-lite-image` (Nano Banana 2 Lite) | cheap drafts, volume | 1K only | 0.034 |
+| `gemini-3-pro-image` (Nano Banana Pro) | text-heavy, complex layouts | 1K · 2K · 4K | 0.134 @ 1K |
 
 ## Engines
 

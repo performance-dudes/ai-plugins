@@ -1,16 +1,16 @@
 # /// script
 # requires-python = ">=3.13"
 # dependencies = [
-#   "google-genai>=1.68.0",
+#   "google-genai>=2.25.0",
 #   "Pillow",
 # ]
 # ///
-"""Generate or edit images with the Google Gemini image API.
+"""Generate or edit images with the Gemini image models (Interactions API).
 
 Bundled so the image-toolkit plugin works out of the box — no manual deps:
 `uv` reads the PEP-723 header above and provisions google-genai + Pillow on
-first run. Always pins google-genai>=1.68.0 (image_size / thinking_level need
-the newer SDK; the system Python 3.9 path caches an old SDK — never use it).
+first run. Pins google-genai>=2.25.0: `client.interactions` and the typed
+image `response_format` need the 2.x SDK.
 
 Usage (always via uv):
     uv run scripts/generate_image.py \
@@ -20,6 +20,10 @@ Usage (always via uv):
     uv run scripts/generate_image.py \
         --edit input.jpg --prompt "Add snow to this scene" --out /tmp/edited.png
 
+    # follow-up edit on the previous result (id is printed after every run)
+    uv run scripts/generate_image.py \
+        --continue <interaction-id> --prompt "Make it night" --out /tmp/night.png
+
 Auth: expects GEMINI_API_KEY in the environment (e.g. exported in ~/.zshrc).
 Post-process the result with ImageMagick (`magick`) for exact size / format /
 optimization — see the image-toolkit skill.
@@ -27,6 +31,7 @@ optimization — see the image-toolkit skill.
 from __future__ import annotations
 
 import argparse
+import base64
 import os
 import sys
 from io import BytesIO
@@ -41,6 +46,18 @@ MIME_BY_EXT = {
     ".webp": "image/webp",
 }
 
+DEFAULT_MODEL = "gemini-3.1-flash-image"  # Nano Banana 2
+# What each GA image model accepts (Gemini API image-generation guide).
+MODELS = {
+    "gemini-3.1-flash-lite-image": {"sizes": {"1K"}, "thinking": True, "search": set()},
+    "gemini-3.1-flash-image": {"sizes": {"512", "1K", "2K", "4K"}, "thinking": True,
+                               "search": {"web_search", "image_search"}},
+    "gemini-3-pro-image": {"sizes": {"1K", "2K", "4K"}, "thinking": False, "search": {"web_search"}},
+}
+ASPECTS = ["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9",
+           "21:9", "1:4", "4:1", "1:8", "8:1"]
+MAX_REFERENCE_IMAGES = 14
+
 
 def _client():
     from google import genai
@@ -51,84 +68,91 @@ def _client():
     return genai.Client(api_key=key)
 
 
-def _save_parts(parts, out_path: str) -> bool:
+def _image_block(path: str) -> dict:
+    src = Path(path)
+    if not src.is_file():
+        sys.exit(f"--edit source not found: {path}")
+    return {
+        "type": "image",
+        "mime_type": MIME_BY_EXT.get(src.suffix.lower(), "image/jpeg"),
+        "data": base64.b64encode(src.read_bytes()).decode("ascii"),
+    }
+
+
+def _check(model: str, size: str | None, thinking: str | None, search: list[str] | None) -> None:
+    caps = MODELS.get(model)
+    if caps is None:
+        # Unknown id (newer model, alias): pass through, let the API decide.
+        print(f"[warn] {model} is not a known GA image model — sending as-is.", file=sys.stderr)
+        return
+    if size and size not in caps["sizes"]:
+        sys.exit(f"--size {size} not supported by {model} (allowed: {', '.join(sorted(caps['sizes']))}).")
+    if thinking and not caps["thinking"]:
+        sys.exit(f"--thinking is not configurable on {model} (it always thinks).")
+    unsupported = set(search or ()) - caps["search"]
+    if unsupported:
+        sys.exit(f"--search {' '.join(sorted(unsupported))} not supported by {model}.")
+
+
+def run(args) -> bool:
     from PIL import Image
 
-    saved = False
-    for part in parts:
-        if getattr(part, "text", None):
-            print(f"[gemini] {part.text.strip()}")
-        elif getattr(part, "inline_data", None):
-            Image.open(BytesIO(part.inline_data.data)).save(out_path)
-            print(f"Image saved: {out_path}")
-            saved = True
-    return saved
+    _check(args.model, args.size, args.thinking, args.search)
+    if args.edit:
+        if len(args.edit) > MAX_REFERENCE_IMAGES:
+            sys.exit(f"at most {MAX_REFERENCE_IMAGES} input images, got {len(args.edit)}.")
+        user_input = [*(_image_block(p) for p in args.edit), {"type": "text", "text": args.prompt}]
+    else:
+        user_input = args.prompt
 
+    response_format = {"type": "image", "aspect_ratio": args.aspect}
+    if args.size:
+        response_format["image_size"] = args.size
+    request = {"model": args.model, "input": user_input, "response_format": response_format}
+    if args.thinking:
+        request["generation_config"] = {"thinking_level": args.thinking}
+    if args.continue_id:
+        request["previous_interaction_id"] = args.continue_id
+    if args.search:
+        request["tools"] = [{"type": "google_search", "search_types": args.search}]
 
-def generate(prompt: str, model: str, aspect: str, size: str, out: str, person: str | None = None) -> bool:
-    from google.genai import types
-
+    # Keep the Client referenced: SDK 2.x closes its HTTP transport when the
+    # Client is garbage-collected, so `_client().interactions.create(...)` fails.
     client = _client()
-    img_kwargs = {"aspect_ratio": aspect, "image_size": size}
-    # person_generation wird nur im Gemini Enterprise Agent Platform mode unterstuetzt.
-    # In der Developer API (Standard) fuehrt es zu einem ValueError -> nur setzen, wenn angefordert.
-    if person:
-        img_kwargs["person_generation"] = person
-    resp = client.models.generate_content(
-        model=model,
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            response_modalities=["TEXT", "IMAGE"],
-            image_config=types.ImageConfig(**img_kwargs),
-        ),
-    )
-    return _save_parts(resp.candidates[0].content.parts, out)
+    interaction = client.interactions.create(**request)
 
-
-def edit(image_path: str, prompt: str, model: str, aspect: str, out: str) -> bool:
-    from google.genai import types
-
-    src = Path(image_path)
-    if not src.is_file():
-        sys.exit(f"--edit source not found: {image_path}")
-    mime = MIME_BY_EXT.get(src.suffix.lower(), "image/jpeg")
-    client = _client()
-    resp = client.models.generate_content(
-        model=model,
-        contents=[
-            types.Part.from_bytes(data=src.read_bytes(), mime_type=mime),
-            types.Part.from_text(prompt),
-        ],
-        config=types.GenerateContentConfig(
-            response_modalities=["TEXT", "IMAGE"],
-            image_config=types.ImageConfig(aspect_ratio=aspect),
-        ),
-    )
-    return _save_parts(resp.candidates[0].content.parts, out)
+    if interaction.output_text:
+        print(f"[gemini] {interaction.output_text.strip()}")
+    print(f"Interaction: {interaction.id}  (follow-up: --continue {interaction.id})")
+    image = interaction.output_image  # last image of the turn = the final render
+    if image is None or not image.data:
+        return False
+    # The API delivers JPEG; Pillow re-encodes to whatever --out asks for.
+    Image.open(BytesIO(base64.b64decode(image.data))).save(args.out)
+    print(f"Image saved: {args.out}")
+    return True
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="Generate or edit images with Gemini.")
+    p = argparse.ArgumentParser(description="Generate or edit images with Gemini (Interactions API).")
     p.add_argument("--prompt", required=True, help="text prompt / edit instruction")
-    p.add_argument("--edit", metavar="IMAGE", help="edit an existing image instead of generating")
-    p.add_argument("--out", default="/tmp/gemini_image.png", help="output file path")
-    p.add_argument("--model", default="gemini-2.5-flash-image", help="image model id")
-    p.add_argument("--aspect", default="16:9", help="aspect ratio, e.g. 1:1, 16:9, 4:3")
-    p.add_argument("--size", default="2K", help="image size: 1K or 2K (generate only)")
-    p.add_argument(
-        "--person-generation",
-        dest="person",
-        default=None,
-        help="z.B. allow_adult — NUR im Enterprise Agent Platform mode; in der Developer API weglassen (Default)",
-    )
+    p.add_argument("--edit", metavar="IMAGE", nargs="+",
+                   help=f"edit/combine existing image(s) — up to {MAX_REFERENCE_IMAGES} references")
+    p.add_argument("--continue", dest="continue_id", metavar="ID",
+                   help="continue a previous interaction (multi-turn editing)")
+    p.add_argument("--out", default="/tmp/gemini_image.png", help="output file path (format from extension)")
+    p.add_argument("--model", default=DEFAULT_MODEL,
+                   help=f"image model id (default {DEFAULT_MODEL}; also: {', '.join(m for m in MODELS if m != DEFAULT_MODEL)})")
+    p.add_argument("--aspect", default="16:9", choices=ASPECTS, help="aspect ratio")
+    p.add_argument("--size", choices=["512", "1K", "2K", "4K"],
+                   help="output resolution (default: model default, 1K). 512 = Flash only, Lite = 1K only")
+    p.add_argument("--thinking", choices=["minimal", "high"],
+                   help="thinking level for Flash / Flash Lite (API default: minimal). Pro always thinks")
+    p.add_argument("--search", nargs="+", choices=["web_search", "image_search"],
+                   help="ground on Google Search (image_search: Flash only; not on Flash Lite)")
     args = p.parse_args()
 
-    if args.edit:
-        ok = edit(args.edit, args.prompt, args.model, args.aspect, args.out)
-    else:
-        ok = generate(args.prompt, args.model, args.aspect, args.size, args.out, args.person)
-
-    if not ok:
+    if not run(args):
         print("No image returned — check the prompt, model, or your quota.", file=sys.stderr)
         return 1
     return 0

@@ -33,8 +33,18 @@ uv run ${CLAUDE_PLUGIN_ROOT}/scripts/generate_image.py \
   --out /tmp/logo_edited.png
 ```
 
-Flags: `--model` (default `gemini-2.5-flash-image`), `--aspect` (`1:1`, `16:9`,
-`4:3`, …), `--size` (`1K`/`2K`, generate only), `--out`.
+```bash
+# Follow-up edit on the last result (every run prints its interaction id)
+uv run ${CLAUDE_PLUGIN_ROOT}/scripts/generate_image.py \
+  --continue <interaction-id> --prompt "Make the gradient darker" --out /tmp/logo_v2.png
+```
+
+Flags: `--model` (default `gemini-3.1-flash-image`; `gemini-3.1-flash-lite-image`
+for cheap drafts, 1K only; `gemini-3-pro-image` for text-heavy/complex layouts),
+`--aspect` (`1:1`, `16:9`, `9:16`, `21:9`, `4:1`, …), `--size` (`512`/`1K`/`2K`/`4K`,
+default 1K), `--thinking` (`minimal`/`high`, Flash + Lite), `--search`
+(`web_search`/`image_search`), `--edit` (up to 14 images), `--continue`, `--out`
+(format from extension — Gemini returns JPEG, the script re-encodes).
 
 ## Local processing (ImageMagick)
 

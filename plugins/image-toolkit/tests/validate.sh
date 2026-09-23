@@ -53,6 +53,23 @@ head -16 "$PLUGIN_DIR/skills/image-toolkit/SKILL.md" | grep -q '^name:' \
   && head -16 "$PLUGIN_DIR/skills/image-toolkit/SKILL.md" | grep -q '^description:' \
   && ok "SKILL.md (name+description)" || bad "SKILL.md missing name/description"
 
+note "6. Gemini models: GA only, no shut-down IDs"
+# Shut down per ai.google.dev/gemini-api/docs/deprecations. They may appear ONLY in the
+# successor table of the reference ("## Abgeschaltete Modelle" section) — anywhere else
+# they would send users to a dead endpoint.
+DEAD='gemini-2\.5-flash-image|gemini-3\.1-flash-image-preview|gemini-3-pro-image-preview|imagen-[34]\.0-'
+REF="$PLUGIN_DIR/skills/image-toolkit/references/gemini-image-api.md"
+hits="$(grep -rnE --exclude-dir=__pycache__ "$DEAD" "$PLUGIN_DIR/scripts" "$PLUGIN_DIR/commands" "$PLUGIN_DIR/README.md" 2>/dev/null || true)"
+[ -z "$hits" ] && ok "no shut-down model IDs in scripts/commands/README" || bad "shut-down model IDs found: $hits"
+outside="$(awk '/^## /{inside=($0 ~ /^## Abgeschaltete Modelle/)} !inside' "$REF" | grep -nE "$DEAD" || true)"
+[ -z "$outside" ] && ok "reference: shut-down IDs only in the successor table" || bad "reference uses shut-down IDs outside the successor table: $outside"
+grep -qE '^DEFAULT_MODEL = "gemini-3\.1-flash-image"' "$PLUGIN_DIR/scripts/generate_image.py" \
+  && ok "default model is gemini-3.1-flash-image (GA)" || bad "default model is not gemini-3.1-flash-image"
+grep -q '"google-genai>=2\.' "$PLUGIN_DIR/scripts/generate_image.py" \
+  && ok "google-genai pinned to 2.x (Interactions API)" || bad "google-genai pin below 2.x — client.interactions missing"
+grep -q 'interactions\.create' "$PLUGIN_DIR/scripts/generate_image.py" \
+  && ok "script uses the Interactions API" || bad "script does not call interactions.create"
+
 note "Result"
 if [ "$fail" -eq 0 ]; then echo "  ALL CHECKS PASSED"; else echo "  FAILURES ABOVE"; fi
 exit "$fail"
