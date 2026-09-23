@@ -113,8 +113,8 @@ curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/interactions" 
 
 **Models (all GA):** `gemini-3.1-flash-image` (default, Nano Banana 2) ·
 `gemini-3.1-flash-lite-image` (cheapest, 1K only) · `gemini-3-pro-image` (best text-in-image,
-complex layouts). `gemini-2.5-flash-image`, every `*-preview` image ID and all `imagen-4.0-*`
-are shut down or shutting down — never use them; successors are in the reference.
+complex layouts). The 2.5 Flash image model, every preview image ID and all Imagen models are
+shut down or shutting down — never use them; the successor table is in the reference.
 
 ## 🔧 Important conventions
 
@@ -143,9 +143,6 @@ uv run ${CLAUDE_PLUGIN_ROOT}/scripts/generate_image.py \
   --aspect 16:9 --size 2K --out raw_hero.png
 
 # Step 2: Post-process with ImageMagick
-magick raw_hero.png \
-  -resize 1200x630 \            # Social media size
-  -strip \                       # Remove metadata
-  -quality 85 \                  # Optimize
-  hero_final.jpg
+# social media size, strip metadata, optimize
+magick raw_hero.png -resize 1200x630 -strip -quality 85 hero_final.jpg
 ```

@@ -41,6 +41,9 @@ Alle drei sind **GA** (keine Preview). Der Plugin-Default ist `gemini-3.1-flash-
 - Bis zu **14** Eingabebilder je Aufruf.
 - `gemini-3-pro-image`: 5 Bilder in hoher Treue, 14 insgesamt.
 - `gemini-3.1-flash-image`: Ähnlichkeit für bis zu 4 Figuren, Treue für bis zu 10 Objekte.
+- `gemini-3.1-flash-lite-image` ist laut Google **nicht** für mehrere Referenzbilder oder
+  Multi-Turn-Editing optimiert — dafür Flash oder Pro.
+- Eingabeformate: PNG, JPEG, WebP, HEIC/HEIF (iPhone-Fotos).
 - Jedes erzeugte Bild trägt ein **SynthID**-Wasserzeichen.
 
 ---
@@ -94,8 +97,11 @@ response_format={
 }
 ```
 
-**Aspect Ratios:** `1:1` `2:3` `3:2` `3:4` `4:3` `4:5` `5:4` `9:16` `16:9` `21:9`
-`1:4` `4:1` `1:8` `8:1`
+**Aspect Ratios (alle Modelle):** `1:1` `2:3` `3:2` `3:4` `4:3` `4:5` `5:4` `9:16` `16:9` `21:9`
+**Nur `gemini-3.1-flash-image`:** `1:4` `4:1` `1:8` `8:1`
+
+Ohne `aspect_ratio` übernimmt ein Edit das Seitenverhältnis des Eingabebilds. Das Skript
+setzt 16:9 deshalb nur bei neuen Bildern, nicht bei `--edit`/`--continue`.
 
 | Ratio | Einsatz |
 |---|---|
@@ -280,7 +286,7 @@ für Bildmodelle über die API.
 | `gemini-3.1-flash-image` | 0,045 $ | 0,067 $ | 0,101 $ | 0,151 $ |
 | `gemini-3-pro-image` | — | 0,134 $ | 0,134 $ | 0,24 $ |
 
-Dazu Thinking-Tokens zum Text-Output-Preis (Flash/Lite 1,50 $, Pro 12 $ je 1 Mio. Tokens)
+Dazu Thinking-Tokens zum Text-Output-Preis (Flash 3 $, Lite 1,50 $, Pro 12 $ je 1 Mio. Tokens)
 und Eingabebilder (vernachlässigbar). Aktuell: <https://ai.google.dev/gemini-api/docs/pricing>.
 
 ---

@@ -8,7 +8,13 @@ Modelle, die Referenz und Skript nannten, waren schon weg:
 alle `imagen-4.0-*` seit 17. August 2026. Quelle: die Deprecations-Seite der Gemini API,
 gegengeprüft mit `client.models.list()` — Imagen taucht dort nicht mehr auf.
 
-## Upgrade-Pfade (Googles eigene Nachfolger-Angaben)
+## Upgrade-Pfade
+
+Nach Googles Nachfolger-Angaben. Für `gemini-2.5-flash-image` nennt die
+Deprecations-Seite noch `gemini-3.1-flash-image-preview`, das selbst auf
+`gemini-3.1-flash-image` verweist. Die Pricing-Seite nennt „3.1 Flash Image oder
+3.1 Flash Lite Image". Default wird Flash; das kostet je 1K-Bild ca. 0,067 $ statt
+0,039 $ (+70 %). Wer den alten Preispunkt will, nimmt Flash Lite (0,034 $).
 
 | Alt | Neu |
 |---|---|
@@ -47,12 +53,27 @@ bezahlter Aufruf rausgeht.
 `types.Part.from_text(prompt)` positional — im SDK ist `text` keyword-only. Jeder `--edit`-Lauf
 warf `TypeError`. Mit dem Umbau erledigt (Edit baut jetzt Interactions-Blöcke).
 
+## Cold-Review-Befunde (umgesetzt)
+
+- Seitenverhältnisse je Modell geprüft: `1:4`/`4:1`/`1:8`/`8:1` nur Flash.
+- `--aspect` ohne Default bei `--edit`/`--continue` — das Modell behält das
+  Eingabe-Seitenverhältnis; neue Bilder weiter 16:9.
+- Ausgabe-Endung und Zielordner werden **vor** dem bezahlten Aufruf geprüft.
+- Abgeschaltete IDs brechen mit Nachfolger-Hinweis ab statt nur zu warnen.
+- Eingabe-MIME über `mimetypes`, plus HEIC/HEIF.
+- Thinking-Preis Flash korrigiert (3 $, nicht 1,50 $); Lite-Einschränkung bei
+  Multi-Turn/mehreren Referenzen dokumentiert.
+
 ## Tests
 
 `validate.sh` §6 neu: keine abgeschalteten IDs in `scripts/`, `commands/`, `README.md`; in der
 Referenz nur in der Nachfolger-Tabelle; Default = `gemini-3.1-flash-image`; SDK-Pin 2.x;
-Skript nutzt `interactions.create`. Gegenprobe gegen den Stand von `origin/main`: alle fünf
-Prüfungen rot.
+Skript ruft `client.interactions.create` (nicht nur im Kommentar), kein `generateContent` mehr.
+SKILL.md ist mit im Scan; die Nachfolger-Map im Skript ist per `# dead-id-ok` ausgenommen.
+Gegenprobe gegen den Stand von `origin/main`: alle Prüfungen rot.
+
+`validate.sh` §7 neu: Unit-Test der Guards mit reinem `python3` (kein uv, kein Key) —
+elf Ablehnungen, vier Annahmen.
 
 ## Verifiziert
 

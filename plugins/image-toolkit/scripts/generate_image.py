@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import mimetypes
 import os
 import sys
 from io import BytesIO
@@ -39,23 +40,34 @@ from pathlib import Path
 
 # ImageMagick covers deterministic local work; this script is only the Gemini
 # (cloud) half — the recommended path for *generating* and *semantic editing*.
-MIME_BY_EXT = {
-    ".jpg": "image/jpeg",
-    ".jpeg": "image/jpeg",
-    ".png": "image/png",
-    ".webp": "image/webp",
-}
+# Input formats the image models accept; iPhone photos are HEIC.
+MIME_BY_EXT = {".heic": "image/heic", ".heif": "image/heif"}
+# Output formats Pillow writes without extra plugins.
+OUT_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".tif", ".tiff"}
 
 DEFAULT_MODEL = "gemini-3.1-flash-image"  # Nano Banana 2
+STANDARD_ASPECTS = {"1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"}
+EXTREME_ASPECTS = {"1:4", "4:1", "1:8", "8:1"}  # Flash only
 # What each GA image model accepts (Gemini API image-generation guide).
 MODELS = {
-    "gemini-3.1-flash-lite-image": {"sizes": {"1K"}, "thinking": True, "search": set()},
+    "gemini-3.1-flash-lite-image": {"sizes": {"1K"}, "thinking": True, "search": set(),
+                                    "aspects": STANDARD_ASPECTS},
     "gemini-3.1-flash-image": {"sizes": {"512", "1K", "2K", "4K"}, "thinking": True,
-                               "search": {"web_search", "image_search"}},
-    "gemini-3-pro-image": {"sizes": {"1K", "2K", "4K"}, "thinking": False, "search": {"web_search"}},
+                               "search": {"web_search", "image_search"},
+                               "aspects": STANDARD_ASPECTS | EXTREME_ASPECTS},
+    "gemini-3-pro-image": {"sizes": {"1K", "2K", "4K"}, "thinking": False, "search": {"web_search"},
+                           "aspects": STANDARD_ASPECTS},
 }
-ASPECTS = ["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9",
-           "21:9", "1:4", "4:1", "1:8", "8:1"]
+# Shut down (ai.google.dev/gemini-api/docs/deprecations) -> successor.
+SHUT_DOWN = {
+    "gemini-2.5-flash-image": "gemini-3.1-flash-image",  # dead-id-ok
+    "gemini-3.1-flash-image-preview": "gemini-3.1-flash-image",  # dead-id-ok
+    "gemini-3-pro-image-preview": "gemini-3-pro-image",  # dead-id-ok
+    "imagen-4.0-generate-001": "gemini-3.1-flash-image",  # dead-id-ok
+    "imagen-4.0-ultra-generate-001": "gemini-3.1-flash-image",  # dead-id-ok
+    "imagen-4.0-fast-generate-001": "gemini-3.1-flash-image",  # dead-id-ok
+}
+ASPECTS = sorted(STANDARD_ASPECTS | EXTREME_ASPECTS)
 MAX_REFERENCE_IMAGES = 14
 
 
@@ -72,14 +84,20 @@ def _image_block(path: str) -> dict:
     src = Path(path)
     if not src.is_file():
         sys.exit(f"--edit source not found: {path}")
+    ext = src.suffix.lower()
+    mime = MIME_BY_EXT.get(ext) or mimetypes.guess_type(src.name)[0] or "image/jpeg"
     return {
         "type": "image",
-        "mime_type": MIME_BY_EXT.get(src.suffix.lower(), "image/jpeg"),
+        "mime_type": mime,
         "data": base64.b64encode(src.read_bytes()).decode("ascii"),
     }
 
 
-def _check(model: str, size: str | None, thinking: str | None, search: list[str] | None) -> None:
+def _check(model: str, size: str | None = None, thinking: str | None = None,
+           search: list[str] | None = None, aspect: str | None = None) -> None:
+    """Reject combinations the model cannot serve — before any paid call."""
+    if model in SHUT_DOWN:
+        sys.exit(f"{model} is shut down — use {SHUT_DOWN[model]}.")
     caps = MODELS.get(model)
     if caps is None:
         # Unknown id (newer model, alias): pass through, let the API decide.
@@ -92,12 +110,26 @@ def _check(model: str, size: str | None, thinking: str | None, search: list[str]
     unsupported = set(search or ()) - caps["search"]
     if unsupported:
         sys.exit(f"--search {' '.join(sorted(unsupported))} not supported by {model}.")
+    if aspect and aspect not in caps["aspects"]:
+        sys.exit(f"--aspect {aspect} not supported by {model} (1:4, 4:1, 1:8, 8:1 are Flash only).")
+
+
+def _check_out(out: str) -> None:
+    """Fail before paying if the result could not be written."""
+    path = Path(out)
+    if path.suffix.lower() not in OUT_EXTS:
+        sys.exit(f"--out {out}: unsupported extension (use one of {', '.join(sorted(OUT_EXTS))}).")
+    if not path.parent.is_dir():
+        sys.exit(f"--out {out}: directory {path.parent} does not exist.")
 
 
 def run(args) -> bool:
     from PIL import Image
 
-    _check(args.model, args.size, args.thinking, args.search)
+    # Fresh images default to 16:9; edits and follow-ups keep the input's ratio.
+    aspect = args.aspect or (None if args.edit or args.continue_id else "16:9")
+    _check(args.model, args.size, args.thinking, args.search, aspect)
+    _check_out(args.out)
     if args.edit:
         if len(args.edit) > MAX_REFERENCE_IMAGES:
             sys.exit(f"at most {MAX_REFERENCE_IMAGES} input images, got {len(args.edit)}.")
@@ -105,7 +137,9 @@ def run(args) -> bool:
     else:
         user_input = args.prompt
 
-    response_format = {"type": "image", "aspect_ratio": args.aspect}
+    response_format = {"type": "image"}
+    if aspect:
+        response_format["aspect_ratio"] = aspect
     if args.size:
         response_format["image_size"] = args.size
     request = {"model": args.model, "input": user_input, "response_format": response_format}
@@ -143,7 +177,9 @@ def main() -> int:
     p.add_argument("--out", default="/tmp/gemini_image.png", help="output file path (format from extension)")
     p.add_argument("--model", default=DEFAULT_MODEL,
                    help=f"image model id (default {DEFAULT_MODEL}; also: {', '.join(m for m in MODELS if m != DEFAULT_MODEL)})")
-    p.add_argument("--aspect", default="16:9", choices=ASPECTS, help="aspect ratio")
+    p.add_argument("--aspect", choices=ASPECTS,
+                   help="aspect ratio (default 16:9; --edit/--continue keep the input's ratio). "
+                        "1:4, 4:1, 1:8, 8:1 = Flash only")
     p.add_argument("--size", choices=["512", "1K", "2K", "4K"],
                    help="output resolution (default: model default, 1K). 512 = Flash only, Lite = 1K only")
     p.add_argument("--thinking", choices=["minimal", "high"],
