@@ -126,6 +126,10 @@ renders 1K, which is only right for drafts, tests and previews.
 | Print, poster, large display, "highest resolution" | `4K` | Flash, or Pro |
 | "Highest quality", text-heavy, complex layout, infographic | `2K`, or `4K` for print | **Pro** (`gemini-3-pro-image`) |
 
+Why 2K for web: retina screens render at 2× and cropping to an exact size eats pixels — a
+1K frame (1376 px wide at 16:9) looks soft as a full-width hero. Crop to the exact target
+size afterwards with ImageMagick.
+
 For hard compositions on Flash also pass `--thinking high`; Pro always thinks.
 
 ## 🔧 Important conventions
