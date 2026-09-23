@@ -7,6 +7,7 @@
 | AC-WC-2-1 | `skills/workspace-context/SKILL.md` | `validate.sh` component/content checks |
 | AC-WC-2-2 | Four reference templates | `validate.sh` presence, JSON parse, `bash -n` |
 | AC-WC-2-3 | `reindex-workspace.sh.template` | `validate.sh` hook-contract checks |
+| AC-WC-2-4 | `SKILL.md` → „Verifying the index", Schritt 7 | `validate.sh` Inhaltsmarker (Quell-Etikett, `Source:`-Pfad, `--limit`, `rg -l`, zwei Geschwister-Repos). **Nicht abgedeckt:** das Laufzeitverhalten von Context Mode selbst — kein Live-Test gegen einen echten Index |
 | AC-WC-3-1 | Plugin `README.md` | Review |
 | AC-WC-3-2 | Repository docs and journal | Review |
 
