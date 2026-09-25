@@ -42,13 +42,22 @@ echo "[structure] US-conv-5: jede description ≤ 1024 Zeichen, Frontmatter stri
 # Die Copilot CLI verweigert ein Plugin ganz, sobald eine description das Limit
 # reißt — Claude Code lädt es trotzdem, der Fehler ist dort unsichtbar. Geprüft
 # werden marketplace.json, plugin.json, Skills, Agents und Commands.
-while IFS= read -r line; do
-  case "$line" in
-    "OK Negativ"*) ok "${line#OK }" ;;
-    OK*)   ok "alle ${line#OK } descriptions im Limit" ;;
-    FAIL*) note "${line#FAIL }" ;;
-  esac
-done < <(python3 "$ROOT/tests/lib/check_descriptions.py" --self-test; python3 "$ROOT/tests/lib/check_descriptions.py" "$ROOT")
+# Fail-closed: Exit 0 braucht eine OK-Zeile, Exit 1 mindestens eine FAIL-Zeile —
+# alles andere (Absturz, fehlendes python3) ist ein Verstoß, kein stilles Grün.
+for arg in --self-test "$ROOT"; do
+  out="$(python3 "$ROOT/tests/lib/check_descriptions.py" "$arg" 2>&1)"; rc=$?
+  n_ok=0; n_fail=0
+  while IFS= read -r line; do
+    case "$line" in
+      "OK Negativ"*) ok "${line#OK }"; n_ok=1 ;;
+      OK*)   ok "alle ${line#OK } descriptions im Limit"; n_ok=1 ;;
+      FAIL*) note "${line#FAIL }"; n_fail=1 ;;
+    esac
+  done <<< "$out"
+  if ! { [ "$rc" -eq 0 ] && [ "$n_ok" -eq 1 ]; } && ! { [ "$rc" -eq 1 ] && [ "$n_fail" -eq 1 ]; }; then
+    note "check_descriptions.py $arg nicht ausführbar (rc=$rc): $(printf '%s' "$out" | tail -1)"
+  fi
+done
 
 echo "[structure] US-conv-4: Marketplace-Manifest deckt sich mit den Plugins"
 # Gilt fuer JEDES Plugin: registriert, source loest auf, Version identisch zu

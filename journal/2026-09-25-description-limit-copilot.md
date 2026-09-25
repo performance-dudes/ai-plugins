@@ -30,5 +30,8 @@ Kürzung.
   (wie bisher in `ai-plugins-internal`) hätte keinen der Überläufe gefunden.
 - Ein Clip-Scalar (`description: >`) trägt für striktes YAML einen Zeilenumbruch
   am Ende, sobald ein weiterer Key folgt. `skill_desc_len.py` zählt ihn jetzt
-  konservativ mit; die erste Kürzung von `mechanic` (1023 ohne, 1024 mit) wäre
-  sonst durchgerutscht.
+  konservativ mit (die Zahlen oben sind ohne ihn gezählt, der Guard meldet +1).
+  Die erste Kürzung von `mechanic` lag damit bei exakt 1024 — gültig, aber ohne
+  Puffer; die Endfassung hält Abstand.
+- Der Guard ist fail-closed: `check.sh` wertet den Exit-Code aus, ein Absturz
+  des Skripts färbt rot statt still grün (Befund aus dem Cold-Review).

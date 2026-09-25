@@ -73,7 +73,11 @@ def main(root: pathlib.Path) -> int:
         rel = str(f.relative_to(root))
         n = description_length(str(f))
         if n < 0:
-            continue  # ohne Frontmatter-description: nicht Sache dieses Checks
+            # Ein Skill ohne description (oder mit kaputtem Frontmatter) lädt
+            # nirgends — melden. Agents/Commands dürfen ohne auskommen.
+            if f.name == "SKILL.md":
+                fails.append(f"{rel}: description fehlt oder Frontmatter unparsbar")
+            continue
         checked += 1
         if n > LIMIT:
             fails.append(f"{rel}: description {n} > {LIMIT} Zeichen")
@@ -88,26 +92,35 @@ def main(root: pathlib.Path) -> int:
 
 
 def self_test() -> int:
-    """Negativ-Fixture: ein Agent > 1024 und ein ungequoteter Doppelpunkt MÜSSEN
-    beide gemeldet werden — sonst ist der Guard blind und färbt fälschlich grün."""
+    """Negativ-Fixture: jeder Verstoßtyp MUSS genau an seiner Datei gemeldet
+    werden — sonst ist der Guard blind und färbt fälschlich grün."""
     import contextlib
     import io
     import tempfile
 
+    expected = {
+        "plugins/neg/.claude-plugin/plugin.json: description 1100",
+        "plugins/neg/agents/a.md: description 1100",
+        "plugins/neg/skills/s/SKILL.md: ungequotete description",
+        "plugins/neg/skills/leer/SKILL.md: description fehlt",
+    }
     with tempfile.TemporaryDirectory() as tmp:
         r = pathlib.Path(tmp)
-        (r / "plugins/neg/agents").mkdir(parents=True)
-        (r / "plugins/neg/skills/s").mkdir(parents=True)
+        for d in ("plugins/neg/.claude-plugin", "plugins/neg/agents", "plugins/neg/skills/s", "plugins/neg/skills/leer"):
+            (r / d).mkdir(parents=True)
+        (r / "plugins/neg/.claude-plugin/plugin.json").write_text(json.dumps({"description": "x" * 1100}))
         (r / "plugins/neg/agents/a.md").write_text("---\nname: a\ndescription: " + "x" * 1100 + "\n---\n")
         (r / "plugins/neg/skills/s/SKILL.md").write_text('---\nname: s\ndescription: Baut das Sheet "A: B" neu\n---\n')
+        (r / "plugins/neg/skills/leer/SKILL.md").write_text("---\nname: leer\n---\n")
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
             main(r)
-    n = buf.getvalue().count("FAIL ")
-    if n == 2:
-        print("OK Negativ-Selbsttest: Agent-Überlauf und ungequoteter Doppelpunkt erkannt")
+    fails = [ln[5:] for ln in buf.getvalue().splitlines() if ln.startswith("FAIL ")]
+    missing = [e for e in expected if not any(f.startswith(e) for f in fails)]
+    if not missing and len(fails) == len(expected):
+        print("OK Negativ-Selbsttest: plugin.json-/Agent-Überlauf, ungequoteter Doppelpunkt, fehlende description erkannt")
         return 0
-    print(f"FAIL Negativ-Selbsttest: 2 Verstöße erwartet, {n} gemeldet")
+    print(f"FAIL Negativ-Selbsttest: nicht erkannt {missing}, gemeldet {fails}")
     return 1
 
 
