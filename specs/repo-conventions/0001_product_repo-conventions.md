@@ -189,6 +189,19 @@ zufällig auffiel. Zwei Lehren stecken darin, beide in AC-4-4 adressiert:
 Ein dauerhaft roter Check ist zudem schlimmer als gar keiner: er trainiert alle
 darauf, ihn zu überlesen. Rot heißt handeln, nicht gewöhnen.
 
+### US-conv-5 — Jedes Plugin lädt in jedem Loader
+
+Als Nutzer der Copilot CLI will ich dieselben Plugins nutzen wie in Claude Code. Die
+Copilot CLI verweigert ein Plugin ganz, sobald eine seiner descriptions das Limit
+reißt oder das Frontmatter kein striktes YAML ist — Claude Code lädt es trotzdem,
+der Fehler ist dort also unsichtbar.
+
+| AC | Soll | Test |
+|----|------|------|
+| AC-5-1 | Jede `description` ≤ 1024 Zeichen: Einträge in `marketplace.json`, jede `plugin.json`, Frontmatter von `skills/*/SKILL.md`, `agents/*.md`, `commands/*.md`. | `tests/structure/check.sh` (`tests/lib/check_descriptions.py`) |
+| AC-5-2 | Keine inline, ungequotete Frontmatter-`description` enthält `": "` (striktes YAML liest das als Mapping). | `tests/structure/check.sh` (`tests/lib/check_descriptions.py`) |
+| AC-5-3 | Der Check meldet eine Negativ-Fixture (Agent > 1024, ungequoteter Doppelpunkt), bevor er das Repo scannt. | `tests/lib/check_descriptions.py --self-test` |
+
 ## 9. Phasen (Rollout)
 
 - **PR 1 (diese):** Konventions-Spec + Top-Level-Struktur + Fix der Spec-in-docs-

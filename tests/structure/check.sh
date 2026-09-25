@@ -38,6 +38,18 @@ for pj in plugins/*/.claude-plugin/plugin.json; do
 done
 [ "$fail" -eq 0 ] && ok "alle Plugin-Ordner rein"
 
+echo "[structure] US-conv-5: jede description ≤ 1024 Zeichen, Frontmatter striktes YAML"
+# Die Copilot CLI verweigert ein Plugin ganz, sobald eine description das Limit
+# reißt — Claude Code lädt es trotzdem, der Fehler ist dort unsichtbar. Geprüft
+# werden marketplace.json, plugin.json, Skills, Agents und Commands.
+while IFS= read -r line; do
+  case "$line" in
+    "OK Negativ"*) ok "${line#OK }" ;;
+    OK*)   ok "alle ${line#OK } descriptions im Limit" ;;
+    FAIL*) note "${line#FAIL }" ;;
+  esac
+done < <(python3 "$ROOT/tests/lib/check_descriptions.py" --self-test; python3 "$ROOT/tests/lib/check_descriptions.py" "$ROOT")
+
 echo "[structure] US-conv-4: Marketplace-Manifest deckt sich mit den Plugins"
 # Gilt fuer JEDES Plugin: registriert, source loest auf, Version identisch zu
 # plugin.json. Die Implementierung liegt zentral in tests/lib/, damit die

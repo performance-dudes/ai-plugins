@@ -1,26 +1,21 @@
 ---
 name: mechanic
 description: >
-  Cost-tiered worker for MECHANICAL work that needs CODE / CONTEXT COMPREHENSION —
-  pinned to the cheaper Sonnet 4.6 tier to preserve premium (Opus / Sonnet 5) budget
-  for judgment. Same broad tool access as general-purpose, for tasks that have a
-  SINGLE correct output but require reading and understanding the surrounding code to
-  execute correctly: applying a specified edit that must fit its context, mechanical
-  refactors across files (rename a symbol, reorder imports, extract a constant),
-  generating boilerplate/scaffolding that must slot into an existing codebase,
-  translating a stated change into the right call sites, running a known command and
-  interpreting its output.
-  USE WHEN the "what" is decided and success is objectively checkable, AND doing it
-  right requires comprehending code/files — not just pattern-substitution.
-  DO NOT USE (route DOWN) for trivial transformations that need no codebase
-  understanding — classify, extract a field, reformat, literal find/replace with
-  exact old→new, yes/no checks. A SINGLE such item stays INLINE in the orchestrator
-  (delegating one lone item costs more than it saves); a BATCH of them goes to the
-  even cheaper Haiku tier via subagent_type "mechanic:errand".
-  DO NOT USE (route UP to general-purpose) for anything needing a DECISION — design,
-  architecture, naming choices, debugging an unknown cause, prose/specs, security or
-  correctness review, open-ended relevance-weighted search. If the task needs a
-  decision, it is not mechanical; if it needs no code understanding, it is an errand.
+  Sonnet 4.6 tier for MECHANICAL work that needs CODE / CONTEXT COMPREHENSION.
+  For tasks with a SINGLE correct output that require understanding the
+  surrounding code: a specified edit that must fit its
+  context, mechanical refactors across files (rename a symbol, reorder imports,
+  extract a constant), boilerplate that must fit an existing codebase, applying a
+  stated change at the right call sites, running a known command and interpreting
+  its output.
+  USE WHEN the "what" is decided, success is objectively checkable, AND it needs
+  code comprehension — not just pattern-substitution.
+  NOT for trivial work needing no code understanding (classify, extract, reformat,
+  literal find/replace, yes/no): one item stays INLINE, a batch goes to
+  "mechanic:errand".
+  NOT for anything needing a DECISION (design, architecture, naming, debugging an
+  unknown cause, prose/specs, security or correctness review, open-ended search) →
+  general-purpose.
   Invoked via the Agent tool with subagent_type "mechanic".
 model: claude-sonnet-4-6
 ---
