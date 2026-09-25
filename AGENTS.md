@@ -93,4 +93,4 @@ Ergänzende Prinzipien:
   Community-Tools: `cc-plugin-eval` (Triggering), `skill-eval-action` (YAML-Skill-Cases).
 
 Ein neues/geändertes Plugin gilt erst als fertig, wenn **Spec + Tests + Evals +
-Code + Docs + Context (CLAUDE.md/README)** in sync sind (repo-conventions §4).
+Code + Docs + Context (AGENTS.md/README)** in sync sind (repo-conventions §4).

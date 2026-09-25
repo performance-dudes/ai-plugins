@@ -75,7 +75,7 @@ ausgenommen.
 Die Schleife aus `craft/spec-driven-tdd` ist **verbindlich**, nicht optional:
 **(1)** Spec schreiben/erweitern + PR sofort öffnen → **(2)** Tests für die neuen
 Acceptance Criteria → **(3)** Plan in `plans/` bei Mehr-Schritt-Arbeit → **(4)**
-implementieren bis **Spec + Tests + Code + Docs + Context (CLAUDE.md/README)** in
+implementieren bis **Spec + Tests + Code + Docs + Context (AGENTS.md/README)** in
 sync sind → **(5)** Plan löschen, Journal-Eintrag, Docs/Context finalisieren →
 **(6)** Merge **nur** auf Freigabe.
 
