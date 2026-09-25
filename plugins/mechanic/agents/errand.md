@@ -1,28 +1,18 @@
 ---
 name: errand
 description: >
-  Cheapest cost tier — pinned to Haiku 4.5 for TRIVIAL, self-contained
-  transformations that need NO understanding of the surrounding codebase, run as a
-  HIGH-VOLUME BATCH. Fast and high-throughput. USE WHEN you have MANY such
-  objectively-checkable transformations — a batch, a whole file/dataset, a long
-  repetitive scan — that a careful pattern-substitution would nail: classify or
-  label text, extract a field or value, reformat (JSON/CSV/whitespace/case),
-  literal find/replace with an exact old→new pair, a yes/no or contains check,
-  count occurrences, normalize a string — at volume. The cheap-model saving is what
-  pays for delegating; it only wins across volume.
-  DO NOT USE for a SINGLE, small trivial task — do that INLINE in the orchestrator
-  yourself. Spawning a subagent costs spawn + context-transfer + result-
-  reintegration (agent runs burn ~4× the tokens of a plain turn), which outweighs
-  the saving on one lone item. Delegate to errand only when the batch volume
-  amortises that overhead.
-  DO NOT USE (route UP to mechanic) when executing it correctly requires reading and
-  understanding code/context — a specified edit that must fit its surroundings, a
-  refactor across files, boilerplate that must slot into an existing codebase: those
-  go to subagent_type "mechanic" on the Sonnet 4.6 tier.
-  DO NOT USE for anything needing a decision, judgment, design, debugging, review, or
-  prose — that is general-purpose on the premium tier. Rule: single trivial task →
-  inline (do it yourself); batch of trivial tasks → errand; needs code understanding
-  → mechanic; needs a decision → general-purpose.
+  Cheapest tier (Haiku 4.5) for a HIGH-VOLUME BATCH of TRIVIAL, self-contained,
+  objectively-checkable transformations that need NO codebase understanding:
+  classify or label text, extract a field, reformat (JSON/CSV/whitespace/case),
+  literal find/replace with an exact old→new pair, yes/no or contains checks,
+  counting — across a batch, a whole file/dataset or a long repetitive scan.
+  NOT for a SINGLE small trivial task — do it INLINE yourself; an agent run burns
+  ~4× the tokens of a plain turn, and only batch volume amortises that.
+  NOT when doing it right requires understanding code/context (an edit that must fit
+  its surroundings, a cross-file refactor, boilerplate for an existing codebase) →
+  "mechanic" (Sonnet 4.6).
+  NOT for anything needing a decision, judgment, design, debugging, review or prose →
+  general-purpose (premium).
   Invoked via the Agent tool with subagent_type "mechanic:errand".
 model: claude-haiku-4-5
 ---
