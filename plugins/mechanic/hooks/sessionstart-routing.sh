@@ -8,7 +8,7 @@
 # the orchestrator has the rule, not just the two tools.
 #
 # Injects the REAL object: it emits hooks/routing-card.md verbatim, so the card is
-# the single source and the hook cannot drift from it (repo CLAUDE.md, eval doctrine).
+# the single source and the hook cannot drift from it (repo AGENTS.md, eval doctrine).
 #
 # Zero-dep by design: pure bash, no jq/python/node. A hook that cannot run is a
 # silent failure, so it must not depend on anything beyond the shell.

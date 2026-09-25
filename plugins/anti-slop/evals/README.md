@@ -6,7 +6,7 @@ an und lässt er von Menschen geschriebene Prosa in Ruhe?
 ## Regime: deterministisch, kein Judge
 
 Das beobachtbare Ergebnis ist eine Zahl — harte Treffer je 1000 Wörter. Das ist
-objektiv, also wird **deterministisch gematcht** (repo-CLAUDE.md: STRUCTURED →
+objektiv, also wird **deterministisch gematcht** (repo-AGENTS.md: STRUCTURED →
 deterministisch). Ein LLM-Judge würde hier nur Varianz auf etwas legen, das schon
 eindeutig ist.
 

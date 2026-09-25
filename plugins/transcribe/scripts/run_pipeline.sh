@@ -32,7 +32,7 @@ if [[ ! -f "$INPUT" ]]; then
 fi
 if [[ ! -f ~/.cache/huggingface/token ]]; then
     echo "❌ HuggingFace-Token fehlt unter ~/.cache/huggingface/token" >&2
-    echo "   Setup-Anleitung: siehe CLAUDE.md Abschnitt 'HuggingFace-Token'" >&2
+    echo "   Setup-Anleitung: siehe AGENTS.md Abschnitt 'HuggingFace-Token'" >&2
     exit 1
 fi
 
