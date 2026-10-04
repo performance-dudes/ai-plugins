@@ -1,0 +1,37 @@
+{
+  "name": "opencode-token-guard",
+  "version": "0.1.0",
+  "description": "OpenCode plugin: guards against token burn in long agent sessions — rations un-batched bash calls, throttles premature verification runs, and nudges at step/context budgets.",
+  "license": "MIT",
+  "author": "Performance Dudes",
+  "repository": "performance-dudes/ai-plugins",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "tokens",
+    "cost",
+    "agent-loop",
+    "context",
+    "efficiency"
+  ],
+  "devDependencies": {
+    "@opencode-ai/plugin": "^1.18.15",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  }
+}
