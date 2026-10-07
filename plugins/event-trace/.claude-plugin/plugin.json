@@ -1,0 +1,7 @@
+{
+  "name": "event-trace",
+  "version": "0.1.0",
+  "description": "Showcase for hooks and mods: registers a classic command hook on every hook event and a mod (function hooks module) on every mod event via on(\"*\"), and writes what fired, in which order and with which input to JSONL log files. Pass-through only, changes nothing. Command: /event-trace",
+  "author": { "name": "Performance Dudes" },
+  "license": "MIT"
+}
