@@ -70,6 +70,12 @@
       "source": "./plugins/event-trace",
       "description": "Showcase for hooks and mods: registers a classic command hook on every hook event and a mod (function hooks module) on every mod event via on(\"*\"), and writes what fired, in which order and with which input to JSONL log files. Pass-through only, changes nothing. Command: /event-trace",
       "version": "0.1.0"
+    },
+    {
+      "name": "plugin-guard",
+      "source": "./plugins/plugin-guard",
+      "description": "Security gate for Claude Code plugins. A mod judges every hooks module (JS/TS) before it loads, at start and on every reload or update: it scans the source and the capabilities the engine read off it, pins a content hash, and refuses risky or changed modules until you approve them. A SessionStart hook audits all installed plugins (shell hooks, MCP servers, scripts) and reports new or changed ones. Command: /plugin-guard",
+      "version": "0.1.0"
     }
   ]
 }
