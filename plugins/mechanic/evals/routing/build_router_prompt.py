@@ -5,7 +5,7 @@
 # ///
 """Build a blind routing prompt by INJECTING the real object under test.
 
-The golden rule (see ../README.md and the repo CLAUDE.md): an eval tests the
+The golden rule (see ../README.md and the repo AGENTS.md): an eval tests the
 REAL object — the actual agent descriptions and task prompts — never a paraphrase
 copied into the harness. A copy drifts from the plugin and then measures itself.
 

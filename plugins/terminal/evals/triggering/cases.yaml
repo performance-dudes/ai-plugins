@@ -2,7 +2,7 @@
 #
 # Regime: DETERMINISTIC. The output under test is STRUCTURED — one label per case
 # ("fires" / "does not fire"), so a judge would only add variance (SPEC-terminal §7,
-# ai-plugins CLAUDE.md "Regime pro Suite wählen").
+# ai-plugins AGENTS.md "Regime pro Suite wählen").
 #
 # LOCKED. A failing case is a PLUGIN bug — fix the skill description, never the case.
 # Each `note` is the calibration anchor: it states WHY the expectation is what it is,
