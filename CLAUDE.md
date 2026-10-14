@@ -43,7 +43,8 @@ Ergänzende Prinzipien:
 - 🎯 **Regime pro Suite wählen** — STRUCTURED Output (welcher Entrypoint feuert: ein
   Label) → **deterministisch matchen** (billig, reproduzierbar, keine
   Judge-Varianz); FREE-TEXT (Wording, Ton, Sprache) → **LLM-as-a-judge**
-  (Two-Call, forced `tool_use`, Judge bei temp 0). Genau der Split, den Claude
+  (Two-Call, forced `tool_use`; das Tool-Schema fixiert die Form — `temperature 0`
+  nur noch auf 4.x, die 5.x-Modelle lehnen Sampling-Parameter mit 400 ab). Genau der Split, den Claude
   Codes plugin-eval-Tooling als `programmatic_first` + LLM-Judgment fährt.
 - 🔒 **Locked before run · Clean/Precision-Case Pflicht · N Trials, pass^k / mean±σ** —
   Triggering ist stochastisch; ein einzelner Trial ist eine Anekdote. Anthropic macht

@@ -8,7 +8,7 @@ description: >
   fingerprint per finding for deterministic dedup. Read-only — never mutates the
   workspace. Invoked by the context-aware demo workflow (or directly via the Agent
   tool with subagent_type "context-scout").
-model: claude-sonnet-4-6
+model: claude-sonnet-5-5
 maxTurns: 12
 tools:
   - Read

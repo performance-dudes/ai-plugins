@@ -27,9 +27,26 @@ errand < mechanic < premium hält, die Abstände werden größer.
 - Docs/README: Modellvergleich auf aktuelle Preise; der `errand`-Hinweis „kleinstes
   Fenster, 200K" entfällt — der ctx_*-Rat bleibt, weil Batches auch 1M füllen.
 
+## Mitgezogen: die anderen Plugins
+
+- `context-aware`: `context-scout` → `claude-sonnet-5-5` (0.1.1 → 0.1.2).
+- `example`: `judge.py` → `claude-haiku-5-5` (0.2.0 → 0.2.1). Haiku 5.5 lehnt jedes
+  `temperature` ≠ 1 mit 400 ab; die locked Cases setzen `temperature: 0.3`. Deshalb
+  schickt das Harness Sampling nur noch an 4.x-Modelle — die Cases bleiben unberührt.
+  Die Form des Judge-Urteils fixiert das erzwungene Tool-Schema, nicht temp 0;
+  Querverweise (Repo-`CLAUDE.md`, READMEs) entsprechend korrigiert.
+- `image-toolkit`: Eval-Produktionsstufe → `claude-sonnet-5-5` (0.2.1 → 0.2.2).
+  Neu gefahren: Skill 41/41 zertifiziert, aber Baseline 0,83 und nur 7/41 trennscharf —
+  Sonnet 5.5 weiß das meiste ohne Skill. Schwerere Cases nötig (#75).
+
+## Learning
+
+Ein stärkeres Modell kann eine Knowledge-Eval entwerten, ohne dass der Skill schlechter
+wird: die Baseline steigt. Nach jedem Pin-Wechsel die Baseline-Schranke neu prüfen.
+
 ## Offen
 
 - AC-1-3 / AC-1-6 (e2e: gespawnter Agent meldet die neue Modell-ID) nach dem Update
   in frischer Session manuell bestätigen.
-- Routing-Eval mit dem neuen Kostenmodell nicht neu gefahren — die Labels hängen nicht
-  am Preis, nur die illustrative Ersparnis-Zahl.
+- `example`-Judge nicht live gefahren: das Harness ruft die API per SDK-Key, hier läuft
+  alles über `claude -p` + Subscription. Nur kompiliert.

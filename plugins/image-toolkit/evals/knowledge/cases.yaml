@@ -6,7 +6,7 @@
 # No judge variance either way.
 #
 # Certification bar (plugin-eval, cold-agent loop): a cold, cheap agent on the
-# production tier (claude-sonnet-4-6), with NOTHING but the skill files, answers 100 %
+# production tier (claude-sonnet-5-5), with NOTHING but the skill files, answers 100 %
 # of these tasks, stable over N trials (pass^k). The baseline WITHOUT the skill is
 # FORCED to choose (no `not-specified` outside the decline axis) — a baseline allowed to
 # decline measures reluctance, not knowledge. The `recent` axis carries most of the

@@ -10,9 +10,11 @@ structured → score them with score_routing.py (deterministic, free). The greet
 *wording* is fuzzy → judge it here, with the two-call pattern:
 
     1. TARGET call — run the thing under test (the greeter's REAL system prompt)
-                     at production temperature (~0.3). Free-text out. (Or set
+                     at production temperature (~0.3, where the model accepts
+                     sampling). Free-text out. (Or set
                      target.response in the case to judge a captured answer.)
-    2. JUDGE call  — forced tool_use (JUDGE_TOOL), temperature 0 for determinism.
+    2. JUDGE call  — forced tool_use (JUDGE_TOOL); the tool schema pins the
+                     output shape (temperature 0 only on 4.x models).
                      The human-written expectation in cases.json is the calibration
                      anchor; the judge checks the response AGAINST it only — it sets
                      no standard of its own. Like a test runner, not a critic.
@@ -43,8 +45,14 @@ import sys
 
 import yaml  # human-authored cases live in YAML
 
-DEFAULT_TARGET_MODEL = "claude-haiku-4-5"
-DEFAULT_JUDGE_MODEL = "claude-haiku-4-5"
+DEFAULT_TARGET_MODEL = "claude-haiku-5-5"
+DEFAULT_JUDGE_MODEL = "claude-haiku-5-5"
+
+
+def _sampling(model, temperature):
+    """Haiku/Sonnet 5.5 and the other 5.x models reject any non-default
+    temperature with a 400; only 4.x models still take it."""
+    return {"temperature": temperature} if "-4-" in model else {}
 
 # The judge MUST return exactly this shape (forced via tool_choice) — no prose to
 # parse, no schema drift. Each result carries its own reason for debugging.
@@ -136,10 +144,11 @@ def call_target(client, case, model):
     t = case["target"]
     if t.get("response"):
         return t["response"]
+    target_model = t.get("model", model)
     msg = client.messages.create(
-        model=t.get("model", model),
-        max_tokens=512,
-        temperature=t.get("temperature", 0.3),
+        model=target_model,
+        max_tokens=2048,  # 5.x thinks by default; thinking counts toward max_tokens
+        **_sampling(target_model, t.get("temperature", 0.3)),
         system=_target_system(t),
         messages=[{"role": m["role"], "content": m["text"]} for m in t["messages"]],
     )
@@ -150,7 +159,7 @@ def call_judge(client, case, response, model):
     msg = client.messages.create(
         model=model,
         max_tokens=1024,
-        temperature=0,
+        **_sampling(model, 0),
         tools=[JUDGE_TOOL],
         tool_choice={"type": "tool", "name": "record_judgment"},
         messages=[{"role": "user", "content": build_judge_prompt(case, response)}],

@@ -9,13 +9,13 @@
       "name": "example",
       "source": "./plugins/example",
       "description": "Reference showcase of every Claude Code plugin component and technique — workflow, command, skill (calling the workflow), subagent, theme, output style, plus .example templates for hooks/MCP/LSP/monitors and a tests/ folder on how to test plugins and skills. Command: /greet",
-      "version": "0.2.0"
+      "version": "0.2.1"
     },
     {
       "name": "context-aware",
       "source": "./plugins/context-aware",
       "description": "Reference plugin for building context-aware plugins: workflows and agents that route ALL retrieval through the context-mode MCP (ctx_*), so raw bytes are indexed and searched in a sandbox, never dumped into the window. Requires context-mode (enabled once at the workspace level). Teaches the five patterns (index-once-slice-many, fetch-and-index, plain-JS glue, structured-output handoffs, lean orchestrator) and ships a runnable, domain-agnostic demo. Command: /context-aware",
-      "version": "0.1.1"
+      "version": "0.1.2"
     },
     {
       "name": "workspace-context",
@@ -39,7 +39,7 @@
       "name": "image-toolkit",
       "source": "./plugins/image-toolkit",
       "description": "Image create & edit framework — Google Gemini for AI generation and semantic editing (recommended path), plus ImageMagick 7 for fast local processing (resize, crop, convert, watermark, favicon, batch, GIF, montage). Bundled generate_image.py runs via uv (no manual deps). Generic: prompts and assets come from the user. Command: /image",
-      "version": "0.2.1"
+      "version": "0.2.2"
     },
     {
       "name": "content-craft",
