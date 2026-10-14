@@ -52,7 +52,12 @@ DEFAULT_JUDGE_MODEL = "claude-haiku-5-5"
 def _sampling(model, temperature):
     """Haiku/Sonnet 5.5 and the other 5.x models reject any non-default
     temperature with a 400; only 4.x models still take it."""
-    return {"temperature": temperature} if "-4-" in model else {}
+    if "-4-" in model:
+        return {"temperature": temperature}
+    if temperature not in (None, 1):
+        print(f"note: {model} takes no sampling params — temperature {temperature} dropped",
+              file=sys.stderr)
+    return {}
 
 # The judge MUST return exactly this shape (forced via tool_choice) — no prose to
 # parse, no schema drift. Each result carries its own reason for debugging.
@@ -158,7 +163,7 @@ def call_target(client, case, model):
 def call_judge(client, case, response, model):
     msg = client.messages.create(
         model=model,
-        max_tokens=1024,
+        max_tokens=2048,  # 5.x thinks by default; thinking counts toward max_tokens
         **_sampling(model, 0),
         tools=[JUDGE_TOOL],
         tool_choice={"type": "tool", "name": "record_judgment"},
@@ -167,6 +172,8 @@ def call_judge(client, case, response, model):
     for b in msg.content:
         if getattr(b, "type", "") == "tool_use" and b.name == "record_judgment":
             return b.input
+    if msg.stop_reason == "max_tokens":
+        print("judge: hit max_tokens before the tool call — verdict empty", file=sys.stderr)
     return {}  # defensive: no tool call -> treated as failing below
 
 
