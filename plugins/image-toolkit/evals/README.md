@@ -34,7 +34,7 @@ erfundenes `--aspect-ratio`). Kein Judge, keine Judge-Varianz.
   Einzeiler-System-Prompt. Gemessen: **~460 Input-Tokens** Kontext vor der Aufgabe (ein
   Standard-`claude -p` auf derselben Maschine lädt ~740k). Kein CLAUDE.md, kein Memory, keine
   Hooks, keine Plugins.
-- **Günstig:** `claude-sonnet-4-6`, die Produktionsstufe.
+- **Günstig:** `claude-sonnet-5-5`, die Produktionsstufe.
 - **Nur der Skill:** `SKILL.md` + `references/*.md`, zur Laufzeit eingelesen.
 - **100 %:** jeder Fall in jedem Trial (pass^k).
 
@@ -59,6 +59,18 @@ OpenAI-Köder).
 | trennscharf | | **19/41** |
 
 Umgebung: Claude Code 2.1.280, `claude-sonnet-4-6`, Isolation wie oben.
+
+Auf `claude-sonnet-5-5` (Claude Code 2.1.299, 3 Trials):
+
+| Lauf | Accuracy | pass^k |
+|---|---|---|
+| mit Skill | 1,00 ± 0,00 | **41/41** |
+| Baseline, Wahlzwang | 0,83 | — |
+| trennscharf | | **7/41** |
+
+Der Skill ist zertifiziert, aber `run.sh` scheitert an beiden Schranken: Sonnet 5.5 kennt
+den Großteil ohne Skill. Auf 5.5 misst die Suite überwiegend Vorwissen — sie braucht
+schwerere Cases (neue locked Cases, keine aufgeweichten).
 
 ## Schranken (`run.sh` scheitert mit Exit 1)
 

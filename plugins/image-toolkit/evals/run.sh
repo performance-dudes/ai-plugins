@@ -7,7 +7,7 @@
 # Cold: a fresh headless `claude -p` per trial in an empty directory, no tools, no skills,
 # no MCP, no settings sources (so no CLAUDE.md, memory, hooks or plugins) and a one-line
 # system prompt. Measured: ~460 input tokens of context before the task.
-# Cheap: pinned to the production tier (MODEL, default claude-sonnet-4-6).
+# Cheap: pinned to the production tier (MODEL, default claude-sonnet-5-5).
 #
 # Exit 1 if the skill run is not certified (every task in every trial), OR the no-skill
 # baseline scores above BASELINE_MAX, OR fewer than MIN_DISCRIMINATING tasks separate skill
@@ -17,7 +17,7 @@ set -uo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCORER="$HERE/scripts/score_knowledge.py"
-MODEL="${MODEL:-claude-sonnet-4-6}"
+MODEL="${MODEL:-claude-sonnet-5-5}"
 TRIALS="${TRIALS:-3}"
 BASELINE_MAX="${BASELINE_MAX:-0.65}"
 MIN_DISCRIMINATING="${MIN_DISCRIMINATING:-15}"

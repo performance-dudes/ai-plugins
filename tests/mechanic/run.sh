@@ -34,8 +34,8 @@ if [ -f "$AG" ]; then
   fm="$(awk 'NR==1&&/^---/{f=1;next} f&&/^---/{exit} f{print}' "$AG")"
   printf '%s\n' "$fm" | grep -qE '^name:[[:space:]]*mechanic[[:space:]]*$' \
     && ok "name: mechanic" || note "Frontmatter name != mechanic"
-  printf '%s\n' "$fm" | grep -qE '^model:[[:space:]]*claude-sonnet-4-6[[:space:]]*$' \
-    && ok "model: claude-sonnet-4-6 (Versions-Pin)" || note "model-Pin != claude-sonnet-4-6"
+  printf '%s\n' "$fm" | grep -qE '^model:[[:space:]]*claude-sonnet-5-5[[:space:]]*$' \
+    && ok "model: claude-sonnet-5-5 (Versions-Pin)" || note "model-Pin != claude-sonnet-5-5"
 else note "agents/mechanic.md fehlt"; fi
 
 echo "[mechanic] AC-1-5: errand-Frontmatter (name + Haiku-Pin)"
@@ -44,8 +44,8 @@ if [ -f "$ER" ]; then
   efm="$(awk 'NR==1&&/^---/{f=1;next} f&&/^---/{exit} f{print}' "$ER")"
   printf '%s\n' "$efm" | grep -qE '^name:[[:space:]]*errand[[:space:]]*$' \
     && ok "name: errand" || note "Frontmatter name != errand"
-  printf '%s\n' "$efm" | grep -qE '^model:[[:space:]]*claude-haiku-4-5[[:space:]]*$' \
-    && ok "model: claude-haiku-4-5 (Versions-Pin)" || note "model-Pin != claude-haiku-4-5"
+  printf '%s\n' "$efm" | grep -qE '^model:[[:space:]]*claude-haiku-5-5[[:space:]]*$' \
+    && ok "model: claude-haiku-5-5 (Versions-Pin)" || note "model-Pin != claude-haiku-5-5"
 else note "agents/errand.md fehlt"; fi
 
 echo "[mechanic] AC-3-3: Beide Bodies routen Bulk-Retrieval über ctx_* (falls vorhanden)"

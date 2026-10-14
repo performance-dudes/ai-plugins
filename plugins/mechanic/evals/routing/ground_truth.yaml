@@ -15,7 +15,7 @@
 #                    volume — the cheap-model saving amortises over the volume,
 #                    so it beats doing it inline on the premium model.
 #   mechanic Sonnet  a DECIDED change that needs code/context comprehension to
-#            4.6     execute (fit an edit to its surroundings, cross-file refactor,
+#            5.5     execute (fit an edit to its surroundings, cross-file refactor,
 #                    boilerplate that must slot in, run+interpret a known command).
 #   general  premium needs a DECISION: design, debug an unknown cause, review,
 #   -purpose         a naming/architecture choice, prose/specs.
@@ -153,7 +153,7 @@ cases:
     difficulty: medium
     note: long trivial scan over many files — throughput job for the cheap tier
 
-  # ── mechanic (Sonnet 4.6): decided change that needs code/context comprehension ─
+  # ── mechanic (Sonnet 5.5): decided change that needs code/context comprehension ─
   - case: m01-rename-symbol
     prompt: "rename the `Cart` class to `Basket` everywhere and fix all imports and usages"
     route: mechanic

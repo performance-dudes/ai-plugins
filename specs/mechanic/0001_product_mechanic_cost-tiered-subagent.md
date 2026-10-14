@@ -13,9 +13,9 @@ Ein Plugin, das **zwei** Kosten-Tier-Subagents ausliefert, je per Frontmatter fe
 eine günstigere Modell-Version gepinnt, für **vollständig spezifizierte**, mechanische
 Ausführungsarbeit:
 
-- **`mechanic`** → `claude-sonnet-4-6`: mechanische Arbeit, die **Code-/Kontext-Verständnis**
+- **`mechanic`** → `claude-sonnet-5-5`: mechanische Arbeit, die **Code-/Kontext-Verständnis**
   braucht (spezifizierte Edits, Cross-File-Refactors, passendes Boilerplate).
-- **`errand`** → `claude-haiku-4-5`: **triviale, selbst-enthaltene** Transformationen
+- **`errand`** → `claude-haiku-5-5`: **triviale, selbst-enthaltene** Transformationen
   **ohne** Codebase-Verständnis (klassifizieren, extrahieren, umformatieren, literales
   Suchen/Ersetzen).
 
@@ -24,13 +24,13 @@ Routing-Regel: Entscheidung nötig → `general-purpose` (Premium); Code-Verstä
 
 ## 2. Warum (Begründung)
 
-- **Kosten-Tiering.** Sonnet 4.6 ist die günstigere Vorgänger-Generation (≈ $3/$15
-  pro 1M vs. das teurere Sonnet 5). Deterministische Arbeit — Aufgaben mit **einem**
-  korrekten Output — braucht kein Premium-Modell. Diese Arbeit auf 4.6 auszulagern
-  ist ein reiner Budget-Gewinn **ohne** Qualitätsverlust, weil kein Urteilsvermögen
-  im Spiel ist. Premium-Tier (Opus / Sonnet 5) bleibt für Denkarbeit frei.
+- **Kosten-Tiering.** Sonnet 5.5 (≈ $2/$10 pro 1M) und Haiku 5.5 (≈ $0.10/$0.50)
+  kosten einen Bruchteil der Premium-Tier (Opus 5.5 ≈ $4/$20). Deterministische
+  Arbeit — Aufgaben mit **einem** korrekten Output — braucht kein Premium-Modell.
+  Diese Arbeit auszulagern ist ein reiner Budget-Gewinn **ohne** Qualitätsverlust,
+  weil kein Urteilsvermögen im Spiel ist. Premium-Tier (Opus) bleibt für Denkarbeit frei.
 - **Der Alias reicht nicht.** Der Agent-Tool-`model`-Parameter ist ein Enum
-  `{sonnet, opus, haiku, fable}`; `sonnet` löst auf das aktuelle Default (Sonnet 5)
+  `{sonnet, opus, haiku, fable}`; `sonnet` löst auf das jeweils aktuelle Default
   auf. Ein versions-genauer Pin ist **nur** über das Frontmatter-Feld `model:` mit
   voller Modell-ID möglich (offiziell dokumentiert, akzeptiert dieselben Werte wie
   `--model`). Ein ausgeliefertes Plugin ist der reproduzierbare, teilbare Träger
@@ -65,10 +65,10 @@ Routing-Regel: Entscheidung nötig → `general-purpose` (Premium); Code-Verstä
 | AC | Soll | Test |
 |----|------|------|
 | AC-1-1 | `plugins/mechanic/.claude-plugin/plugin.json` ist valides JSON mit `name: "mechanic"`. | config-valid (`run.sh`) |
-| AC-1-2 | `plugins/mechanic/agents/mechanic.md` hat wohlgeformtes Frontmatter mit `name: mechanic` und `model: claude-sonnet-4-6`. | config-valid (`run.sh`) |
-| AC-1-3 | In frischer Session meldet ein via `subagent_type: "mechanic"` gespawnter Agent die Modell-ID `claude-sonnet-4-6`. | e2e (manuell, dokumentiert) |
-| AC-1-5 | `plugins/mechanic/agents/errand.md` hat wohlgeformtes Frontmatter mit `name: errand` und `model: claude-haiku-4-5`. | config-valid (`run.sh`) |
-| AC-1-6 | In frischer Session meldet ein via `subagent_type: "mechanic:errand"` gespawnter Agent die Modell-ID `claude-haiku-4-5`. | e2e (manuell, dokumentiert) |
+| AC-1-2 | `plugins/mechanic/agents/mechanic.md` hat wohlgeformtes Frontmatter mit `name: mechanic` und `model: claude-sonnet-5-5`. | config-valid (`run.sh`) |
+| AC-1-3 | In frischer Session meldet ein via `subagent_type: "mechanic"` gespawnter Agent die Modell-ID `claude-sonnet-5-5`. | e2e (manuell, dokumentiert) |
+| AC-1-5 | `plugins/mechanic/agents/errand.md` hat wohlgeformtes Frontmatter mit `name: errand` und `model: claude-haiku-5-5`. | config-valid (`run.sh`) |
+| AC-1-6 | In frischer Session meldet ein via `subagent_type: "mechanic:errand"` gespawnter Agent die Modell-ID `claude-haiku-5-5`. | e2e (manuell, dokumentiert) |
 
 ### US-mech-2 — Marketplace & Struktur
 | AC | Soll | Test |

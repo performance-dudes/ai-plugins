@@ -7,7 +7,7 @@
 
 The plugin's promise is a SHARP routing decision: for each task, pick the right
 execution tier — do it inline, or delegate to errand (Haiku), mechanic (Sonnet
-4.6), or general-purpose (premium). That output is a LABEL, so this is the
+5.5), or general-purpose (premium). That output is a LABEL, so this is the
 STRUCTURED regime of the plugin-eval method: a matcher grades it, no model runs
 here, zero judge-variance. It scores a captured routing run against the locked
 ground truth.
@@ -62,10 +62,10 @@ import yaml  # human-authored cases live in YAML (comments = calibration anchors
 # lone trivial task must NOT be delegated.
 COST = {
     "price_per_mtok": {          # blended input+output, USD / 1M tokens
-        "errand": 2.0,           # Haiku 4.5     (~$1 in / $5 out)
-        "mechanic": 8.0,         # Sonnet 4.6    (~$3 in / $15 out)
-        "inline": 20.0,          # premium orchestrator model (Opus / Sonnet 5)
-        "general-purpose": 20.0,  # premium
+        "errand": 0.2,           # Haiku 5.5     (~$0.10 in / $0.50 out)
+        "mechanic": 4.0,         # Sonnet 5.5    (~$2 in / $10 out)
+        "inline": 8.0,           # premium orchestrator model (Opus 5.5, ~$4 in / $20 out)
+        "general-purpose": 8.0,  # premium
     },
     "tokens": {"single": 20_000, "batch": 1_500_000},
     "delegation_overhead_tokens": 12_000,  # coordinator spawn + handoff + reintegrate

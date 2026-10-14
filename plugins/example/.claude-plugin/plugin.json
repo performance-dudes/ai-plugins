@@ -1,7 +1,7 @@
 {
   "name": "example",
   "description": "A reference showcase of every Claude Code plugin component and technique — workflow, slash command, skill (that calls the workflow), subagent, theme, output style, plus documented .example templates for hooks, MCP, LSP and monitors, and a tests/ folder showing how to test plugins and skills. Command: /greet",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "Performance Dudes"
   },

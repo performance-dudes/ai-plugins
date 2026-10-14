@@ -88,7 +88,7 @@ truth** in two suites, one per regime:
   Scored by `evals/scripts/score_routing.py` (confusion matrix, no model).
 - **`evals/greeting/`** (free-text → LLM-as-a-judge): what a good greeting is
   (named, warm, right language) plus a zero-tolerance injection-safety case.
-  Graded by `evals/scripts/judge.py` (two-call, forced `tool_use`, temp-0 judge).
+  Graded by `evals/scripts/judge.py` (two-call, forced `tool_use`, schema-pinned judge).
 
 The one rule, spelled out in `evals/README.md`: **the eval measures the plugin —
 you fix the skill/agent/workflow, you never loosen a locked case to make a run go

@@ -1,17 +1,17 @@
 # mechanic
 
 Cost-tiered subagents for **mechanical, fully-specified work** — two agents pinned to
-cheaper model versions so the premium tier (Opus / Sonnet 5) stays free for judgment.
+cheaper model versions so the premium tier (Opus) stays free for judgment.
 
 | Agent | `subagent_type` | Model pin | For |
 |---|---|---|---|
-| `mechanic` | `mechanic` | `claude-sonnet-4-6` | mechanical work that needs **code/context comprehension** |
-| `errand` | `mechanic:errand` | `claude-haiku-4-5` | **trivial, self-contained** transformations, no codebase understanding |
+| `mechanic` | `mechanic` | `claude-sonnet-5-5` | mechanical work that needs **code/context comprehension** |
+| `errand` | `mechanic:errand` | `claude-haiku-5-5` | **trivial, self-contained** transformations, no codebase understanding |
 
 ## Why
 
-Sonnet 4.6 (≈ $3/$15 per 1M) is cheaper than Sonnet 5; Haiku 4.5 (≈ $1/$5) is cheaper
-still. **Deterministic** work — a single correct output — doesn't need a premium
+Sonnet 5.5 (≈ $2/$10 per 1M) costs half of Opus 5.5 (≈ $4/$20); Haiku 5.5
+(≈ $0.10/$0.50) costs a fraction of that. **Deterministic** work — a single correct output — doesn't need a premium
 model, so routing it down is a straight budget win with no quality loss. The only
 question is *which* cheap tier, and that's decided by how much understanding the task
 needs.
@@ -23,10 +23,10 @@ Needs a DECISION (design, debug unknown cause, review, prose, weigh relevance)
     -> general-purpose (premium tier)
 
 Needs to UNDERSTAND CODE/CONTEXT to execute a decided change
-    -> mechanic            (subagent_type "mechanic", Sonnet 4.6)
+    -> mechanic            (subagent_type "mechanic", Sonnet 5.5)
 
 TRIVIAL transformation, no codebase understanding — as a BATCH / at volume
-    -> errand              (subagent_type "mechanic:errand", Haiku 4.5)
+    -> errand              (subagent_type "mechanic:errand", Haiku 5.5)
 
 TRIVIAL transformation, but a SINGLE small item
     -> INLINE — do it yourself, do NOT delegate
@@ -116,7 +116,7 @@ case to loosen so the run goes green. See [`evals/README.md`](evals/README.md).
 
 Each agent pins a full model ID in its frontmatter. Claude Code's `model:` field
 accepts a full model ID (same values as the `--model` flag), so this selects the exact
-version rather than a generic alias (`sonnet` → Sonnet 5, `haiku` → current default).
+version rather than a generic alias (`sonnet` / `haiku` → whatever the current default is).
 See [Claude Code subagents docs](https://code.claude.com/docs/en/sub-agents.md).
 
 ## Tool access
@@ -157,5 +157,5 @@ session, not per subagent** — what the orchestrator learns about `ctx_*` never
 reaches the subagent. The card stays free of it (it points at the agents; the agents
 know their own tools) and keeps its character budget.
 
-`errand` gains the most: it runs the largest batches on the smallest window (Haiku
-4.5, 200K), where raw reads run out mid-batch.
+`errand` gains the most: it runs the largest batches (whole files, 900-doc scans),
+where raw reads fill even a 1M window mid-batch.

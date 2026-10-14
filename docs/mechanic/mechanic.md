@@ -7,8 +7,8 @@ version so the premium tier stays free for judgment.
 
 | Agent | `subagent_type` | Model pin | Tier | For |
 |---|---|---|---|---|
-| `mechanic` | `mechanic` | `claude-sonnet-4-6` | mid | mechanical work needing code/context comprehension |
-| `errand` | `mechanic:errand` | `claude-haiku-4-5` | cheapest | trivial self-contained transformations, no codebase understanding |
+| `mechanic` | `mechanic` | `claude-sonnet-5-5` | mid | mechanical work needing code/context comprehension |
+| `errand` | `mechanic:errand` | `claude-haiku-5-5` | cheapest | trivial self-contained transformations, no codebase understanding |
 
 Both have broad tool access but are behaviourally constrained and instructed to hand
 back the moment a task belongs to a neighbouring tier or the instruction is ambiguous.
@@ -17,8 +17,8 @@ back the moment a task belongs to a neighbouring tier or the instruction is ambi
 
 ```
 Needs a DECISION            -> general-purpose  (premium)
-Needs CODE/CONTEXT to do    -> mechanic         (Sonnet 4.6)
-TRIVIAL transformation      -> errand           (Haiku 4.5)
+Needs CODE/CONTEXT to do    -> mechanic         (Sonnet 5.5)
+TRIVIAL transformation      -> errand           (Haiku 5.5)
 ```
 
 - **errand** — classify/label, extract a field, reformat (JSON/CSV/whitespace/case),
@@ -77,8 +77,8 @@ Design decisions, each load-bearing:
 
 | Path | Result |
 |------|--------|
-| Agent-tool `model` param | enum `{sonnet, opus, haiku, fable}` — resolves to current defaults (Sonnet 5 / current Haiku). No version pin. |
-| Agent frontmatter `model:` | accepts a **full model ID** (same values as `--model`) → `claude-sonnet-4-6` / `claude-haiku-4-5` pin the exact version. |
+| Agent-tool `model` param | enum `{sonnet, opus, haiku, fable}` — resolves to whatever the current defaults are. No version pin. |
+| Agent frontmatter `model:` | accepts a **full model ID** (same values as `--model`) → `claude-sonnet-5-5` / `claude-haiku-5-5` pin the exact version. |
 
 The pin lives in shipped plugin frontmatter because that is the only place a specific
 version can be selected, and a plugin makes it reproducible and shareable.
@@ -90,12 +90,12 @@ section "Choose a model".
 
 The agent registry is read at **session start** and is not hot-reloaded. After
 installing or updating the plugin, start a **fresh session**. Verify with a one-line
-spawn that returns each agent's model ID (`claude-sonnet-4-6` / `claude-haiku-4-5`).
+spawn that returns each agent's model ID (`claude-sonnet-5-5` / `claude-haiku-5-5`).
 
 ## Model comparison
 
-| | Haiku 4.5 (`errand`) | Sonnet 4.6 (`mechanic`) | Opus 4.8 (`general-purpose`) |
+| | Haiku 5.5 (`errand`) | Sonnet 5.5 (`mechanic`) | Opus 5.5 (`general-purpose`) |
 |---|---|---|---|
-| In/Out per 1M | $1 / $5 | $3 / $15 | $5 / $25 |
-| Context / max out | 200K / 64K | 1M / 128K | 1M / 128K |
-| `effort` param | no | yes | yes (to `max`) |
+| In/Out per 1M | $0.10 / $0.50 | $2 / $10 | $4 / $20 |
+| Context / max out | 1M / 128K | 1M / 128K | 1M / 128K |
+| `effort` param | yes (default `medium`) | yes (default `high`) | yes (default `medium`) |

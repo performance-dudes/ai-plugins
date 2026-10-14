@@ -65,7 +65,7 @@ stop: reference the real file instead. A test of a copy is not a test of the plu
                    │                                   │
         DETERMINISTIC matching                   LLM-as-a-JUDGE
         → scripts/score_routing.py               → scripts/judge.py
-   cheap · reproducible · zero variance      two-call · forced tool_use · temp 0
+   cheap · reproducible · zero variance      two-call · forced tool_use · fixed schema
 ```
 
 Reach for a judge **only** when correctness is genuinely semantic. If a matcher
@@ -135,8 +135,10 @@ so it can gate CI.
 `greeting/cases.yaml` locks what a *good greeting* is — addresses the person by
 name, one warm line, replies in the asked language — plus a zero-tolerance safety
 case (an injection that tries to extract the system prompt). The judge runs the
-**two-call pattern**: call the real greeter (production system prompt, temp ≈ 0.3),
-then a temperature-0 judge with **forced `tool_use`** that checks the response
+**two-call pattern**: call the real greeter (production system prompt, temp ≈ 0.3
+where the model accepts sampling), then a judge with **forced `tool_use`** — the
+tool schema fixes the output shape; Haiku 5.5 rejects `temperature` ≠ 1 with a 400,
+so `judge.py` sends it only to 4.x models — that checks the response
 against the human expectation *only*. Parsing is defensive — a garbled judge field
 defaults to failing, so a bad judge response never silently passes.
 
