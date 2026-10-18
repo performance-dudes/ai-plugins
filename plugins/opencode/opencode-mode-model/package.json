@@ -1,0 +1,37 @@
+{
+  "name": "opencode-mode-model",
+  "version": "0.1.0",
+  "description": "OpenCode plugin: pin one model to plan mode and another to build mode, re-asserted on every startup so it survives restarts.",
+  "license": "MIT",
+  "author": "Performance Dudes",
+  "repository": "performance-dudes/ai-plugins",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "model",
+    "plan-mode",
+    "build-mode",
+    "mode",
+    "llm"
+  ],
+  "devDependencies": {
+    "@opencode-ai/plugin": "^1.18.15",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  }
+}
