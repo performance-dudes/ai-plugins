@@ -1,0 +1,16 @@
+{
+  "name": "plugin-guard",
+  "version": "0.1.0",
+  "description": "Security gate for Claude Code plugins. A mod judges every hooks module (JS/TS) before it loads, at start and on every reload or update: it scans the source and the capabilities the engine read off it, pins a content hash, and refuses risky or changed modules until you approve them. A SessionStart hook audits all installed plugins (shell hooks, MCP servers, scripts) and reports new or changed ones. Command: /plugin-guard",
+  "author": { "name": "Performance Dudes" },
+  "license": "MIT",
+  "userConfig": {
+    "blockAt": {
+      "type": "string",
+      "title": "Block at",
+      "description": "Lowest severity at which an unapproved hooks module is refused: critical, high, or off (report only).",
+      "options": ["high", "critical", "off"],
+      "default": "high"
+    }
+  }
+}

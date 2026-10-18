@@ -1,0 +1,216 @@
+{
+  "_comment": "Eine Regelquelle für beide Ebenen: hooks/register.ts (Mod-Gate) und hooks/scripts/scan.py (SessionStart-Audit). Muster sind reguläre Ausdrücke im gemeinsamen Teil von JS- und Python-Syntax (keine Lookbehinds, keine Inline-Flags); 'flags': 'i' = ignore case. 'files' = Dateiendungen, auf die die Regel angewendet wird. Übersprungen wird nur, was die Engine selbst schreibt und nie ausführt: der Pfad .claude-plugin/types und tsconfig/jsconfig — KEIN Verzeichnisname pauschal, sonst versteckt ein Angreifer Code in z. B. hooks/types/.",
+  "codeExtensions": [
+    ".js",
+    ".mjs",
+    ".cjs",
+    ".jsx",
+    ".ts",
+    ".mts",
+    ".cts",
+    ".tsx",
+    ".sh",
+    ".bash",
+    ".zsh",
+    ".py",
+    ".rb",
+    ".pl",
+    ".ps1",
+    ".json"
+  ],
+  "skipPaths": [
+    ".claude-plugin/types"
+  ],
+  "skipFiles": [
+    "tsconfig.json",
+    "jsconfig.json"
+  ],
+  "maxFiles": 600,
+  "maxFileBytes": 524288,
+  "sourceRules": [
+    {
+      "id": "pipe-to-shell",
+      "severity": "critical",
+      "pattern": "(curl|wget)[^|\\n]{0,300}\\|\\s*(sudo\\s+)?(ba|z|da)?sh\\b",
+      "why": "lädt Code aus dem Netz und führt ihn ungeprüft aus"
+    },
+    {
+      "id": "decode-and-exec",
+      "severity": "critical",
+      "pattern": "base64\\s+(-d|-D|--decode)[^|\\n]{0,200}\\|\\s*(ba|z)?sh\\b|eval\\s*\\(\\s*atob\\s*\\(|exec\\s*\\(\\s*(base64\\.b64decode|bytes\\.fromhex|codecs\\.decode)",
+      "why": "versteckt ausgeführten Code hinter einer Kodierung"
+    },
+    {
+      "id": "reverse-shell",
+      "severity": "critical",
+      "pattern": "/dev/tcp/|\\bnc(at)?\\s+(-[a-z]*e|--exec)\\b|bash\\s+-i\\s*>&|socat\\s+[^\\n]*exec:",
+      "why": "öffnet eine Remote-Shell"
+    },
+    {
+      "id": "exfil-endpoint",
+      "severity": "critical",
+      "flags": "i",
+      "pattern": "pastebin\\.com|webhook\\.site|requestbin|ngrok(-free)?\\.(io|app)|discord(app)?\\.com/api/webhooks|transfer\\.sh|pipedream\\.net|interact\\.sh|burpcollaborator",
+      "why": "bekannter Abfluss-/Sammel-Endpunkt"
+    },
+    {
+      "id": "credential-store",
+      "severity": "high",
+      "pattern": "\\.ssh/(id_|authorized_keys)|\\.aws/credentials|\\.netrc\\b|\\.npmrc\\b|\\.pypirc\\b|\\.config/gh/hosts|\\.docker/config\\.json|\\.kube/config|\\.gnupg/|security\\s+(find|dump)-(generic|internet)-password|\\.claude/\\.credentials",
+      "why": "liest Zugangsdaten-Ablagen"
+    },
+    {
+      "id": "secret-env-read",
+      "severity": "medium",
+      "pattern": "(\\$\\.env\\.get\\s*\\(|process\\.env\\b|os\\.environ|os\\.getenv\\s*\\(|ENV\\[)[^\\n]{0,60}(TOKEN|SECRET|PASSWORD|PASSWD|API_?KEY|CREDENTIAL|PRIVATE_?KEY)",
+      "why": "liest geheime Umgebungsvariablen (bei API-Clients normal — im Mod-Gate zählt die Fähigkeit, mit Netz kritisch)"
+    },
+    {
+      "id": "dynamic-code",
+      "severity": "high",
+      "pattern": "\\beval\\s*\\(|\\bnew\\s+Function\\s*\\(|\\bFunction\\s*\\(\\s*['\"`]|\\bvm\\.runIn|child_process|\\bexecSync\\s*\\(|\\bspawnSync\\s*\\(",
+      "why": "führt dynamisch erzeugten Code oder Kindprozesse aus"
+    },
+    {
+      "id": "persistence",
+      "severity": "high",
+      "pattern": "\\bcrontab\\s|\\blaunchctl\\s+(load|bootstrap)|LaunchAgents/|LaunchDaemons/|>>?\\s*~?/?[^\\s]*\\.(bashrc|zshrc|bash_profile|profile|zprofile)\\b|systemctl\\s+(--user\\s+)?enable",
+      "why": "nistet sich dauerhaft im System ein"
+    },
+    {
+      "id": "permission-bypass",
+      "severity": "high",
+      "pattern": "dangerously-skip-permissions|bypassPermissions|\"defaultMode\"\\s*:\\s*\"(bypassPermissions|acceptEdits)\"",
+      "why": "schaltet Rückfragen ab"
+    },
+    {
+      "id": "settings-write",
+      "severity": "high",
+      "pattern": "(>>?\\s*|tee\\s+(-a\\s+)?|writeFile(Sync)?\\s*\\(|write_text\\s*\\(|open\\s*\\([^)\\n]*['\"][wa]['\"])[^\\n]{0,80}\\.claude/settings(\\.local)?\\.json(?![.\\w])",
+      "why": "schreibt Claude-Code-Einstellungen (Berechtigungen, Hooks)"
+    },
+    {
+      "id": "destructive",
+      "severity": "high",
+      "pattern": "rm\\s+-[a-zA-Z]*r[a-zA-Z]*f?\\s+(--no-preserve-root\\s+)?(/|~|\\$HOME|\\$\\{HOME\\})(\\s|/?\\*?\\s*$|/?\"|$)",
+      "why": "löscht Home- oder Root-Verzeichnis"
+    },
+    {
+      "id": "obfuscated-blob",
+      "severity": "medium",
+      "pattern": "[A-Za-z0-9+/]{600,}={0,2}|(\\\\x[0-9a-fA-F]{2}){40,}",
+      "why": "langer kodierter Block — Code, den niemand liest"
+    },
+    {
+      "id": "unpinned-remote-package",
+      "severity": "medium",
+      "pattern": "\\b(npx|bunx|pnpm\\s+dlx)\\s+(-y\\s+|--yes\\s+)?(@[a-z0-9-]+/)?[a-z0-9._-]+(@latest)?(\\s|\"|$)|\\buvx\\s+[a-z0-9._-]+(\\s|\"|$)",
+      "why": "zieht beim Start die jeweils neueste Paketversion aus dem Netz (Supply-Chain)"
+    }
+  ],
+  "capabilityRules": {
+    "_comment": "Nur Mod-Gate: bewertet, was die Engine aus dem Modul gelesen hat (plugin.register → e.uses).",
+    "calls": [
+      {
+        "match": "process.run",
+        "severity": "high",
+        "why": "startet Programme auf dem Rechner"
+      },
+      {
+        "match": "process.spawn",
+        "severity": "high",
+        "why": "startet Programme auf dem Rechner"
+      },
+      {
+        "match": "env.set",
+        "severity": "high",
+        "why": "ändert Umgebungsvariablen für alles, was danach startet"
+      },
+      {
+        "match": "http.fetch",
+        "severity": "medium",
+        "why": "spricht mit dem Netz"
+      },
+      {
+        "match": "mcp.connect",
+        "severity": "medium",
+        "why": "verbindet MCP-Server"
+      },
+      {
+        "match": "fs.write",
+        "severity": "low",
+        "why": "schreibt Dateien"
+      }
+    ],
+    "events": [
+      {
+        "match": "tool.check",
+        "severity": "high",
+        "why": "kann Berechtigungsentscheidungen für Tool-Aufrufe ändern"
+      },
+      {
+        "match": "config.set",
+        "severity": "high",
+        "why": "greift in Einstellungsänderungen ein"
+      },
+      {
+        "match": "plugin.register",
+        "severity": "medium",
+        "why": "entscheidet über das Laden anderer Plugins"
+      },
+      {
+        "match": "prompt.compose",
+        "severity": "medium",
+        "why": "kann den System-Prompt umschreiben"
+      },
+      {
+        "match": "prompt.section",
+        "severity": "medium",
+        "why": "kann den System-Prompt umschreiben"
+      },
+      {
+        "match": "session.append",
+        "severity": "medium",
+        "why": "kann Gesprächszeilen umschreiben"
+      },
+      {
+        "match": "tool.call",
+        "severity": "medium",
+        "why": "kann Tool-Aufrufe umschreiben oder beantworten"
+      },
+      {
+        "match": "*",
+        "severity": "medium",
+        "why": "hängt sich in jedes Event"
+      }
+    ],
+    "sensitiveEnv": {
+      "severity": "high",
+      "pattern": "TOKEN|SECRET|PASSWORD|PASSWD|API_?KEY|CREDENTIAL|PRIVATE_?KEY|AUTH|COOKIE|SESSION",
+      "why": "liest geheime Umgebungsvariablen"
+    },
+    "dangerousEnvWrites": {
+      "severity": "critical",
+      "pattern": "^(PATH|NODE_OPTIONS|LD_PRELOAD|DYLD_[A-Z_]+|PYTHONPATH|HTTPS?_PROXY|ALL_PROXY|NODE_EXTRA_CA_CERTS|SSL_CERT_FILE|GIT_SSH_COMMAND|ANTHROPIC_BASE_URL)$",
+      "why": "lenkt Programme, Netzverkehr oder Zertifikate um"
+    },
+    "combos": [
+      {
+        "all": [
+          "http.fetch",
+          "fs.read"
+        ],
+        "severity": "high",
+        "why": "kann Dateien lesen UND ins Netz senden — ein Abflussweg"
+      },
+      {
+        "all": [
+          "http.fetch",
+          "secret-env"
+        ],
+        "severity": "critical",
+        "why": "liest Geheimnisse UND spricht mit dem Netz"
+      }
+    ]
+  }
+}
