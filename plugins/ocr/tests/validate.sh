@@ -93,6 +93,22 @@ else
   bad "dry-run behaved unexpectedly: $out"
 fi
 
+note "9. Text-layer font covers Cyrillic (searchbar.FONT)"
+if command -v uv >/dev/null 2>&1; then
+  uv run -q --with pymupdf python - "$PLUGIN_DIR/scripts" <<'PY' 2>/dev/null && ok "text-layer font round-trips Cyrillic + Umlauts" || bad "text-layer font loses non-Latin script"
+import sys; sys.path.insert(0, sys.argv[1])
+import pymupdf, searchbar
+doc = pymupdf.open(); page = doc.new_page()
+s = "Пикочна киселина / Uric acid äöüÄÖÜß € „Zoll“ – §"
+page.insert_text((20, 50), s, fontsize=12, render_mode=3, **searchbar.font_kwargs())
+doc.subset_fonts()
+doc = pymupdf.open("pdf", doc.tobytes())
+assert doc[0].get_text().strip() == s, doc[0].get_text()
+PY
+else
+  ok "uv absent — skipped"
+fi
+
 note "Result"
 if [ "$fail" -eq 0 ]; then echo "  ALL CHECKS PASSED"; else echo "  FAILURES ABOVE"; fi
 exit "$fail"

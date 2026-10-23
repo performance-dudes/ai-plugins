@@ -12,9 +12,15 @@ a plain image has no text layer to carry until it is turned into a PDF.
 
 Generic: ships no personal data. Languages follow searchbar (OCR_LANGS env).
 
+--redo also replaces an existing OCR layer: PDFs whose text is entirely
+invisible (render mode 3) get that layer removed and a fresh auge layer
+embedded — for layers that lost non-Latin script (Cyrillic as "·") or come from
+another OCR engine. Visible document text is never touched; the run aborts per
+file if any image stream would change.
+
 Usage:
-  uv run durchsuchbar.py <file.pdf | folder> [--apply] [--rekursiv]
-  # Default = dry-run (shows only which PDFs are image-only).
+  uv run durchsuchbar.py <file.pdf | folder> [--apply] [--rekursiv] [--redo]
+  # Default = dry-run (shows only which PDFs would be processed).
 """
 from __future__ import annotations
 
@@ -28,6 +34,7 @@ def main() -> int:
     pos = [a for a in sys.argv[1:] if not a.startswith("--")]
     apply = "--apply" in sys.argv
     rekursiv = "--rekursiv" in sys.argv
+    redo = "--redo" in sys.argv
     if not pos:
         print(__doc__)
         return 1
@@ -39,20 +46,23 @@ def main() -> int:
         pdfs = [target]
 
     image_pdfs = [p for p in pdfs if searchbar.pdf_is_image_only(p)]
-    print(f"{len(pdfs)} PDF(s) checked · {len(image_pdfs)} image-only "
-          f"{'-> embed text layer' if apply else '(dry-run)'}")
+    ocr_pdfs = [p for p in pdfs if redo and searchbar.pdf_has_only_invisible_text(p)]
+    print(f"{len(pdfs)} PDF(s) checked · {len(image_pdfs)} image-only"
+          + (f" · {len(ocr_pdfs)} with an OCR layer to replace" if redo else "")
+          + f" {'-> embed text layer' if apply else '(dry-run)'}")
     ok = 0
-    for p in image_pdfs:
-        print(f"  {'.' if apply else 'o'} {p}")
+    todo = [(p, False) for p in image_pdfs] + [(p, True) for p in ocr_pdfs]
+    for p, replace in todo:
+        print(f"  {'.' if apply else 'o'} {'[redo] ' if replace else ''}{p}")
         if apply:
             try:
-                n = searchbar.add_textlayer(p)
+                n = searchbar.add_textlayer(p, replace=replace)
                 ok += 1
                 print(f"      {n} lines embedded")
             except Exception as e:  # noqa: BLE001
                 sys.stderr.write(f"      failed: {e}\n")
     if apply:
-        print(f"\n{ok}/{len(image_pdfs)} PDFs made searchable.")
+        print(f"\n{ok}/{len(todo)} PDFs made searchable.")
     else:
         print("\n(dry-run — nothing changed. Use --apply to embed.)")
     return 0

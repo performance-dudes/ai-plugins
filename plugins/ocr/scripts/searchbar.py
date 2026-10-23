@@ -23,6 +23,14 @@ from pathlib import Path
 
 LANGS = os.environ.get("OCR_LANGS", "de-DE,en-US")
 IMG_EXTS = {".jpg", ".jpeg", ".png", ".tiff", ".tif", ".heic"}
+# Text-layer font. Must round-trip every script auge can return:
+#   - Base-14 "helv" is Latin-1 only: Cyrillic/Greek become "·".
+#   - PyMuPDF "china-s" (CJK, not embedded) drops ä ö Ä Ö Ü ß „ on extraction.
+#   - Arial.ttf extracts spaces as NBSP (U+00A0).
+# macOS Helvetica.ttc round-trips Latin incl. Umlauts, Cyrillic and Greek;
+# subset_fonts() on save keeps it at ~20 KB per file. Falls back to "helv".
+FONT_FILE = os.environ.get("OCR_FONT_FILE", "/System/Library/Fonts/Helvetica.ttc")
+FONT = "ocrhelv" if os.path.exists(FONT_FILE) else "helv"
 
 
 def auge_lines(img_path: Path | str) -> list[dict]:
@@ -38,6 +46,11 @@ def auge_lines(img_path: Path | str) -> list[dict]:
         return []
 
 
+def font_kwargs() -> dict:
+    """insert_text() font arguments for the text layer (see FONT_FILE)."""
+    return {"fontname": FONT, "fontfile": FONT_FILE} if FONT != "helv" else {"fontname": "helv"}
+
+
 def _place(page, lines: list[dict], w: float, h: float) -> int:
     """Place invisible text (render_mode=3) per the auge boxes onto the page.
     auge-y is bottom-origin (Vision); PyMuPDF-y is top-origin -> convert."""
@@ -51,7 +64,7 @@ def _place(page, lines: list[dict], w: float, h: float) -> int:
             fs = max(4.0, ln["height"] * h * 0.9)
             y_top = (1.0 - (ln["y"] + ln["height"])) * h
             page.insert_text((x, y_top + fs * 0.85), t,
-                             fontsize=fs, render_mode=3, fontname="helv")
+                             fontsize=fs, render_mode=3, **font_kwargs())
             n += 1
         except Exception:  # noqa: BLE001
             continue
@@ -81,6 +94,7 @@ def build_pdf(pages: list[tuple[Path, list[dict]]], dest: Path) -> int:
         page.insert_image(fitz.Rect(0, 0, w, h), filename=str(img))
         total += _place(page, lines, w, h)
     dest.parent.mkdir(parents=True, exist_ok=True)
+    doc.subset_fonts()
     doc.save(str(dest), deflate=True, garbage=3)
     doc.close()
     return total
@@ -103,12 +117,61 @@ def pdf_is_image_only(pdf_path: Path) -> bool:
     return not has_text
 
 
-def add_textlayer(pdf_path: Path, dpi: int = 200) -> int:
+def pdf_has_only_invisible_text(pdf_path: Path) -> bool:
+    """True if the PDF carries text and all of it is invisible (render mode 3) —
+    i.e. an OCR layer over scanned images, not real document text."""
+    import fitz  # PyMuPDF (lazy)
+    try:
+        doc = fitz.open(str(pdf_path))
+    except Exception:  # noqa: BLE001
+        return False
+    if doc.needs_pass:
+        doc.close()
+        return False
+    seen = False
+    try:
+        for page in doc:
+            for span in page.get_texttrace():
+                if span["type"] != 3:
+                    return False
+                seen = True
+    except Exception:  # noqa: BLE001
+        return False
+    finally:
+        doc.close()
+    return seen
+
+
+def _image_digest(doc) -> str:
+    """Hash over every image stream in the document (raw, undecoded bytes)."""
+    import hashlib
+    h = hashlib.sha256()
+    for xref in sorted({img[0] for page in doc for img in page.get_images(full=True)}):
+        h.update(doc.xref_stream_raw(xref) or b"")
+    return h.hexdigest()
+
+
+def add_textlayer(pdf_path: Path, dpi: int = 200, replace: bool = False) -> int:
     """Make an existing image PDF searchable in place: per page, auge OCR + an
-    invisible text layer. Leaves geometry/image untouched. Returns line count."""
+    invisible text layer. Leaves geometry/image untouched. Returns line count.
+
+    replace=True first removes an existing invisible OCR layer (e.g. one that lost
+    Cyrillic to "·", or a foreign OCR's Latin gibberish). Only for PDFs where
+    pdf_has_only_invisible_text() holds; aborts without writing if any image
+    stream would change."""
     import fitz  # PyMuPDF (lazy)
     doc = fitz.open(str(pdf_path))
     total = 0
+    if replace:
+        before = _image_digest(doc)
+        for page in doc:
+            page.add_redact_annot(page.rect)
+            page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE,
+                                  graphics=fitz.PDF_REDACT_LINE_ART_NONE,
+                                  text=fitz.PDF_REDACT_TEXT_REMOVE)
+        if _image_digest(doc) != before:
+            doc.close()
+            raise RuntimeError("image streams changed while removing the old layer — nothing written")
     with tempfile.TemporaryDirectory() as td:
         for page in doc:
             w, h = page.rect.width, page.rect.height
@@ -116,6 +179,7 @@ def add_textlayer(pdf_path: Path, dpi: int = 200) -> int:
             page.get_pixmap(dpi=dpi).save(png)     # only for OCR; coords are normalized
             total += _place(page, auge_lines(png), w, h)
     tmp = pdf_path.with_suffix(".tmp.pdf")
+    doc.subset_fonts()
     doc.save(str(tmp), deflate=True, garbage=3)
     doc.close()
     tmp.replace(pdf_path)
