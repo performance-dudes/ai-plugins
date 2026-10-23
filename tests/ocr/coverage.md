@@ -20,7 +20,8 @@ Typen: `config-valid` · `unit` · `e2e`.
 | Apply bewegt nichts im Dry-Run | — | `validate.sh` §8 | — |
 | Foto-vs-Dokument-Schwelle | — | `validate.sh` §8 | echte Scans (manuell) |
 | Textlayer-Font round-trip (Kyrillisch + Umlaute) | — | `validate.sh` §9 (macOS, sonst skipped) | — |
-| `--redo`: Rotation, Links, Bild-Pixel, Abbruch bei leerem OCR | — | `validate.sh` §10 (auge gemockt; macOS, sonst skipped) | 157 reale PDFs, manuell |
+| `--redo`: Rotation, Kyrillisch, Links, Bild-Pixel; Abbruch bei leerem OCR, sichtbarem Text, Verschlüsselung, Text außerhalb der Seitenbox | — | `validate.sh` §10 (auge gemockt; macOS, sonst skipped) | 157 reale PDFs, manuell |
+| `durchsuchbar.py --redo` CLI (Dry-Run, fehlender Pfad) | — | `validate.sh` §10 | — |
 | echtes OCR/PDF-Layer | — | — | on-device, manuell (extern) |
 
 ## code : tests
@@ -34,7 +35,8 @@ Typen: `config-valid` · `unit` · `e2e`.
 | `commands/*`, `skills/document-ocr/*` | Frontmatter | — |
 
 ## Lücken (Merge-Gate — schließen oder Issue)
-- §9/§10 brauchen `uv` + macOS-`Helvetica.ttc`; der Linux-CI-Runner meldet sie als skipped.
+- §9/§10 brauchen `uv` + macOS-`Helvetica.ttc`; der Linux-CI-Runner meldet sie als skipped — Issue #79.
+- Abbruch bei signierten PDFs und bei geänderten Bilddaten ist offline nicht nachstellbar (kein Signier-Werkzeug, Redaction ändert Bilder nicht) — Issue #79.
 - Kein E2E mit echter `auge`/PyMuPDF-Pipeline (extern: Apple Silicon + macOS 26).
   Bewusst offline ausgelassen; bei Bedarf Issue.
 - Klassifizierungs-Prompt nur statisch (kein Opus-Call im Test).

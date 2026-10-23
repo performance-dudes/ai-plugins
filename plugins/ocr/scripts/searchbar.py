@@ -164,14 +164,21 @@ def add_textlayer(pdf_path: Path, dpi: int = 200, replace: bool = False) -> int:
 
     replace=True first removes an existing invisible OCR layer (e.g. one that lost
     Cyrillic to "·", or a foreign OCR's Latin gibberish). Only for PDFs where
-    pdf_has_only_invisible_text() holds. Nothing is written (RuntimeError) if the
-    PDF is signed, no Unicode font is available, a page that had text gets no
-    new lines, or any image's pixel data differs in the saved file. Links survive."""
+    pdf_has_only_invisible_text() holds (checked here). Nothing is written
+    (RuntimeError) if the PDF is signed or encrypted, no Unicode font is available,
+    old text survives the redaction (e.g. outside the CropBox), a page that had text
+    gets no new lines, or the decoded data of any xref image differs in the saved
+    file. Links survive."""
     import fitz  # PyMuPDF (lazy)
+    if replace and not pdf_has_only_invisible_text(pdf_path):
+        raise RuntimeError("PDF has visible text or no text layer — --redo not applicable; nothing written")
     doc = fitz.open(str(pdf_path))
     total = 0
     had_text: list[bool] = []
     if replace:
+        if doc.is_encrypted or doc.metadata.get("encryption"):
+            doc.close()
+            raise RuntimeError("encrypted PDF — saving would drop its encryption/permissions; nothing written")
         if doc.get_sigflags() > 0:
             doc.close()
             raise RuntimeError("signed PDF — rewriting would invalidate the signature; nothing written")
@@ -192,6 +199,9 @@ def add_textlayer(pdf_path: Path, dpi: int = 200, replace: bool = False) -> int:
             for link in links:
                 if _link_key(link) not in kept:
                     page.insert_link(link)
+            if page.get_texttrace():
+                doc.close()
+                raise RuntimeError("old text survived the redaction (outside the page box?) — nothing written")
     with tempfile.TemporaryDirectory() as td:
         for i, page in enumerate(doc):
             w, h = page.rect.width, page.rect.height
@@ -202,7 +212,9 @@ def add_textlayer(pdf_path: Path, dpi: int = 200, replace: bool = False) -> int:
                 doc.close()
                 raise RuntimeError(f"page {i + 1}: old layer had text, auge returned none — nothing written")
             total += n
-    tmp = pdf_path.with_suffix(".tmp.pdf")
+    fd, tmp_name = tempfile.mkstemp(prefix=f".{pdf_path.stem}.", suffix=".tmp.pdf", dir=pdf_path.parent)
+    os.close(fd)
+    tmp = Path(tmp_name)                           # unique name: never clobbers a neighbour file
     try:
         doc.subset_fonts()
         doc.save(str(tmp), deflate=True, garbage=3)

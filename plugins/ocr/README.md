@@ -77,7 +77,7 @@ that already have text are left untouched.
 > extraction, `Arial.ttf` extracts spaces as NBSP. Versions ≤ 0.1.3 used Base-14
 > `helv`, which turned every Cyrillic letter into `·` — such files show many `·` in
 > `page.get_text()` (PyMuPDF) and are fixed with
-> `/ocr-searchable <folder> --rekursiv --redo`.
+> `uv run scripts/durchsuchbar.py <folder> --rekursiv --redo` (dry-run, then `--apply`).
 
 ## Components
 

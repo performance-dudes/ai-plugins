@@ -12,7 +12,11 @@
 - `OCR_LANGS` unverändert: auge erkennt Kyrillisch mit `de-DE,en-US` gleich gut wie mit `ru-RU`.
 - `--redo` nur für vollständig unsichtbaren Text; Redaction in ungedrehten Koordinaten
   (`page.rect * page.derotation_matrix`), Links werden neu gesetzt, Bildprüfung auf dem
-  gespeicherten File über sortierte Hashes der dekodierten Streams.
+  gespeicherten File über sortierte Hashes der dekodierten Streams. Links werden nur neu
+  gesetzt, wenn die Redaction sie entfernt hat (Links außerhalb der Seitenbox überleben sie).
+- Abbruch ohne Schreiben bei signierten/verschlüsselten PDFs, bei Text, der die Redaction
+  überlebt (außerhalb der CropBox), und bei leerem OCR auf einer Seite mit altem Text.
+- Temp-Datei per `mkstemp` im Zielordner, damit keine Nachbardatei überschrieben wird.
 
 ## Learnings
 - `node --check` auf Node 24 erkennt Dateien mit `export` als ESM und lehnt das top-level
@@ -21,5 +25,5 @@
   löscht Link-Annotationen.
 
 ## Follow-ups
-- §9/§10 laufen auf dem Linux-Runner nicht (kein `uv`, kein Helvetica.ttc) — macOS-Runner erwägen.
-- `durchsuchbar.py` gibt auch bei Fehlschlägen exit 0 (vor diesem PR schon so).
+- §9/§10 laufen auf dem Linux-Runner nicht (kein `uv`, kein Helvetica.ttc) — Issue #79.
+- Inline-Images (`BI…EI`) prüft die Pixel-Kontrolle nicht; nur Bilder mit xref.

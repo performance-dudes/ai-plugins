@@ -118,12 +118,12 @@ if ! command -v uv >/dev/null 2>&1; then skip "uv absent"
 elif [ ! -f "${OCR_FONT_FILE:-/System/Library/Fonts/Helvetica.ttc}" ]; then skip "no Helvetica.ttc (not macOS)"
 else
   rtmp="$(mktemp -d)"
-  uv run -q --with pymupdf python - "$PLUGIN_DIR/scripts" "$rtmp" <<'PY' 2>/dev/null && ok "rotated page cleared, links kept once, image pixels identical, empty OCR aborts" || bad "--redo replace unsafe"
+  uv run -q --with pymupdf python - "$PLUGIN_DIR/scripts" "$rtmp" <<'PY' 2>/dev/null && ok "rotated page cleared, Cyrillic kept, links once, pixels identical; aborts: empty OCR, visible text, encrypted, out-of-box text" || bad "--redo replace unsafe"
 import sys; sys.path.insert(0, sys.argv[1])
 from pathlib import Path
 import pymupdf, searchbar
 tmp = Path(sys.argv[2])
-NEW = [{"text": "NEU", "x": 0.1, "y": 0.5, "height": 0.02}]
+NEW = [{"text": "НОВ Prüfung", "x": 0.1, "y": 0.5, "height": 0.02}]
 
 def make(path, rotate):
     doc = pymupdf.open(); page = doc.new_page(width=595, height=842)
@@ -144,7 +144,7 @@ for rot in (0, 90):
     assert searchbar.pdf_has_only_invisible_text(p)
     searchbar.add_textlayer(p, replace=True)
     d = pymupdf.open(str(p))
-    assert d[0].get_text().split() == ["NEU"], (rot, d[0].get_text())
+    assert d[0].get_text().split() == ["НОВ", "Prüfung"], (rot, d[0].get_text())  # helv would give "··· Prüfung"
     assert len(d[0].get_links()) == 2, (rot, "link lost or duplicated", d[0].get_links())
     assert searchbar._image_digests(d) == before, (rot, "image changed")
 
@@ -155,7 +155,39 @@ try:
 except RuntimeError:
     pass
 assert p.read_bytes() == raw and not list(tmp.glob("*.tmp.pdf")), "file touched after abort"
+searchbar.auge_lines = lambda _png: NEW
+
+def refused(path, why):
+    raw = path.read_bytes()
+    try:
+        searchbar.add_textlayer(path, replace=True); raise SystemExit(f"no abort: {why}")
+    except RuntimeError:
+        pass
+    assert path.read_bytes() == raw and not list(tmp.glob("*.tmp.pdf")), f"touched: {why}"
+
+# visible text -> precondition fails inside add_textlayer itself
+p = tmp / "visible.pdf"; d = pymupdf.open(); d.new_page().insert_text((50, 50), "sichtbar"); d.save(str(p)); refused(p, "visible text")
+# encrypted (owner password) -> saving would drop the protection
+p = tmp / "enc.pdf"; make(tmp / "plain.pdf", 0); d = pymupdf.open(str(tmp / "plain.pdf"))
+d.save(str(p), encryption=pymupdf.PDF_ENCRYPT_AES_256, owner_pw="o", user_pw="", permissions=pymupdf.PDF_PERM_PRINT); refused(p, "encrypted")
+# invisible text outside the page box survives the redaction -> abort
+p = tmp / "out.pdf"; make(p, 0); d = pymupdf.open(str(p)); d[0].insert_text((60, 1000), "ALTOUT", fontsize=12, render_mode=3, fontname="helv")
+d.saveIncr(); d.close(); refused(p, "text outside page box")
 PY
+  # CLI: --redo dry-run lists the file and changes nothing; a missing path exits non-zero
+  uv run -q --with pymupdf python - "$rtmp/cli.pdf" <<'PY' 2>/dev/null
+import sys, pymupdf
+d = pymupdf.open(); d.new_page().insert_text((50, 50), "ALT", render_mode=3, fontname="helv"); d.save(sys.argv[1])
+PY
+before="$(shasum "$rtmp/cli.pdf")"
+cli="$(uv run -q "$PLUGIN_DIR/scripts/durchsuchbar.py" "$rtmp/cli.pdf" --redo 2>/dev/null)"
+if printf '%s' "$cli" | grep -q '\[redo\]' && printf '%s' "$cli" | grep -q 'dry-run' \
+   && [ "$before" = "$(shasum "$rtmp/cli.pdf")" ] \
+   && ! uv run -q "$PLUGIN_DIR/scripts/durchsuchbar.py" "$rtmp/missing.pdf" >/dev/null 2>&1; then
+    ok "durchsuchbar.py --redo dry-run lists [redo], changes nothing; missing path exits 1"
+  else
+    bad "durchsuchbar.py --redo CLI: $cli"
+  fi
   rm -rf "$rtmp"
 fi
 

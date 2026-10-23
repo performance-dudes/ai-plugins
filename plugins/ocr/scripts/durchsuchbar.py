@@ -40,13 +40,17 @@ def main() -> int:
         return 1
 
     target = Path(pos[0]).expanduser()
+    if not target.exists():
+        sys.stderr.write(f"not found: {target}\n")
+        return 1
     if target.is_dir():
         pdfs = sorted(target.rglob("*.pdf") if rekursiv else target.glob("*.pdf"))
     else:
         pdfs = [target]
 
     image_pdfs = [p for p in pdfs if searchbar.pdf_is_image_only(p)]
-    ocr_pdfs = [p for p in pdfs if redo and searchbar.pdf_has_only_invisible_text(p)]
+    ocr_pdfs = [p for p in pdfs if redo and p not in image_pdfs
+                and searchbar.pdf_has_only_invisible_text(p)]
     print(f"{len(pdfs)} PDF(s) checked · {len(image_pdfs)} image-only"
           + (f" · {len(ocr_pdfs)} with an OCR layer to replace" if redo else "")
           + f" {'-> embed text layer' if apply else '(dry-run)'}")
