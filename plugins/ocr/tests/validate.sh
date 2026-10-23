@@ -118,7 +118,7 @@ if ! command -v uv >/dev/null 2>&1; then skip "uv absent"
 elif [ ! -f "${OCR_FONT_FILE:-/System/Library/Fonts/Helvetica.ttc}" ]; then skip "no Helvetica.ttc (not macOS)"
 else
   rtmp="$(mktemp -d)"
-  uv run -q --with pymupdf python - "$PLUGIN_DIR/scripts" "$rtmp" <<'PY' 2>/dev/null && ok "rotated page cleared, links kept, image pixels identical, empty OCR aborts" || bad "--redo replace unsafe"
+  uv run -q --with pymupdf python - "$PLUGIN_DIR/scripts" "$rtmp" <<'PY' 2>/dev/null && ok "rotated page cleared, links kept once, image pixels identical, empty OCR aborts" || bad "--redo replace unsafe"
 import sys; sys.path.insert(0, sys.argv[1])
 from pathlib import Path
 import pymupdf, searchbar
@@ -132,6 +132,8 @@ def make(path, rotate):
     for y in (100, 400, 700):
         page.insert_text((60, y), f"ALT{y}", fontsize=12, render_mode=3, fontname="helv")
     page.insert_link({"kind": pymupdf.LINK_URI, "from": pymupdf.Rect(60, 60, 200, 80), "uri": "https://example.org"})
+    # outside the page box (e.g. scanner-app watermark links): redaction keeps it -> must not be duplicated
+    page.insert_link({"kind": pymupdf.LINK_URI, "from": pymupdf.Rect(60, 900, 200, 920), "uri": "https://example.org/out"})
     page.set_rotation(rotate)
     doc.save(str(path)); doc.close()
 
@@ -143,7 +145,7 @@ for rot in (0, 90):
     searchbar.add_textlayer(p, replace=True)
     d = pymupdf.open(str(p))
     assert d[0].get_text().split() == ["NEU"], (rot, d[0].get_text())
-    assert len(d[0].get_links()) == 1, (rot, "link lost")
+    assert len(d[0].get_links()) == 2, (rot, "link lost or duplicated", d[0].get_links())
     assert searchbar._image_digests(d) == before, (rot, "image changed")
 
 p = tmp / "empty.pdf"; make(p, 0); raw = p.read_bytes()

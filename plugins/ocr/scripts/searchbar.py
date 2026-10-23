@@ -151,6 +151,13 @@ def _image_digests(doc) -> list[str]:
     return sorted(hashlib.sha256(doc.xref_stream(x) or b"").hexdigest() for x in xrefs)
 
 
+def _link_key(link: dict) -> tuple:
+    """Identity of a link for de-duplication: kind, rounded area, target."""
+    r = link.get("from")
+    area = tuple(round(v, 1) for v in r) if r is not None else ()
+    return (link.get("kind"), area, link.get("uri"), link.get("page"), link.get("file"))
+
+
 def add_textlayer(pdf_path: Path, dpi: int = 200, replace: bool = False) -> int:
     """Make an existing image PDF searchable in place: per page, auge OCR + an
     invisible text layer. Leaves geometry/image untouched. Returns line count.
@@ -180,8 +187,11 @@ def add_textlayer(pdf_path: Path, dpi: int = 200, replace: bool = False) -> int:
             page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE,
                                   graphics=fitz.PDF_REDACT_LINE_ART_NONE,
                                   text=fitz.PDF_REDACT_TEXT_REMOVE)
-            for link in links:                     # full-page redaction drops link annots
-                page.insert_link(link)
+            # Full-page redaction may drop link annots (not always) -> restore only missing ones.
+            kept = {_link_key(lk) for lk in page.get_links()}
+            for link in links:
+                if _link_key(link) not in kept:
+                    page.insert_link(link)
     with tempfile.TemporaryDirectory() as td:
         for i, page in enumerate(doc):
             w, h = page.rect.width, page.rect.height
