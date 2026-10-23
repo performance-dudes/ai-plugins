@@ -34,7 +34,9 @@ done
 
 note "3. Workflow script is valid JavaScript"
 if command -v node >/dev/null 2>&1; then
-  node --check "$PLUGIN_DIR/workflows/ocr.js" 2>/dev/null && ok "ocr.js parses" || bad "ocr.js syntax error"
+  # Parse as the Workflow runtime does: body of an async function (top-level return/await).
+  # Plain `node --check` fails on Node >=22.12 (ESM detection rejects top-level return).
+  node -e 'const s=require("fs").readFileSync(process.argv[1],"utf8").replace(/^export\s+/gm,"");new (Object.getPrototypeOf(async function(){}).constructor)(s)' "$PLUGIN_DIR/workflows/ocr.js" 2>/dev/null && ok "ocr.js parses" || bad "ocr.js syntax error"
 else
   ok "node absent — skipped (install node >=20 to check)"
 fi
