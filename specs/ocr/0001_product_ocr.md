@@ -45,14 +45,16 @@ Built following the PD plugin house style established by the `example` plugin.
 
 | AC | Criterion | Test reference |
 |----|-----------|----------------|
-| AC-OCR-4-1 | Image-only PDFs (detected via PyMuPDF) get an embedded auge text layer on move and via standalone `durchsuchbar.py`; already-searchable PDFs are left untouched. Embedding is on-device (auge + PyMuPDF, shared `scripts/searchbar.py`) — no ocrmypdf / tesseract / poppler. | review (`searchbar.py`, `anwenden.py`, `durchsuchbar.py`) |
+| AC-OCR-4-1 | Image-only PDFs (detected via PyMuPDF) get an embedded auge text layer on move and via standalone `durchsuchbar.py`; already-searchable PDFs are left untouched unless `--redo` (AC-OCR-4-5) is given. Embedding is on-device (auge + PyMuPDF, shared `scripts/searchbar.py`) — no ocrmypdf / tesseract / poppler. | review (`searchbar.py`, `anwenden.py`, `durchsuchbar.py`) |
 | AC-OCR-4-2 | Embedding applies to documents/PDFs; plain photo images are moved as-is. | review |
 | AC-OCR-4-3 | Photo-vs-document by a text threshold (MIN_DOC_CHARS): document scans become searchable PDFs, photo scans/keepsakes (little/no recognized text) stay as images. `--skip-fotos` processes documents only; `--copy` keeps originals. | `tests/validate.sh` (threshold unit test) |
+| AC-OCR-4-4 | The text layer round-trips every script auge returns — Latin incl. Umlauts/ß/„, Cyrillic, Greek: an embedded Unicode font (macOS `Helvetica.ttc`, override `OCR_FONT_FILE`), subset on save. Base-14 `helv` (Cyrillic → `·`) is only a fallback and never used by `--redo`. | `tests/validate.sh` §9 |
+| AC-OCR-4-5 | `durchsuchbar.py --redo` replaces a text layer that is **entirely invisible** (render mode 3): the old layer is removed by text-only redaction (rotation-aware), links are restored, a fresh auge layer is embedded. Nothing is written if the PDF is signed or encrypted, old text survives the redaction (e.g. outside the CropBox), a page that had text gets no new lines, or the decoded data of any xref image differs in the saved file. The precondition is checked inside `add_textlayer` itself. Visible document text is never touched. | `tests/validate.sh` §10 (auge mocked; CLI dry-run) |
 
 ## US-OCR-5 — Every file valid, the safety path provably tested
 > As a **developer**, I want every file validated and the dry-run proven to move nothing.
 
 | AC | Criterion | Test reference |
 |----|-----------|----------------|
-| AC-OCR-5-1 | `plugin.json` valid JSON; `workflows/ocr.js` passes `node --check`; every script compiles. | `tests/validate.sh` |
+| AC-OCR-5-1 | `plugin.json` valid JSON; `workflows/ocr.js` parses as the Workflow runtime runs it (async-function body); every script compiles. | `tests/validate.sh` |
 | AC-OCR-5-2 | `ocr.py` groups scanner pages by prefix; `anwenden.py` dry-run plans a move and changes nothing on disk. | `tests/validate.sh` (unit tests) |

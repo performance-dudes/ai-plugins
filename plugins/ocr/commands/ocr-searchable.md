@@ -1,6 +1,6 @@
 ---
 description: Embed a searchable OCR text layer into image-only PDFs (dry-run by default)
-argument-hint: "[file.pdf | folder]"
+argument-hint: "[file.pdf | folder] (path only — add --redo / --rekursiv to the run line)"
 ---
 
 # /ocr-searchable — make image-only PDFs searchable
@@ -32,6 +32,18 @@ After the user confirms, embed for real (add `--rekursiv` for a whole folder tre
 ```
 uv run ${CLAUDE_PLUGIN_ROOT}/scripts/durchsuchbar.py "$ARGUMENTS" --apply [--rekursiv]
 ```
+
+The argument is **only the path** — `"$ARGUMENTS"` is one quoted word, so flags
+typed after the path would become part of it and silently match nothing. Add
+`--rekursiv` / `--redo` / `--apply` yourself after the quoted path, e.g.
+`uv run ${CLAUDE_PLUGIN_ROOT}/scripts/durchsuchbar.py "$ARGUMENTS" --rekursiv --redo`
+(dry-run), then the same with `--apply`.
+
+`--redo` also **replaces** an existing invisible OCR layer (e.g. one where
+Cyrillic came out as `·`, or another engine's gibberish). Only PDFs whose text is
+entirely invisible qualify; visible document text is never touched, links are kept,
+and a file is not written if it is signed, a page loses all its text, or any image's
+pixel data would change. Dry-run first, as above.
 
 Set OCR languages via `OCR_LANGS` (e.g. `OCR_LANGS=de-DE,en-US`). Needs `auge`
 (see `/ocr-doctor`).

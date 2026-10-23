@@ -76,8 +76,10 @@ ocrmypdf / tesseract / poppler).
 > vector page → stays vector (lossless) **and** searchable.
 >
 > ⚠️ **Junk text layer:** a PDF with any minimal/junk text fragment is detected as
-> "has text" and **skipped**. To make it searchable, first strip the junk layer
-> (extract the page image via PyMuPDF → `searchbar.build_pdf`), then auge.
+> "has text" and **skipped**. If all of that text is invisible (an OCR layer —
+> e.g. Cyrillic lost to `·`, or another engine's gibberish), `durchsuchbar.py
+> --redo` replaces it safely (text-only redaction, links kept, aborts on signed /
+> encrypted PDFs or changed image data). Visible text is never touched.
 
 ## The Workflow
 

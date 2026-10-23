@@ -23,6 +23,14 @@ from pathlib import Path
 
 LANGS = os.environ.get("OCR_LANGS", "de-DE,en-US")
 IMG_EXTS = {".jpg", ".jpeg", ".png", ".tiff", ".tif", ".heic"}
+# Text-layer font. Must round-trip every script auge can return:
+#   - Base-14 "helv" is Latin-1 only: Cyrillic/Greek become "·".
+#   - PyMuPDF "china-s" (CJK, not embedded) drops ä ö Ä Ö Ü ß „ on extraction.
+#   - Arial.ttf extracts spaces as NBSP (U+00A0).
+# macOS Helvetica.ttc round-trips Latin incl. Umlauts, Cyrillic and Greek;
+# subset_fonts() on save keeps it at ~20 KB per file. Falls back to "helv".
+FONT_FILE = os.environ.get("OCR_FONT_FILE", "/System/Library/Fonts/Helvetica.ttc")
+FONT = "ocrhelv" if os.path.exists(FONT_FILE) else "helv"
 
 
 def auge_lines(img_path: Path | str) -> list[dict]:
@@ -38,6 +46,11 @@ def auge_lines(img_path: Path | str) -> list[dict]:
         return []
 
 
+def font_kwargs() -> dict:
+    """insert_text() font arguments for the text layer (see FONT_FILE)."""
+    return {"fontname": FONT, "fontfile": FONT_FILE} if FONT != "helv" else {"fontname": "helv"}
+
+
 def _place(page, lines: list[dict], w: float, h: float) -> int:
     """Place invisible text (render_mode=3) per the auge boxes onto the page.
     auge-y is bottom-origin (Vision); PyMuPDF-y is top-origin -> convert."""
@@ -51,7 +64,7 @@ def _place(page, lines: list[dict], w: float, h: float) -> int:
             fs = max(4.0, ln["height"] * h * 0.9)
             y_top = (1.0 - (ln["y"] + ln["height"])) * h
             page.insert_text((x, y_top + fs * 0.85), t,
-                             fontsize=fs, render_mode=3, fontname="helv")
+                             fontsize=fs, render_mode=3, **font_kwargs())
             n += 1
         except Exception:  # noqa: BLE001
             continue
@@ -81,6 +94,7 @@ def build_pdf(pages: list[tuple[Path, list[dict]]], dest: Path) -> int:
         page.insert_image(fitz.Rect(0, 0, w, h), filename=str(img))
         total += _place(page, lines, w, h)
     dest.parent.mkdir(parents=True, exist_ok=True)
+    doc.subset_fonts()
     doc.save(str(dest), deflate=True, garbage=3)
     doc.close()
     return total
@@ -103,20 +117,115 @@ def pdf_is_image_only(pdf_path: Path) -> bool:
     return not has_text
 
 
-def add_textlayer(pdf_path: Path, dpi: int = 200) -> int:
-    """Make an existing image PDF searchable in place: per page, auge OCR + an
-    invisible text layer. Leaves geometry/image untouched. Returns line count."""
+def pdf_has_only_invisible_text(pdf_path: Path) -> bool:
+    """True if the PDF carries text and all of it is invisible (render mode 3) —
+    i.e. an OCR layer over scanned images, not real document text."""
     import fitz  # PyMuPDF (lazy)
+    try:
+        doc = fitz.open(str(pdf_path))
+    except Exception:  # noqa: BLE001
+        return False
+    if doc.needs_pass:
+        doc.close()
+        return False
+    seen = False
+    try:
+        for page in doc:
+            for span in page.get_texttrace():
+                if span["type"] != 3:
+                    return False
+                seen = True
+    except Exception:  # noqa: BLE001
+        return False
+    finally:
+        doc.close()
+    return seen
+
+
+def _image_digests(doc) -> list[str]:
+    """Sorted hashes of every image's DECODED stream (pixel data). Sorted, because
+    garbage collection on save renumbers xrefs; decoded, because save may
+    re-compress an unfiltered stream without changing a pixel."""
+    import hashlib
+    xrefs = {img[0] for page in doc for img in page.get_images(full=True)}
+    return sorted(hashlib.sha256(doc.xref_stream(x) or b"").hexdigest() for x in xrefs)
+
+
+def _link_key(link: dict) -> tuple:
+    """Identity of a link for de-duplication: kind, rounded area, target."""
+    r = link.get("from")
+    area = tuple(round(v, 1) for v in r) if r is not None else ()
+    return (link.get("kind"), area, link.get("uri"), link.get("page"), link.get("file"))
+
+
+def add_textlayer(pdf_path: Path, dpi: int = 200, replace: bool = False) -> int:
+    """Make an existing image PDF searchable in place: per page, auge OCR + an
+    invisible text layer. Leaves geometry/image untouched. Returns line count.
+
+    replace=True first removes an existing invisible OCR layer (e.g. one that lost
+    Cyrillic to "·", or a foreign OCR's Latin gibberish). Only for PDFs where
+    pdf_has_only_invisible_text() holds (checked here). Nothing is written
+    (RuntimeError) if the PDF is signed or encrypted, no Unicode font is available,
+    old text survives the redaction (e.g. outside the CropBox), a page that had text
+    gets no new lines, or the decoded data of any xref image differs in the saved
+    file. Links survive."""
+    import fitz  # PyMuPDF (lazy)
+    if replace and not pdf_has_only_invisible_text(pdf_path):
+        raise RuntimeError("PDF has visible text or no text layer — --redo not applicable; nothing written")
     doc = fitz.open(str(pdf_path))
     total = 0
-    with tempfile.TemporaryDirectory() as td:
+    had_text: list[bool] = []
+    if replace:
+        if doc.is_encrypted or doc.metadata.get("encryption"):
+            doc.close()
+            raise RuntimeError("encrypted PDF — saving would drop its encryption/permissions; nothing written")
+        if doc.get_sigflags() > 0:
+            doc.close()
+            raise RuntimeError("signed PDF — rewriting would invalidate the signature; nothing written")
+        if FONT == "helv":
+            doc.close()
+            raise RuntimeError(f"font file {FONT_FILE} missing — helv would lose non-Latin script; nothing written")
+        before = _image_digests(doc)
         for page in doc:
+            had_text.append(bool((page.get_text() or "").strip()))
+            links = page.get_links()
+            # Redactions work in unrotated coordinates; page.rect is the rotated view.
+            page.add_redact_annot(page.rect * page.derotation_matrix)
+            page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE,
+                                  graphics=fitz.PDF_REDACT_LINE_ART_NONE,
+                                  text=fitz.PDF_REDACT_TEXT_REMOVE)
+            # Full-page redaction may drop link annots (not always) -> restore only missing ones.
+            kept = {_link_key(lk) for lk in page.get_links()}
+            for link in links:
+                if _link_key(link) not in kept:
+                    page.insert_link(link)
+            if page.get_texttrace():
+                doc.close()
+                raise RuntimeError("old text survived the redaction (outside the page box?) — nothing written")
+    with tempfile.TemporaryDirectory() as td:
+        for i, page in enumerate(doc):
             w, h = page.rect.width, page.rect.height
             png = os.path.join(td, "page.png")
             page.get_pixmap(dpi=dpi).save(png)     # only for OCR; coords are normalized
-            total += _place(page, auge_lines(png), w, h)
-    tmp = pdf_path.with_suffix(".tmp.pdf")
-    doc.save(str(tmp), deflate=True, garbage=3)
-    doc.close()
-    tmp.replace(pdf_path)
+            n = _place(page, auge_lines(png), w, h)
+            if replace and had_text[i] and n == 0:
+                doc.close()
+                raise RuntimeError(f"page {i + 1}: old layer had text, auge returned none — nothing written")
+            total += n
+    fd, tmp_name = tempfile.mkstemp(prefix=f".{pdf_path.stem}.", suffix=".tmp.pdf", dir=pdf_path.parent)
+    os.close(fd)
+    tmp = Path(tmp_name)                           # unique name: never clobbers a neighbour file
+    try:
+        doc.subset_fonts()
+        doc.save(str(tmp), deflate=True, garbage=3)
+        doc.close()
+        if replace:
+            saved = fitz.open(str(tmp))
+            same = _image_digests(saved) == before
+            saved.close()
+            if not same:
+                raise RuntimeError("image pixel data changed in the saved file — nothing written")
+        tmp.replace(pdf_path)
+    finally:
+        tmp.unlink(missing_ok=True)
     return total
