@@ -15,8 +15,8 @@ Generic: ships no personal data. Languages follow searchbar (OCR_LANGS env).
 --redo also replaces an existing OCR layer: PDFs whose text is entirely
 invisible (render mode 3) get that layer removed and a fresh auge layer
 embedded — for layers that lost non-Latin script (Cyrillic as "·") or come from
-another OCR engine. Visible document text is never touched; the run aborts per
-file if any image stream would change.
+another OCR engine. Visible document text is never touched; a file is left
+unwritten if it is signed, a page loses all its text, or image pixel data changes.
 
 Usage:
   uv run durchsuchbar.py <file.pdf | folder> [--apply] [--rekursiv] [--redo]
@@ -63,6 +63,8 @@ def main() -> int:
                 sys.stderr.write(f"      failed: {e}\n")
     if apply:
         print(f"\n{ok}/{len(todo)} PDFs made searchable.")
+        if ok < len(todo):
+            return 1
     else:
         print("\n(dry-run — nothing changed. Use --apply to embed.)")
     return 0

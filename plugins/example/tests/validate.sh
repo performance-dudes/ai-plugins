@@ -46,7 +46,7 @@ done
 
 note "4. Workflow script + hook scripts are syntactically valid"
 # Parse as the Workflow runtime does: body of an async function (top-level return/await).
-# Plain `node --check` fails on Node >=22.12 (ESM detection rejects top-level return).
+# Plain `node --check` fails on Node 24 (ESM detection rejects top-level return).
 node -e 'const s=require("fs").readFileSync(process.argv[1],"utf8").replace(/^export\s+/gm,"");new (Object.getPrototypeOf(async function(){}).constructor)(s)' "$PLUGIN_DIR/workflows/greet.js" 2>/dev/null && ok "greet.js parses" || bad "greet.js syntax error"
 for sh in hooks/scripts/example-pretooluse.sh hooks/scripts/example-posttooluse.sh; do
   bash -n "$PLUGIN_DIR/$sh" 2>/dev/null && ok "$sh parses" || bad "$sh syntax error"

@@ -35,8 +35,9 @@ uv run ${CLAUDE_PLUGIN_ROOT}/scripts/durchsuchbar.py "$ARGUMENTS" --apply [--rek
 
 Add `--redo` to also **replace** an existing invisible OCR layer (e.g. one where
 Cyrillic came out as `·`, or another engine's gibberish). Only PDFs whose text is
-entirely invisible qualify; visible document text is never touched, and a file is
-not written if any image stream would change. Dry-run first, as above.
+entirely invisible qualify; visible document text is never touched, links are kept,
+and a file is not written if it is signed, a page loses all its text, or any image's
+pixel data would change. Dry-run first, as above.
 
 Set OCR languages via `OCR_LANGS` (e.g. `OCR_LANGS=de-DE,en-US`). Needs `auge`
 (see `/ocr-doctor`).

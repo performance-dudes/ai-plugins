@@ -142,13 +142,13 @@ def pdf_has_only_invisible_text(pdf_path: Path) -> bool:
     return seen
 
 
-def _image_digest(doc) -> str:
-    """Hash over every image stream in the document (raw, undecoded bytes)."""
+def _image_digests(doc) -> list[str]:
+    """Sorted hashes of every image's DECODED stream (pixel data). Sorted, because
+    garbage collection on save renumbers xrefs; decoded, because save may
+    re-compress an unfiltered stream without changing a pixel."""
     import hashlib
-    h = hashlib.sha256()
-    for xref in sorted({img[0] for page in doc for img in page.get_images(full=True)}):
-        h.update(doc.xref_stream_raw(xref) or b"")
-    return h.hexdigest()
+    xrefs = {img[0] for page in doc for img in page.get_images(full=True)}
+    return sorted(hashlib.sha256(doc.xref_stream(x) or b"").hexdigest() for x in xrefs)
 
 
 def add_textlayer(pdf_path: Path, dpi: int = 200, replace: bool = False) -> int:
@@ -157,30 +157,53 @@ def add_textlayer(pdf_path: Path, dpi: int = 200, replace: bool = False) -> int:
 
     replace=True first removes an existing invisible OCR layer (e.g. one that lost
     Cyrillic to "·", or a foreign OCR's Latin gibberish). Only for PDFs where
-    pdf_has_only_invisible_text() holds; aborts without writing if any image
-    stream would change."""
+    pdf_has_only_invisible_text() holds. Nothing is written (RuntimeError) if the
+    PDF is signed, no Unicode font is available, a page that had text gets no
+    new lines, or any image's pixel data differs in the saved file. Links survive."""
     import fitz  # PyMuPDF (lazy)
     doc = fitz.open(str(pdf_path))
     total = 0
+    had_text: list[bool] = []
     if replace:
-        before = _image_digest(doc)
+        if doc.get_sigflags() > 0:
+            doc.close()
+            raise RuntimeError("signed PDF — rewriting would invalidate the signature; nothing written")
+        if FONT == "helv":
+            doc.close()
+            raise RuntimeError(f"font file {FONT_FILE} missing — helv would lose non-Latin script; nothing written")
+        before = _image_digests(doc)
         for page in doc:
-            page.add_redact_annot(page.rect)
+            had_text.append(bool((page.get_text() or "").strip()))
+            links = page.get_links()
+            # Redactions work in unrotated coordinates; page.rect is the rotated view.
+            page.add_redact_annot(page.rect * page.derotation_matrix)
             page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE,
                                   graphics=fitz.PDF_REDACT_LINE_ART_NONE,
                                   text=fitz.PDF_REDACT_TEXT_REMOVE)
-        if _image_digest(doc) != before:
-            doc.close()
-            raise RuntimeError("image streams changed while removing the old layer — nothing written")
+            for link in links:                     # full-page redaction drops link annots
+                page.insert_link(link)
     with tempfile.TemporaryDirectory() as td:
-        for page in doc:
+        for i, page in enumerate(doc):
             w, h = page.rect.width, page.rect.height
             png = os.path.join(td, "page.png")
             page.get_pixmap(dpi=dpi).save(png)     # only for OCR; coords are normalized
-            total += _place(page, auge_lines(png), w, h)
+            n = _place(page, auge_lines(png), w, h)
+            if replace and had_text[i] and n == 0:
+                doc.close()
+                raise RuntimeError(f"page {i + 1}: old layer had text, auge returned none — nothing written")
+            total += n
     tmp = pdf_path.with_suffix(".tmp.pdf")
-    doc.subset_fonts()
-    doc.save(str(tmp), deflate=True, garbage=3)
-    doc.close()
-    tmp.replace(pdf_path)
+    try:
+        doc.subset_fonts()
+        doc.save(str(tmp), deflate=True, garbage=3)
+        doc.close()
+        if replace:
+            saved = fitz.open(str(tmp))
+            same = _image_digests(saved) == before
+            saved.close()
+            if not same:
+                raise RuntimeError("image pixel data changed in the saved file — nothing written")
+        tmp.replace(pdf_path)
+    finally:
+        tmp.unlink(missing_ok=True)
     return total

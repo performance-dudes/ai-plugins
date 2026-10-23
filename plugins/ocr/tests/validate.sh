@@ -35,7 +35,7 @@ done
 note "3. Workflow script is valid JavaScript"
 if command -v node >/dev/null 2>&1; then
   # Parse as the Workflow runtime does: body of an async function (top-level return/await).
-  # Plain `node --check` fails on Node >=22.12 (ESM detection rejects top-level return).
+  # Plain `node --check` fails on Node 24 (ESM detection rejects top-level return).
   node -e 'const s=require("fs").readFileSync(process.argv[1],"utf8").replace(/^export\s+/gm,"");new (Object.getPrototypeOf(async function(){}).constructor)(s)' "$PLUGIN_DIR/workflows/ocr.js" 2>/dev/null && ok "ocr.js parses" || bad "ocr.js syntax error"
 else
   ok "node absent — skipped (install node >=20 to check)"
@@ -95,9 +95,13 @@ else
   bad "dry-run behaved unexpectedly: $out"
 fi
 
-note "9. Text-layer font covers Cyrillic (searchbar.FONT)"
-if command -v uv >/dev/null 2>&1; then
-  uv run -q --with pymupdf python - "$PLUGIN_DIR/scripts" <<'PY' 2>/dev/null && ok "text-layer font round-trips Cyrillic + Umlauts" || bad "text-layer font loses non-Latin script"
+skip() { printf '  --   %s (skipped)\n' "$1"; }
+
+note "9. Text-layer font round-trips Cyrillic + Umlauts (macOS font)"
+if ! command -v uv >/dev/null 2>&1; then skip "uv absent"
+elif [ ! -f "${OCR_FONT_FILE:-/System/Library/Fonts/Helvetica.ttc}" ]; then skip "no Helvetica.ttc (not macOS)"
+else
+  uv run -q --with pymupdf python - "$PLUGIN_DIR/scripts" <<'PY' 2>/dev/null && ok "Cyrillic + Umlauts survive embed + subset + extract" || bad "text-layer font loses script"
 import sys; sys.path.insert(0, sys.argv[1])
 import pymupdf, searchbar
 doc = pymupdf.open(); page = doc.new_page()
@@ -107,8 +111,50 @@ doc.subset_fonts()
 doc = pymupdf.open("pdf", doc.tobytes())
 assert doc[0].get_text().strip() == s, doc[0].get_text()
 PY
+fi
+
+note "10. --redo replaces an invisible layer safely (auge mocked)"
+if ! command -v uv >/dev/null 2>&1; then skip "uv absent"
+elif [ ! -f "${OCR_FONT_FILE:-/System/Library/Fonts/Helvetica.ttc}" ]; then skip "no Helvetica.ttc (not macOS)"
 else
-  ok "uv absent — skipped"
+  rtmp="$(mktemp -d)"
+  uv run -q --with pymupdf python - "$PLUGIN_DIR/scripts" "$rtmp" <<'PY' 2>/dev/null && ok "rotated page cleared, links kept, image pixels identical, empty OCR aborts" || bad "--redo replace unsafe"
+import sys; sys.path.insert(0, sys.argv[1])
+from pathlib import Path
+import pymupdf, searchbar
+tmp = Path(sys.argv[2])
+NEW = [{"text": "NEU", "x": 0.1, "y": 0.5, "height": 0.02}]
+
+def make(path, rotate):
+    doc = pymupdf.open(); page = doc.new_page(width=595, height=842)
+    pix = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 40, 40), 0); pix.set_rect(pix.irect, (200, 30, 30))
+    page.insert_image(pymupdf.Rect(50, 50, 545, 792), pixmap=pix)
+    for y in (100, 400, 700):
+        page.insert_text((60, y), f"ALT{y}", fontsize=12, render_mode=3, fontname="helv")
+    page.insert_link({"kind": pymupdf.LINK_URI, "from": pymupdf.Rect(60, 60, 200, 80), "uri": "https://example.org"})
+    page.set_rotation(rotate)
+    doc.save(str(path)); doc.close()
+
+searchbar.auge_lines = lambda _png: NEW
+for rot in (0, 90):
+    p = tmp / f"r{rot}.pdf"; make(p, rot)
+    before = searchbar._image_digests(pymupdf.open(str(p)))
+    assert searchbar.pdf_has_only_invisible_text(p)
+    searchbar.add_textlayer(p, replace=True)
+    d = pymupdf.open(str(p))
+    assert d[0].get_text().split() == ["NEU"], (rot, d[0].get_text())
+    assert len(d[0].get_links()) == 1, (rot, "link lost")
+    assert searchbar._image_digests(d) == before, (rot, "image changed")
+
+p = tmp / "empty.pdf"; make(p, 0); raw = p.read_bytes()
+searchbar.auge_lines = lambda _png: []
+try:
+    searchbar.add_textlayer(p, replace=True); raise SystemExit("no abort on empty OCR")
+except RuntimeError:
+    pass
+assert p.read_bytes() == raw and not list(tmp.glob("*.tmp.pdf")), "file touched after abort"
+PY
+  rm -rf "$rtmp"
 fi
 
 note "Result"

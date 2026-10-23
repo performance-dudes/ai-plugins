@@ -67,14 +67,16 @@ that already have text are left untouched.
 > **skipped** by default. If that text is an **invisible OCR layer** (render mode 3 —
 > a broken earlier run, or another OCR engine's gibberish), `--redo` replaces it:
 > the old layer is removed via PyMuPDF text-only redaction, a fresh auge layer is
-> embedded, and the file is left unwritten if any image stream would change. PDFs
-> with visible text are never touched — **not** `--force-ocr`.
+> embedded (rotation-aware, links restored). Nothing is written if the PDF is
+> signed, a page loses all its text, or any image's pixel data differs in the saved
+> file. PDFs with visible text are never touched — **not** `--force-ocr`.
 >
 > 🔤 **Text-layer font covers non-Latin scripts.** The layer embeds macOS
 > `Helvetica.ttc` (Latin incl. Umlauts, Cyrillic, Greek), subset on save (~20 KB;
 > override via `OCR_FONT_FILE`). Rejected: PyMuPDF `china-s` drops ä ö ß „ on
 > extraction, `Arial.ttf` extracts spaces as NBSP. Versions ≤ 0.1.3 used Base-14
-> `helv`, which turned every Cyrillic letter into `·` — such files are found by many `·` in `pdftotext` output and fixed with
+> `helv`, which turned every Cyrillic letter into `·` — such files show many `·` in
+> `page.get_text()` (PyMuPDF) and are fixed with
 > `/ocr-searchable <folder> --rekursiv --redo`.
 
 ## Components

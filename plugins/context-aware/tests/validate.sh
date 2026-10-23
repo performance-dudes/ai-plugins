@@ -46,7 +46,7 @@ done
 note "4. Workflow script is syntactically valid JS"
 if command -v node >/dev/null 2>&1; then
   # Parse as the Workflow runtime does: body of an async function (top-level return/await).
-  # Plain `node --check` fails on Node >=22.12 (ESM detection rejects top-level return).
+  # Plain `node --check` fails on Node 24 (ESM detection rejects top-level return).
   node -e 'const s=require("fs").readFileSync(process.argv[1],"utf8").replace(/^export\s+/gm,"");new (Object.getPrototypeOf(async function(){}).constructor)(s)' "$PLUGIN_DIR/workflows/context-aware-demo.js" 2>/dev/null && ok "context-aware-demo.js parses" || bad "context-aware-demo.js syntax error"
 else
   printf '  - node not found — skipping JS check\n'
