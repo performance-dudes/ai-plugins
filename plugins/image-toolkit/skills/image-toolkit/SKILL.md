@@ -9,7 +9,8 @@ description: |
   - Work with transparency, alpha channels, or compositing
   - Create GIF animations, montages, or image grids
   - Convert between image formats (PNG, JPG, WebP, SVG, PDF)
-  Trigger on: image editing, image generation, ImageMagick, magick command, resize image,
+  - Turn a document photo into a scan
+  Trigger on: photo to scan, document photo, image editing, image generation, ImageMagick, magick command, resize image,
   crop image, transparent background, remove background, watermark, favicon, thumbnail,
   batch image processing, Gemini image, AI image generation, text-to-image, image conversion,
   GIF creation, montage, image optimization, SVG to PNG, PDF to image, image comparison.
@@ -36,6 +37,7 @@ PEP-723 header provisions `google-genai` + Pillow on first run.
 | Add text, watermarks, shapes | ImageMagick | Full typographic control |
 | Create thumbnails, favicons, montages | ImageMagick | Deterministic, repeatable |
 | GIF animation from frames | ImageMagick | Frame-level control |
+| Phone photo of a document → scan | OpenCV + ImageMagick | Local and exact; Gemini would invent digits (`references/photo-to-scan.md`) |
 | Generate images from text description | Gemini API | AI understands natural language prompts |
 | Edit photos with natural language | Gemini API | "Add snow to this scene" |
 | Create illustrations, art, infographics | Gemini API | Creative, context-aware |
@@ -44,7 +46,11 @@ PEP-723 header provisions `google-genai` + Pillow on first run.
 
 ## 📖 Reference files
 
-This skill has two detailed reference files. Read the one you need:
+This skill has three detailed reference files. Read the one you need:
+
+- **`references/photo-to-scan.md`** — Phone photo of a document → flatbed-style scan
+  - Read when: user wants a photo cropped, rectified and cleaned like a scan, usually before OCR
+  - Covers: paper mask, rectifying on the printed frame, overlaid slips, shading removal, PDF, ID checks
 
 - **`references/imagemagick.md`** — Complete ImageMagick 7 command reference
   - Read when: user needs local image processing, format conversion, batch operations

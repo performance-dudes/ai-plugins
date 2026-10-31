@@ -28,5 +28,8 @@ gebraucht. Die Gemini-Aufrufe selbst sind damit nicht abgedeckt; was live geprü
 wurde, steht im jeweiligen Journal-Eintrag
 (`journal/2026-09-23-image-toolkit-gemini-ga-interactions.md`).
 
+Spec-frei: Das Plugin ist generisches Werkzeugwissen ohne eigene `specs/image-toolkit/`; die Evals unter
+`plugins/image-toolkit/evals/` halten die Erwartung fest.
+
 Neue abgeschaltete IDs (Deprecations-Seite der Gemini API) in `DEAD` in
 `plugins/image-toolkit/tests/validate.sh` §6 nachtragen.

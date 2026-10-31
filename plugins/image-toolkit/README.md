@@ -55,6 +55,7 @@ Runs on Google's **Interactions API** (`generateContent` is legacy). All models 
 | Generate from a description, AI edit, illustration/art | **Gemini** (recommended) | API |
 | Resize, crop, convert, transparent/solid bg, watermark, favicon, batch, GIF, montage | **ImageMagick** | local, free |
 | Generate then size/optimize exactly | **both** | API + local |
+| Phone photo of a document → clean scan | **OpenCV + ImageMagick** (`references/photo-to-scan.md`) | local, free |
 
 ## Components
 
@@ -62,7 +63,7 @@ Runs on Google's **Interactions API** (`generateContent` is legacy). All models 
 |-----------|------|-------|
 | Command | `commands/image.md` | `/image` → pick engine, run, open result |
 | Command | `commands/image-doctor.md` | `/image-doctor` → dependency preflight |
-| Skill | `skills/image-toolkit/SKILL.md` | autonomous trigger + full reference (ImageMagick 7, Gemini API) |
+| Skill | `skills/image-toolkit/SKILL.md` | autonomous trigger + full reference (ImageMagick 7, Gemini API, photo → scan) |
 | Script | `scripts/generate_image.py` | bundled Gemini generate/edit (uv, PEP-723) |
 | Script | `scripts/doctor.sh` | dependency check |
 
