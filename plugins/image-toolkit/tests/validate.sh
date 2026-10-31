@@ -25,6 +25,7 @@ for f in \
   "skills/image-toolkit/SKILL.md" \
   "skills/image-toolkit/references/imagemagick.md" \
   "skills/image-toolkit/references/gemini-image-api.md" \
+  "skills/image-toolkit/references/photo-to-scan.md" \
   "scripts/generate_image.py" "scripts/doctor.sh" \
   "README.md"; do
   [ -f "$PLUGIN_DIR/$f" ] && ok "$f" || bad "missing $f"
