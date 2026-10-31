@@ -10,7 +10,7 @@ scannerartigen Ergebnis. Der Ablauf entstand an acht Fotos von vier Vorlagen und
 
 - **Kein Gemini auf Dokumenten:** KI-Schärfen kann Ziffern, Stempel und Unterschriften erfinden.
 - **OpenCV misst, ImageMagick bearbeitet:** Die Referenz nennt die Werte statt ein weiteres Skript
-  mitzuliefern; ein Agent setzt die Messung mit `uv` in wenigen Zeilen um.
+  mitzuliefern; die Messung umfasst rund 100 Zeilen, ein mitgeliefertes Skript wäre mittelfristig robuster.
 - **Rahmen statt Papierkante:** Papierkanten sind eingerissen und gewölbt, Druckzeilen nicht.
 - **Registrierung für verdeckte Rahmen:** Liegt ein Beleg auf dem Formular, fehlen die äußeren Linien.
   Der Rahmen kommt dann per SIFT und RANSAC vom freien Foto.
@@ -25,5 +25,7 @@ scannerartigen Ergebnis. Der Ablauf entstand an acht Fotos von vier Vorlagen und
 ## Nicht gemacht
 
 Keine neuen Knowledge-Eval-Tasks und kein neuer Zertifizierungslauf. Die Änderung erweitert den Skill
-um eine Referenz, die bestehenden Tasks sind unverändert. `tests/validate.sh` prüft nur, dass die Datei
+um eine Referenz, die bestehenden Tasks sind unverändert. Die Referenz vergrößert den Eval-Prompt; die
+letzte Zertifizierung gilt für den alten Stand und ist beim nächsten bezahlten Lauf mitzuprüfen.
+`tests/validate.sh` prüft nur, dass die Datei
 vorhanden ist.

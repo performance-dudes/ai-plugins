@@ -15,6 +15,7 @@ if you need detail):
 | Generate from a description, AI edit ("add snow", "make it a watercolor"), illustration/art | **Gemini** (recommended) | the bundled script below |
 | Resize, crop, rotate, convert format, transparent/solid background, watermark, favicon, thumbnail, batch, GIF, montage | **ImageMagick** | `magick …` (local, deterministic, no API cost) |
 | Generate then size/optimize exactly | **both** | Gemini → then `magick` post-process |
+| Phone photo of a document → clean scan | **OpenCV + ImageMagick**, never Gemini | `references/photo-to-scan.md` in the skill |
 
 ## AI generation / editing (Gemini)
 
