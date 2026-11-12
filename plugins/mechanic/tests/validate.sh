@@ -33,7 +33,7 @@ note "3. plugin.json parses"
 python3 -m json.tool "$PLUGIN_DIR/.claude-plugin/plugin.json" >/dev/null 2>&1 \
   && ok "plugin.json parses" || bad "plugin.json bad JSON"
 
-note "4. Agent frontmatter has name + description + model pin"
+note "4. Agent frontmatter has name + description + model alias"
 for md in agents/errand.md agents/mechanic.md; do
   # extract the YAML frontmatter block (between the first two '---' fences),
   # so a long folded description can't push 'model:' out of a fixed head window.

@@ -45,13 +45,34 @@ import sys
 
 import yaml  # human-authored cases live in YAML
 
-DEFAULT_TARGET_MODEL = "claude-haiku-5-5"
-DEFAULT_JUDGE_MODEL = "claude-haiku-5-5"
+# Aliases, not model IDs: the Messages API does not know them, so resolve_model()
+# turns them into the current ID of that family at run time.
+DEFAULT_TARGET_MODEL = "haiku"
+DEFAULT_JUDGE_MODEL = "haiku"
+ALIASES = ("haiku", "sonnet", "opus", "fable")
+
+
+def resolve_model(client, name):
+    """Alias -> current model ID of that family; a full ID passes through.
+
+    1. ANTHROPIC_DEFAULT_<ALIAS>_MODEL — the variable Claude Code resolves its own
+       aliases through (set on gateways such as Foundry, where IDs differ).
+    2. Otherwise the newest model of the family from the Models API (newest first).
+    """
+    if name not in ALIASES:
+        return name
+    env = os.environ.get(f"ANTHROPIC_DEFAULT_{name.upper()}_MODEL")
+    if env:
+        return env
+    for m in client.models.list(limit=100):
+        if m.id.startswith(f"claude-{name}-"):
+            return m.id
+    raise SystemExit(f"no '{name}' model available for this API key")
 
 
 def _sampling(model, temperature):
-    """Haiku/Sonnet 5.5 and the other 5.x models reject any non-default
-    temperature with a 400; only 4.x models still take it."""
+    """5.x models reject any non-default temperature with a 400; only 4.x
+    models still take it. Expects a resolved ID (see resolve_model)."""
     if "-4-" in model:
         return {"temperature": temperature}
     if temperature not in (None, 1):
@@ -149,7 +170,7 @@ def call_target(client, case, model):
     t = case["target"]
     if t.get("response"):
         return t["response"]
-    target_model = t.get("model", model)
+    target_model = resolve_model(client, t.get("model", model))
     msg = client.messages.create(
         model=target_model,
         max_tokens=2048,  # 5.x thinks by default; thinking counts toward max_tokens
@@ -203,6 +224,8 @@ def main(argv=None):
 
     from anthropic import Anthropic
     client = Anthropic(api_key=key)
+    args.target_model = resolve_model(client, args.target_model)
+    args.judge_model = resolve_model(client, args.judge_model)
 
     with open(args.cases, "r", encoding="utf-8") as fh:
         cases = yaml.safe_load(fh)   # YAML default; JSON is a valid subset

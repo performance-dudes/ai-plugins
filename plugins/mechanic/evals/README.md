@@ -2,8 +2,8 @@
 
 The `mechanic` plugin promises **one thing**: a sharp routing decision. For any
 task it should pick the right tier — do it **inline**, or delegate to **errand**
-(Haiku 5.5), **mechanic** (Sonnet 5.5), or **general-purpose** (premium). Everything
-else (the model pins, the tool access) only matters if that decision is right. So
+(Haiku), **mechanic** (Sonnet), or **general-purpose** (premium). Everything
+else (the model aliases, the tool access) only matters if that decision is right. So
 this is what the eval measures.
 
 ## The one rule — read this first
@@ -29,11 +29,11 @@ spell out, and the method behind it is `plugin-eval@ai-plugins-internal`.)
                    general-purpose (premium)
                           │ no
         does it need to UNDERSTAND CODE/CONTEXT to execute a decided change?
-                          │ yes → mechanic (Sonnet 5.5)
+                          │ yes → mechanic (Sonnet)
                           │ no  → it's trivial. now the SECOND axis:
                           ▼
               is there VOLUME (a batch, a whole file/dataset, a long scan)?
-                     yes → errand (Haiku 5.5)      no → INLINE (do it yourself)
+                     yes → errand (Haiku)          no → INLINE (do it yourself)
 ```
 
 Two independent axes, not one ladder:

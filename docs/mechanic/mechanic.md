@@ -1,14 +1,14 @@
 # Doc: `mechanic` plugin (agents `mechanic` + `errand`)
 
-The `mechanic` plugin ships two cost-tiered subagents, each pinned to a cheaper model
-version so the premium tier stays free for judgment.
+The `mechanic` plugin ships two cost-tiered subagents, each on a cheaper model
+family so the premium tier stays free for judgment.
 
 ## The two agents
 
-| Agent | `subagent_type` | Model pin | Tier | For |
+| Agent | `subagent_type` | Model | Tier | For |
 |---|---|---|---|---|
-| `mechanic` | `mechanic` | `claude-sonnet-5-5` | mid | mechanical work needing code/context comprehension |
-| `errand` | `mechanic:errand` | `claude-haiku-5-5` | cheapest | trivial self-contained transformations, no codebase understanding |
+| `mechanic` | `mechanic` | `sonnet` | mid | mechanical work needing code/context comprehension |
+| `errand` | `mechanic:errand` | `haiku` | cheapest | trivial self-contained transformations, no codebase understanding |
 
 Both have broad tool access but are behaviourally constrained and instructed to hand
 back the moment a task belongs to a neighbouring tier or the instruction is ambiguous.
@@ -17,8 +17,8 @@ back the moment a task belongs to a neighbouring tier or the instruction is ambi
 
 ```
 Needs a DECISION            -> general-purpose  (premium)
-Needs CODE/CONTEXT to do    -> mechanic         (Sonnet 5.5)
-TRIVIAL transformation      -> errand           (Haiku 5.5)
+Needs CODE/CONTEXT to do    -> mechanic         (Sonnet)
+TRIVIAL transformation      -> errand           (Haiku)
 ```
 
 - **errand** — classify/label, extract a field, reformat (JSON/CSV/whitespace/case),
@@ -73,15 +73,16 @@ Design decisions, each load-bearing:
 - **No enforcement** — it injects context only. No `PreToolUse` veto, no rewriting of
   agent calls. The caller still decides; it just decides informed.
 
-## Model pinning — how it works
+## Model aliases — how they resolve
 
 | Path | Result |
 |------|--------|
-| Agent-tool `model` param | enum `{sonnet, opus, haiku, fable}` — resolves to whatever the current defaults are. No version pin. |
-| Agent frontmatter `model:` | accepts a **full model ID** (same values as `--model`) → `claude-sonnet-5-5` / `claude-haiku-5-5` pin the exact version. |
+| Agent frontmatter `model:` | `sonnet` / `haiku` → the current model of that family. |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` / `ANTHROPIC_DEFAULT_HAIKU_MODEL` | override the alias target per machine — gateways such as Foundry set them to their own IDs. |
 
-The pin lives in shipped plugin frontmatter because that is the only place a specific
-version can be selected, and a plugin makes it reproducible and shareable.
+The frontmatter carries an alias, never a full model ID: a full ID goes stale with every
+model release and breaks on gateways that name models differently. Who needs a fixed
+version sets the environment variable, not the plugin.
 
 Source: [Claude Code subagents documentation](https://code.claude.com/docs/en/sub-agents.md),
 section "Choose a model".
@@ -90,12 +91,12 @@ section "Choose a model".
 
 The agent registry is read at **session start** and is not hot-reloaded. After
 installing or updating the plugin, start a **fresh session**. Verify with a one-line
-spawn that returns each agent's model ID (`claude-sonnet-5-5` / `claude-haiku-5-5`).
+spawn that returns each agent's model ID (a Sonnet / a Haiku model).
 
 ## Model comparison
 
-| | Haiku 5.5 (`errand`) | Sonnet 5.5 (`mechanic`) | Opus 5.5 (`general-purpose`) |
+| | Haiku (`errand`) | Sonnet (`mechanic`) | Opus (`general-purpose`) |
 |---|---|---|---|
-| In/Out per 1M | $0.10 / $0.50 | $2 / $10 | $4 / $20 |
+| In/Out per 1M (prices as of the 5.5 generation) | $0.10 / $0.50 | $2 / $10 | $4 / $20 |
 | Context / max out | 1M / 128K | 1M / 128K | 1M / 128K |
 | `effort` param | yes (default `medium`) | yes (default `high`) | yes (default `medium`) |

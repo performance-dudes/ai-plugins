@@ -153,7 +153,7 @@ cases:
     difficulty: medium
     note: long trivial scan over many files — throughput job for the cheap tier
 
-  # ── mechanic (Sonnet 5.5): decided change that needs code/context comprehension ─
+  # ── mechanic (Sonnet): decided change that needs code/context comprehension ─
   - case: m01-rename-symbol
     prompt: "rename the `Cart` class to `Basket` everywhere and fix all imports and usages"
     route: mechanic
