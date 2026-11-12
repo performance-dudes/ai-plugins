@@ -1,16 +1,16 @@
 # mechanic
 
-Cost-tiered subagents for **mechanical, fully-specified work** — two agents pinned to
-cheaper model versions so the premium tier (Opus) stays free for judgment.
+Cost-tiered subagents for **mechanical, fully-specified work** — two agents on
+cheaper model families so the premium tier (Opus) stays free for judgment.
 
-| Agent | `subagent_type` | Model pin | For |
+| Agent | `subagent_type` | Model | For |
 |---|---|---|---|
-| `mechanic` | `mechanic` | `claude-sonnet-5-5` | mechanical work that needs **code/context comprehension** |
-| `errand` | `mechanic:errand` | `claude-haiku-5-5` | **trivial, self-contained** transformations, no codebase understanding |
+| `mechanic` | `mechanic` | `sonnet` | mechanical work that needs **code/context comprehension** |
+| `errand` | `mechanic:errand` | `haiku` | **trivial, self-contained** transformations, no codebase understanding |
 
 ## Why
 
-Sonnet 5.5 (≈ $2/$10 per 1M) costs half of Opus 5.5 (≈ $4/$20); Haiku 5.5
+Sonnet (≈ $2/$10 per 1M) costs half of Opus (≈ $4/$20); Haiku
 (≈ $0.10/$0.50) costs a fraction of that. **Deterministic** work — a single correct output — doesn't need a premium
 model, so routing it down is a straight budget win with no quality loss. The only
 question is *which* cheap tier, and that's decided by how much understanding the task
@@ -23,10 +23,10 @@ Needs a DECISION (design, debug unknown cause, review, prose, weigh relevance)
     -> general-purpose (premium tier)
 
 Needs to UNDERSTAND CODE/CONTEXT to execute a decided change
-    -> mechanic            (subagent_type "mechanic", Sonnet 5.5)
+    -> mechanic            (subagent_type "mechanic", Sonnet)
 
 TRIVIAL transformation, no codebase understanding — as a BATCH / at volume
-    -> errand              (subagent_type "mechanic:errand", Haiku 5.5)
+    -> errand              (subagent_type "mechanic:errand", Haiku)
 
 TRIVIAL transformation, but a SINGLE small item
     -> INLINE — do it yourself, do NOT delegate
@@ -112,11 +112,13 @@ cost us?".
 routing rule). A misroute is a bug to fix *here* — sharpen a description — never a
 case to loosen so the run goes green. See [`evals/README.md`](evals/README.md).
 
-## Model pins
+## Model aliases
 
-Each agent pins a full model ID in its frontmatter. Claude Code's `model:` field
-accepts a full model ID (same values as the `--model` flag), so this selects the exact
-version rather than a generic alias (`sonnet` / `haiku` → whatever the current default is).
+Each agent sets a model **alias** (`sonnet` / `haiku`) in its frontmatter, never a full
+model ID. Claude Code resolves the alias to the current model of that family — or, where
+set, through `ANTHROPIC_DEFAULT_SONNET_MODEL` / `ANTHROPIC_DEFAULT_HAIKU_MODEL` (gateways
+such as Foundry carry their own IDs). A full ID would go stale with every model release
+and break on any gateway that names models differently.
 See [Claude Code subagents docs](https://code.claude.com/docs/en/sub-agents.md).
 
 ## Tool access
@@ -129,7 +131,7 @@ demand, so an agent fetches what it needs with `ToolSearch` before calling it (b
 every tool into one `select:` query). A pinned `tools:` list would have silently
 excluded MCP and `ToolSearch`, which is why there is none.
 
-Broad tool access is **not** broad scope. The cost tier is enforced by the model pin
+Broad tool access is **not** broad scope. The cost tier is enforced by the model alias
 and the agent's contract, not by withholding tools: `errand` still does one trivial
 transformation, `mechanic` still executes a decided change, and both still hand back
 the moment a task needs a decision. MCP is there for when the mechanical task genuinely

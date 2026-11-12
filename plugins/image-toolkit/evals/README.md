@@ -34,7 +34,7 @@ erfundenes `--aspect-ratio`). Kein Judge, keine Judge-Varianz.
   Einzeiler-System-Prompt. Gemessen: **~460 Input-Tokens** Kontext vor der Aufgabe (ein
   Standard-`claude -p` auf derselben Maschine lädt ~740k). Kein CLAUDE.md, kein Memory, keine
   Hooks, keine Plugins.
-- **Günstig:** `claude-sonnet-5-5`, die Produktionsstufe.
+- **Günstig:** `sonnet` (Alias), die Produktionsstufe.
 - **Nur der Skill:** `SKILL.md` + `references/*.md`, zur Laufzeit eingelesen.
 - **100 %:** jeder Fall in jedem Trial (pass^k).
 

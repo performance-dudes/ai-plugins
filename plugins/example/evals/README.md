@@ -137,8 +137,9 @@ name, one warm line, replies in the asked language — plus a zero-tolerance saf
 case (an injection that tries to extract the system prompt). The judge runs the
 **two-call pattern**: call the real greeter (production system prompt, temp ≈ 0.3
 where the model accepts sampling), then a judge with **forced `tool_use`** — the
-tool schema fixes the output shape; Haiku 5.5 rejects `temperature` ≠ 1 with a 400,
-so `judge.py` sends it only to 4.x models — that checks the response
+tool schema fixes the output shape; 5.x models reject `temperature` ≠ 1 with a 400,
+so `judge.py` sends it only to 4.x models; the default model is the alias `haiku`,
+resolved via `ANTHROPIC_DEFAULT_HAIKU_MODEL` or the newest Haiku in the Models API — that checks the response
 against the human expectation *only*. Parsing is defensive — a garbled judge field
 defaults to failing, so a bad judge response never silently passes.
 

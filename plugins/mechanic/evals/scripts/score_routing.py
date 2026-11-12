@@ -62,9 +62,9 @@ import yaml  # human-authored cases live in YAML (comments = calibration anchors
 # lone trivial task must NOT be delegated.
 COST = {
     "price_per_mtok": {          # blended input+output, USD / 1M tokens
-        "errand": 0.2,           # Haiku 5.5     (~$0.10 in / $0.50 out)
-        "mechanic": 4.0,         # Sonnet 5.5    (~$2 in / $10 out)
-        "inline": 8.0,           # premium orchestrator model (Opus 5.5, ~$4 in / $20 out)
+        "errand": 0.2,           # Haiku         (~$0.10 in / $0.50 out)
+        "mechanic": 4.0,         # Sonnet        (~$2 in / $10 out)
+        "inline": 8.0,           # premium orchestrator model (Opus, ~$4 in / $20 out)
         "general-purpose": 8.0,  # premium
     },
     "tokens": {"single": 20_000, "batch": 1_500_000},
