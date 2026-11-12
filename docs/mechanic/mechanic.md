@@ -97,6 +97,6 @@ spawn that returns each agent's model ID (a Sonnet / a Haiku model).
 
 | | Haiku (`errand`) | Sonnet (`mechanic`) | Opus (`general-purpose`) |
 |---|---|---|---|
-| In/Out per 1M | $0.10 / $0.50 | $2 / $10 | $4 / $20 |
+| In/Out per 1M (prices as of the 5.5 generation) | $0.10 / $0.50 | $2 / $10 | $4 / $20 |
 | Context / max out | 1M / 128K | 1M / 128K | 1M / 128K |
 | `effort` param | yes (default `medium`) | yes (default `high`) | yes (default `medium`) |

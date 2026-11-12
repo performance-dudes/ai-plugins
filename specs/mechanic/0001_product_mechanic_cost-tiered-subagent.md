@@ -24,7 +24,7 @@ Routing-Regel: Entscheidung nötig → `general-purpose` (Premium); Code-Verstä
 
 ## 2. Warum (Begründung)
 
-- **Kosten-Tiering.** Sonnet (≈ $2/$10 pro 1M) und Haiku (≈ $0.10/$0.50)
+- **Kosten-Tiering.** Sonnet (≈ $2/$10 pro 1M, Preise der 5.5-Generation) und Haiku (≈ $0.10/$0.50)
   kosten einen Bruchteil der Premium-Tier (Opus ≈ $4/$20). Deterministische
   Arbeit — Aufgaben mit **einem** korrekten Output — braucht kein Premium-Modell.
   Diese Arbeit auszulagern ist ein reiner Budget-Gewinn **ohne** Qualitätsverlust,

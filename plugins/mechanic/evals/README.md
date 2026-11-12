@@ -3,7 +3,7 @@
 The `mechanic` plugin promises **one thing**: a sharp routing decision. For any
 task it should pick the right tier — do it **inline**, or delegate to **errand**
 (Haiku), **mechanic** (Sonnet), or **general-purpose** (premium). Everything
-else (the model pins, the tool access) only matters if that decision is right. So
+else (the model aliases, the tool access) only matters if that decision is right. So
 this is what the eval measures.
 
 ## The one rule — read this first

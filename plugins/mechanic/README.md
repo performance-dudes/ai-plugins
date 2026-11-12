@@ -10,7 +10,7 @@ cheaper model families so the premium tier (Opus) stays free for judgment.
 
 ## Why
 
-Sonnet (≈ $2/$10 per 1M) costs half of Opus (≈ $4/$20); Haiku
+Sonnet (≈ $2/$10 per 1M, prices as of the 5.5 generation) costs half of Opus (≈ $4/$20); Haiku
 (≈ $0.10/$0.50) costs a fraction of that. **Deterministic** work — a single correct output — doesn't need a premium
 model, so routing it down is a straight budget win with no quality loss. The only
 question is *which* cheap tier, and that's decided by how much understanding the task
