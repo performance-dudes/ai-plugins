@@ -21,8 +21,13 @@ Die ai-plugins-Plugins (`context-aware`, `example`, `ocr`, `transcribe`) sind
 einsammelt. So bleibt der Test beim Plugin (mit-wandern bei `git mv`), und der
 Aggregator findet ihn trotzdem.
 
-- **Einteilig** (hier alle): Suite `<plugin>/tests/validate.sh`, Wrapper
+- **Einteilig**: Suite `<plugin>/tests/validate.sh`, Wrapper
   `tests/<plugin>/run.sh`.
+- **Einteilig, Suite top-level** (`token-guard`): kein Build, aber die Node-Tests
+  (`node --test`) liegen direkt unter `tests/token-guard/`, weil sie Plugin-Hooks und
+  das gebaute opencode-Original nebeneinander laden (Paritätstest). `run.sh` fährt sie,
+  die Eval unter `plugins/token-guard/evals/` läuft mit, wenn `uv` da ist. Details:
+  [`tests/token-guard/README.md`](token-guard/README.md).
 - **Zweiteilig** (Plugin mit Build, z. B. TS-MCP): Unit-Tests code-nah beim Build,
   Plugin-Ebene/Integration/E2E unter `tests/<plugin>/`. (Im internen Marketplace
   `ai-plugins-internal` für `agent-sync` so umgesetzt.)

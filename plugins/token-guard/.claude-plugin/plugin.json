@@ -1,0 +1,9 @@
+{
+  "name": "token-guard",
+  "description": "Guards long Claude Code sessions against token burn (cost ≈ steps × context). Hooks block streaks of single-purpose Bash calls and Bash mutations outside the project root, and tell the model when it verifies after too few edits, when the session passes a step or context budget, and when it asks the user to do in-project work themselves. A tripwire, not an autopilot: blocks one tool call with a reason, never rewrites the session. Thresholds via TOKEN_GUARD_* env vars (0 = off). Requires node; without it the hooks do nothing. Command: /token-guard:token-guard (firing stats).",
+  "version": "0.1.0",
+  "author": {
+    "name": "Performance Dudes"
+  },
+  "keywords": ["tokens", "cost", "hook", "bash", "context", "budget", "efficiency", "infrastructure"]
+}

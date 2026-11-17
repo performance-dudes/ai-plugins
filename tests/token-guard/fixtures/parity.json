@@ -1,0 +1,123 @@
+{
+  "_note": "Shared cases for AC-tg-7-5. Each case runs against plugins/token-guard (copy) and plugins/opencode/opencode-token-guard/dist/guard.js (original). 'deviation' marks a deliberate difference (spec §6a); for those, 'expected' is the token-guard result.",
+  "root": "/Users/x/proj",
+  "home": "/Users/x",
+  "classify": [
+    "npm test",
+    "pnpm lint",
+    "npx tsc --noEmit",
+    "ruff check .",
+    "prettier --check .",
+    "ls",
+    "cat a.txt",
+    "ls && pwd",
+    "a || b",
+    "echo a; echo b",
+    "for f in *; do echo $f; done",
+    "while true; do sleep 1; done",
+    "git status"
+  ],
+  "outside": [
+    {
+      "cmd": "echo hi > /etc/foo"
+    },
+    {
+      "cmd": "echo hi >> ~/notes.txt"
+    },
+    {
+      "cmd": "touch ~/notes.txt"
+    },
+    {
+      "cmd": "mkdir -p /Users/x/other/dir"
+    },
+    {
+      "cmd": "rm -rf /Users/x/other"
+    },
+    {
+      "cmd": "sed -i s/a/b/ /Users/x/other/f"
+    },
+    {
+      "cmd": "cd /Users/x/other && cp a b"
+    },
+    {
+      "cmd": "cd /Users/x/other && python3 - <<'PY'\nopen('f','w').write('x')\nPY"
+    },
+    {
+      "cmd": "cat /etc/hosts"
+    },
+    {
+      "cmd": "ls /Users/x/other"
+    },
+    {
+      "cmd": "echo hi > ./local.txt"
+    },
+    {
+      "cmd": "touch /Users/x/proj/sub/f"
+    },
+    {
+      "cmd": "echo x > /tmp/f"
+    },
+    {
+      "cmd": "echo x > /dev/null"
+    },
+    {
+      "cmd": "echo x 2>&1"
+    },
+    {
+      "cmd": "cat client/src/foo.ts > out.txt"
+    },
+    {
+      "cmd": "cp a /Users/x/other/b"
+    },
+    {
+      "cmd": "cd /tmp && touch x",
+      "deviation": true,
+      "expected": false
+    },
+    {
+      "cmd": "cd /private/tmp && echo x > y",
+      "deviation": true,
+      "expected": false
+    },
+    {
+      "cmd": "cd /var/folders && touch x",
+      "deviation": true,
+      "expected": false
+    }
+  ],
+  "offload": [
+    "Please run this yourself in your terminal.",
+    "You can execute the migration manually.",
+    "Copy the file outside the project and run it there.",
+    "Outside the project, run npm install.",
+    "Führe das bitte selbst in deinem Terminal aus.",
+    "Kopiere die Datei manuell.",
+    "Außerhalb des Projekts musst du das Skript ausführen.",
+    "I ran the tests and they pass.",
+    "The command runs in your project directory.",
+    "I'll execute the build now.",
+    "Ich habe die Datei selbst angelegt."
+  ],
+  "offloadDeviations": [
+    {
+      "text": "Erstelle die Datei bitte selbst.",
+      "expected": true
+    },
+    {
+      "text": "Please do the edit yourself.",
+      "expected": true
+    },
+    {
+      "text": "Leg die Datei bitte von Hand an.",
+      "expected": true
+    },
+    {
+      "text": "Next I will run the linter manually to double-check.",
+      "expected": false
+    },
+    {
+      "text": "Ich kopiere die Datei jetzt manuell in den Ordner.",
+      "expected": false
+    }
+  ]
+}

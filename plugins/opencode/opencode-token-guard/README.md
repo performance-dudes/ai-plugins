@@ -19,6 +19,13 @@ explode that product are:
 This plugin attacks both mechanically, plus soft budgets on session length
 and context size.
 
+> **Using Claude Code?** Use the port [`token-guard`](../../token-guard/README.md)
+> (`token-guard@ai-plugins`) instead: same guards as Claude Code hooks, no build step.
+> The port fixes three bugs that are still in this plugin: the verify throttle never
+> fires, `cd /tmp` counts as leaving the project, and the offload detector misses some
+> phrasings (see
+> [spec §6a](../../../specs/token-guard/0001_product_token-guard.md)).
+
 ## What it does
 
 | Guard | Behaviour | Default |
