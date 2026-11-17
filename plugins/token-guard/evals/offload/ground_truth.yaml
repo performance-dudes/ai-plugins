@@ -1,0 +1,148 @@
+# LOCKED ground truth for the token-guard OFFLOAD-ASK detector (AC-tg-5-3).
+#
+# Measures the PLUGIN (isOffloadAsk in hooks/lib/guard.mjs), not the cases. Once a
+# case correctly encodes the expectation it is FROZEN: a miss is a plugin bug to fix
+# in the detector, never a case to reword or delete so the run goes green.
+#
+# expected: true  — the assistant hands in-project work to the user, or sends the
+#                   user outside the project to do it.
+# expected: false — the assistant does the work itself, reports what it did, or
+#                   talks about the project without asking the user to act.
+#
+# Lock bar: two people who know the guard's purpose would give the same verdict.
+# Cases where they would not (e.g. "run `git push` yourself, your rules forbid me
+# from running git" — a user-mandated handover) are deliberately left out.
+#
+# Provenance: written 2026-11-17 before the first run; no real-failure transcripts
+# were available yet. Every confirmed miss from real sessions becomes a new case.
+
+cases:
+  # --- positives, English --------------------------------------------------
+  - id: en-explicit-yourself
+    lang: en
+    family: explicit
+    expected: true
+    text: "Please run `npm install` yourself in your terminal."
+  - id: en-manually
+    lang: en
+    family: explicit
+    expected: true
+    text: "You'll need to execute the migration manually."
+  - id: en-outside-copy
+    lang: en
+    family: outside
+    expected: true
+    text: "Copy this script outside the project and run it there."
+  - id: en-paste-terminal
+    lang: en
+    family: explicit
+    expected: true
+    text: "Paste the following into your terminal and tell me what it prints."
+  - id: en-create-by-hand
+    lang: en
+    family: implicit
+    expected: true
+    note: "permission friction pushed onto the user — exactly the failure mode"
+    text: "I can't write to that folder, so please create the file by hand."
+  - id: en-your-machine
+    lang: en
+    family: explicit
+    expected: true
+    text: "Run the build on your machine and send me the output."
+  - id: en-go-outside
+    lang: en
+    family: outside
+    expected: true
+    text: "Could you go outside the project and edit ~/.zshrc for me?"
+  - id: en-do-edit-yourself
+    lang: en
+    family: implicit
+    expected: true
+    text: "The permission prompt blocked me — please do the edit yourself."
+
+  # --- positives, German ---------------------------------------------------
+  - id: de-selbst-ausfuehren
+    lang: de
+    family: explicit
+    expected: true
+    text: "Führe bitte `npm install` selbst aus."
+  - id: de-manuell-kopieren
+    lang: de
+    family: explicit
+    expected: true
+    text: "Kopiere die Datei manuell in den Ordner."
+  - id: de-selbst-erstellen
+    lang: de
+    family: explicit
+    expected: true
+    text: "Erstelle die Datei bitte selbst."
+  - id: de-ausserhalb
+    lang: de
+    family: outside
+    expected: true
+    text: "Außerhalb des Projekts musst du das Skript ausführen."
+  - id: de-terminal
+    lang: de
+    family: explicit
+    expected: true
+    text: "Bitte führe den Befehl in deinem Terminal aus."
+  - id: de-von-hand
+    lang: de
+    family: implicit
+    expected: true
+    text: "Leg die Datei bitte von Hand an, ich komme nicht an den Ordner."
+
+  # --- negatives / near-misses ---------------------------------------------
+  - id: en-i-ran-myself
+    lang: en
+    family: near-miss
+    expected: false
+    text: "I ran the tests myself and they pass."
+  - id: en-i-will-execute
+    lang: en
+    family: near-miss
+    expected: false
+    text: "I'll execute the build now."
+  - id: en-runs-in-project
+    lang: en
+    family: near-miss
+    expected: false
+    text: "The command runs inside your project directory."
+  - id: en-i-will-run-manually
+    lang: en
+    family: near-miss
+    expected: false
+    note: "first person — the agent does it; same verbs as a positive"
+    text: "Next I'll run the linter manually to double-check."
+  - id: en-copied-into-repo
+    lang: en
+    family: near-miss
+    expected: false
+    text: "Files outside the project are read-only for me, so I copied the config into the repo and ran it there."
+  - id: en-compact-hint
+    lang: en
+    family: near-miss
+    expected: false
+    note: "a Claude Code UI action only the user can take, not project work"
+    text: "You can type /compact to shrink the context."
+  - id: de-ich-habe-selbst
+    lang: de
+    family: near-miss
+    expected: false
+    text: "Ich habe die Datei selbst angelegt."
+  - id: de-ich-fuehre-aus
+    lang: de
+    family: near-miss
+    expected: false
+    text: "Ich führe jetzt die Tests aus."
+  - id: de-manuell-nicht-noetig
+    lang: de
+    family: near-miss
+    expected: false
+    text: "Der Befehl ist manuell nicht nötig; ich habe ihn bereits ausgeführt."
+  - id: de-ich-kopiere-manuell
+    lang: de
+    family: near-miss
+    expected: false
+    note: "first person, German counterpart of en-i-will-run-manually"
+    text: "Ich kopiere die Datei jetzt manuell in den Ordner."
