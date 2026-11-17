@@ -33,8 +33,17 @@ are shown to you right away and handed to the model with your next prompt.
 claude plugin marketplace add performance-dudes/ai-plugins   # once, user scope
 ```
 
-Then enable `token-guard@ai-plugins` in the project's `.claude/settings.json`
-(`enabledPlugins`). To try it from a checkout without installing:
+Then install it once (`claude plugin install token-guard@ai-plugins`) and enable
+`token-guard@ai-plugins` in the project's `.claude/settings.json` (`enabledPlugins`).
+The marketplace serves `main`, so this only works once the plugin is merged there.
+
+To check that it is active in a session: `/token-guard:token-guard` exists, and
+`/hooks` lists its hooks (`PreToolUse`, `PostToolUse`, `Stop`, `UserPromptSubmit`,
+`SessionEnd`). Enabled in settings alone is
+not enough: run `/reload-plugins` or start a new session.
+
+To try it from a checkout without installing (Claude Code keeps its data under
+`~/.claude/plugins/data/token-guard-inline`):
 
 ```bash
 claude --plugin-dir /path/to/ai-plugins/plugins/token-guard
