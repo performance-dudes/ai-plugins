@@ -14,7 +14,7 @@ Claude-Code-Plugin `token-guard`, ohne das opencode-Plugin anzufassen.
   `guard.ts` nach `hooks/lib/guard.mjs` übertragen, Zustand pro Session in einer
   Datei, Command `/token-guard:token-guard`.
 - Spec `SPEC-token-guard` mit 8 User Stories, Tests unter `tests/token-guard/`
-  (22 Tests, grün), Eval-Suite `plugins/token-guard/evals/offload/` (24/24, pass^3).
+  (23 Tests, grün), Eval-Suite `plugins/token-guard/evals/offload/` (24/24, pass^3).
 - E2E (AC-tg-8-1), manuell: headless `claude -p --plugin-dir …` mit
   `TOKEN_GUARD_MAX_CONSECUTIVE_BASH=2`. Der dritte Einzweck-Bash-Call wurde abgelehnt,
   das Modell hat die Begründung wörtlich gesehen, der vierte lief wieder durch,

@@ -33,7 +33,7 @@ Die sechs Wächter des opencode-Plugins werden übernommen; bewusste Abweichunge
 | Projekt-Ausbruch | blockt Bash-Befehle, die Dateisystem-Zustand **außerhalb** des Projekt-Roots verändern | immer an |
 | Offload-Ask | Hinweis, wenn der Assistant den User bittet, Projektarbeit selbst bzw. außerhalb des Projekts zu erledigen | immer an |
 
-Dazu ein Command `/token-guard`, der die gesammelten Auslöse-Statistiken berichtet.
+Dazu ein Command `/token-guard:token-guard` (Plugin-Commands sind immer namespaced), der die gesammelten Auslöse-Statistiken berichtet.
 
 ## 2. Warum (Begründung)
 
@@ -72,7 +72,7 @@ Dazu ein Command `/token-guard`, der die gesammelten Auslöse-Statistiken berich
 | ein langlebiger Plugin-Prozess pro Session, Zustand im Speicher | ein neuer Prozess pro Hook-Event; Zustand in einer Datei pro `session_id` |
 | `tool.execute.before` + `throw` | `PreToolUse`-Hook, Entscheidung `deny` mit Begründung (für das Modell sichtbar) |
 | `tool.execute.after` | `PostToolUse`-Hook, Hinweis per `additionalContext` |
-| `edit` / `write` | `Edit`, `Write`, `NotebookEdit` |
+| `edit` / `write` | `Edit`, `Write`, `NotebookEdit`, `MultiEdit` |
 | `message.updated` mit Token-Zählern | Auswertung des Session-Transcripts (`transcript_path`): Assistant-Steps zählen, Usage der letzten Antwort lesen |
 | gestreamte Text-Parts | `Stop`-Hook liest die letzte Assistant-Antwort aus dem Transcript |
 | `client.app.log` (WARN) | Hinweis an das Modell (`additionalContext`) und an den User (`systemMessage`) |
@@ -107,7 +107,7 @@ testet, damit er Änderungen bündelt.
 
 | AC | Soll | Test |
 |----|------|------|
-| AC-tg-2-1 | `Edit`, `Write` und `NotebookEdit` erhöhen den Edit-Zähler der Session. | hook-behavior |
+| AC-tg-2-1 | `Edit`, `Write`, `NotebookEdit` und `MultiEdit` erhöhen den Edit-Zähler der Session. | hook-behavior |
 | AC-tg-2-2 | Läuft ein `verify`-Befehl nach 1 bis N−1 Edits, liefert `PostToolUse` einen Hinweis als `additionalContext`; bei 0 oder ≥ N Edits keinen. | hook-behavior `hooks.test` |
 | AC-tg-2-3 | Nur der `verify`-Lauf in `PostToolUse` setzt den Edit-Zähler auf 0; `PreToolUse` setzt bei `verify` nur den Bash-Serienzähler zurück. **Abweichung:** im Vorbild setzt schon `onBashBefore` den Edit-Zähler zurück (`guard.ts:61`), sodass `onVerifyAfter` immer 0 liest und der Hinweis nie feuert. | script-run |
 
@@ -120,7 +120,7 @@ Kontext zu groß wird, damit ich rechtzeitig kompaktiere oder neu starte.
 |----|------|------|
 | AC-tg-3-1 | Assistant-Steps werden aus dem Transcript gezählt; mehrere Transcript-Zeilen derselben API-Antwort (gleiche Message-ID) zählen als ein Step. | script-run `metrics.test` |
 | AC-tg-3-2 | Die Kontextgröße ist `input_tokens + cache_read_input_tokens + cache_creation_input_tokens` der letzten Assistant-Antwort. | script-run `metrics.test` |
-| AC-tg-3-3 | Die Budgets werden in `PostToolUse` **und** im `Stop`-Hook ausgewertet (ein Turn ohne Tool-Call hat nur `Stop`). Beim ersten Überschreiten des Step- bzw. Kontext-Budgets entsteht genau ein Hinweis pro Budget und Session — in dem Hook, der das Überschreiten zuerst sieht; ein Flag im Session-Zustand verhindert einen zweiten. | hook-behavior |
+| AC-tg-3-3 | Die Budgets werden in `PostToolUse` **und** im `Stop`-Hook ausgewertet (ein Turn ohne Tool-Call hat nur `Stop`). Beim ersten Überschreiten des Step- bzw. Kontext-Budgets entsteht genau ein Hinweis pro Budget und Session — in dem Hook, der das Überschreiten zuerst sieht; ein Flag im Session-Zustand verhindert einen zweiten. | script-run `guard.test` + hook-behavior `hooks.test` |
 | AC-tg-3-4 | Ein in `PostToolUse` entstandener Hinweis geht als `additionalContext` an das Modell. Ein im `Stop`-Hook entstandener Hinweis geht sofort als `systemMessage` an den User und wird beim nächsten `UserPromptSubmit` als `additionalContext` nachgereicht. | hook-behavior |
 | AC-tg-3-5 | Das Transcript wird inkrementell gelesen (Byte-Offset im Session-Zustand), nicht bei jedem Event komplett. | script-run `metrics.test` |
 
@@ -131,7 +131,7 @@ werden, damit der Agent bei Reibung nicht in fremde Verzeichnisse ausweicht.
 
 | AC | Soll | Test |
 |----|------|------|
-| AC-tg-4-1 | Erkennung wie `mutatesOutsideProject` im Vorbild (`guard.ts:164-190`): Redirect-Ziel außerhalb; Pfad-Operand außerhalb bei `mkdir`, `touch`, `rm`, `tee`, `ln`, `truncate` und `sed -i`; `cd` nach außerhalb plus Schreibhinweis (`mv`, `cp`, `rsync`, `install` u. a. zählen nur in dieser Kombination). Lesen von außerhalb wird nicht geblockt. Allowlist: `/tmp`, `/private/tmp`, `/dev`, `/var/folders` **jeweils inklusive des Verzeichnisses selbst** (`cd /tmp && touch x` ist erlaubt). **Abweichung:** im Vorbild verlangt die Allowlist einen Schrägstrich nach dem Namen (`guard.ts:132`), dort gilt `cd /tmp` als außerhalb. | script-run `guard.test` |
+| AC-tg-4-1 | Erkennung wie `mutatesOutsideProject` im Vorbild (`guard.ts:164-190`): Redirect-Ziel außerhalb; Pfad-Operand außerhalb bei `mkdir`, `touch`, `rm`, `tee`, `ln`, `truncate` und `sed -i`; `cd` nach außerhalb plus Schreibhinweis (`mv`, `cp`, `rsync`, `install` u. a. zählen nur in dieser Kombination). Lesen von außerhalb wird nicht geblockt. Allowlist: `/tmp`, `/private/tmp`, `/dev`, `/var/folders` **jeweils inklusive des Verzeichnisses selbst** (`cd /tmp && touch x` ist erlaubt). **Abweichung:** im Vorbild verlangt die Allowlist einen Schrägstrich nach dem Namen (`guard.ts:132`), dort gilt `cd /tmp` als außerhalb. | script-run `guard.test` + `parity.test` |
 | AC-tg-4-2 | Projekt-Root ist `CLAUDE_PROJECT_DIR`, sonst `cwd` aus dem Hook-Input. | hook-behavior |
 | AC-tg-4-3 | Ein erkannter Befehl wird per `PreToolUse` mit `deny` und der Begründung des opencode-Plugins (angepasst auf Claude-Code-Toolnamen) abgelehnt. Die Prüfung läuft vor der Bash-Rationierung. | hook-behavior `hooks.test` |
 
@@ -142,11 +142,11 @@ selbst bzw. außerhalb des Projekts zu erledigen.
 
 | AC | Soll | Test |
 |----|------|------|
-| AC-tg-5-1 | Der `Stop`-Hook prüft den Text der letzten Assistant-Antwort (`last_assistant_message` aus dem Hook-Input, sonst aus dem Transcript) satzweise mit den Offload-Mustern des opencode-Plugins (de + en). **Abweichung (eval-getrieben):** zusätzliche Verben (*create, do, edit, …*; *erstelle, leg, mach, …*), *von Hand*/*händisch*, der `erstell\b`-Fehler auf „Erstelle" behoben, und ein Satz in der ersten Person, der den User nicht anspricht, gilt nicht als Offload. | script-run `guard.test` + `parity.test` + hook-behavior `hooks.test` |
+| AC-tg-5-1 | Der `Stop`-Hook prüft den Text der letzten Assistant-Antwort (`last_assistant_message` aus dem Hook-Input, sonst aus dem Transcript) satzweise mit den Offload-Mustern des opencode-Plugins (de + en). **Abweichung (eval-getrieben):** zusätzliche Verben (*create, do, edit, …*; *erstelle, leg, mach, …*), *von Hand*/*händisch*, der `erstell\b`-Fehler auf „Erstelle" behoben, und ein Satz in der ersten Person, der den User nicht anspricht, gilt nicht als Offload. | script-run `parity.test` + hook-behavior `hooks.test` |
 | AC-tg-5-2 | Bei Treffer gilt dieselbe Zustellung wie AC-tg-3-4 (User sofort, Modell beim nächsten Prompt). Der `Stop`-Hook blockt das Turn-Ende nie. | hook-behavior |
 | AC-tg-5-3 | Die Erkennung erreicht auf der festgezurrten Eval-Suite `plugins/token-guard/evals/offload/` pass^3 = 100 % auf allen Positiv- und Near-Miss-Cases. | Eval-Suite `plugins/token-guard/evals/offload/` |
 
-### US-tg-6 — Metriken und `/token-guard`
+### US-tg-6 — Metriken und `/token-guard:token-guard`
 
 Als Nutzer will ich sehen, wie oft das Plugin ausgelöst hat und was es grob gespart
 hat.
@@ -155,7 +155,7 @@ hat.
 |----|------|------|
 | AC-tg-6-1 | Jede Auslösung erhöht in `~/.claude/token-guard-metrics.json` (überschreibbar per `TOKEN_GUARD_METRICS_PATH`) den Zähler ihrer Art, `total`, `firstFiring`/`lastFiring` und bei der ersten Auslösung einer Session `sessions`. Schema-Felder wie im opencode-Plugin. | script-run `metrics.test` |
 | AC-tg-6-2 | Parallele Hook-Prozesse verlieren keine Zählung (atomares Schreiben). | script-run `metrics.test` |
-| AC-tg-6-3 | Ein mitgeliefertes Skript gibt die Statistik deterministisch aus (Zähler je Art, Sessions, Zeitraum, beschriftete Schätzung gesparter Steps). `/token-guard` ruft nur dieses Skript und gibt seine Ausgabe wieder. | script-run `metrics.test` |
+| AC-tg-6-3 | Ein mitgeliefertes Skript gibt die Statistik deterministisch aus (Zähler je Art, Sessions, Zeitraum, beschriftete Schätzung gesparter Steps). `/token-guard:token-guard` ruft nur dieses Skript und gibt seine Ausgabe wieder. | script-run `metrics.test` |
 
 ### US-tg-7 — Konfiguration, Robustheit, Parität
 

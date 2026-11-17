@@ -20,6 +20,22 @@ test('AC-tg-1-2 / 1-4 / 1-5 streak block via PreToolUse, persisted per session',
   sb.sid = first
 })
 
+test('AC-tg-1-3 streak resets on chained/verify and restarts after a block, via PreToolUse', () => {
+  const sb = sandbox({ TOKEN_GUARD_MAX_CONSECUTIVE_BASH: '2' })
+  sb.bash('ls')
+  sb.bash('pwd')
+  assert.equal(denied(sb.bash('ls && pwd')), false) // chained: resets
+  sb.bash('whoami')
+  sb.bash('id')
+  assert.equal(denied(sb.bash('npx vitest run')), false) // verify: resets
+  sb.bash('date')
+  sb.bash('uname')
+  assert.ok(denied(sb.bash('hostname'))) // 3rd single in a row
+  assert.equal(denied(sb.bash('ls')), false) // counting restarts after the block
+  assert.equal(denied(sb.bash('pwd')), false)
+  assert.ok(denied(sb.bash('whoami')))
+})
+
 test('AC-tg-4-2 / 4-3 outside mutation denied before rationing', () => {
   const sb = sandbox({ TOKEN_GUARD_MAX_CONSECUTIVE_BASH: '1' })
   sb.bash('ls')

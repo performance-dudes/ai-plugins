@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Deterministic firing report for /token-guard. Reads the metrics file and prints
+// Deterministic firing report for /token-guard:token-guard. Reads the metrics file and prints
 // counts per kind, sessions, the time span and a clearly labelled rough estimate.
 
 import { metricsPath, readMetrics } from './lib/store.mjs'

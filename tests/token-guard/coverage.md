@@ -33,7 +33,7 @@ Code-Pfade relativ zu `plugins/token-guard/`.
 |---|---|---|---|---|---|
 | AC-tg-1-1 | — | `guard.test` | — | — | — |
 | AC-tg-1-2 | — | — | `hooks.test` | — | `e2e.sh` |
-| AC-tg-1-3 | — | `guard.test` | — | — | `e2e.sh` (Zähler nach Block neu) |
+| AC-tg-1-3 | — | `guard.test` | `hooks.test` | — | `e2e.sh` (Zähler nach Block neu) |
 | AC-tg-1-4, 1-5 | — | — | `hooks.test` | — | — |
 | AC-tg-2-1, 2-2 | — | — | `hooks.test` | — | — |
 | AC-tg-2-3 | — | `guard.test` | — | — | — |
